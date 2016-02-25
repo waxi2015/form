@@ -1,0 +1,9 @@
+<? if (!isset($language)) $language = null; ?>
+
+<? if ($this->isError($language)): ?>
+	<small class="help-block">
+		<? foreach ($this->getErrors($language) as $key => $one): ?>
+			<?=$one . ($key + 1 < count($this->getErrors($language)) ? '<br />' : '')?>
+		<? endforeach; ?>
+	</small>
+<? endif; ?>

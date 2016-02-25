@@ -1,0 +1,40 @@
+<? foreach ($this->getInstances() as $language): ?>
+
+<div class="<?=$this->getClass()?> form-group wx-element wx-multifile <?=$this->hasError($language)?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	<?=$this->fetchTemplate('info')?>
+
+	<div id="<?=$this->getId($language)?>-previews" class="file-previews" <?=$this->renderLanguageData($language)?>>
+		<? if (!empty($this->getValue(false, $language))): ?>
+			<? foreach ($this->getValue(false, $language) as $key => $value): ?>
+				<div class="file">
+					<a href="" class="remove">x</a>
+					<a href="<?=$this->getFileUrl($value['file'], $language)?>" target="_blank" class="name"><?=$value['file']?></a>
+					<input name="<?=$this->getName(true, $language)?>[<?=$key?>][file]" value="<?=$value['file']?>" type="hidden" <?=$this->getAdditionalAttributes()?> />
+					<? if ($this->hasFields()): ?>
+						<? foreach ($this->getFields() as $field): ?>
+							<input placeholder="<?=$field['placeholder']?>" value="<?=$value[$field['name']]?>" name="<?=$this->getName(true, $language)?>[<?=$key?>][<?=$field['name']?>]" <?=$this->getAdditionalAttributes()?> />
+						<? endforeach; ?>
+					<? endif; ?>
+				</div>
+			<? endforeach; ?>
+		<? endif; ?>
+	</div>
+
+
+	<div class="file-uploader-container">
+		<div id="<?=$this->getId($language)?>" class="dropzone"></div>
+		<div id="<?=$this->getId($language)?>-progress" class="progress hidden"><div class="bar"></div></div>
+	</div>
+
+	<div class="dropzone-previews" style="display: none;"></div>
+
+	<?=$this->fetchTemplate('description')?>
+	<?=$this->fetchTemplate('error', array('language' => $language))?>
+</div>
+
+<?=$this->fetchJavascript(null, array('language' => $language))?>
+
+<? endforeach; ?>
+
+<?=$this->fetchJavascript('validator.phtml')?>

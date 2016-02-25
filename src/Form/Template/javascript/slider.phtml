@@ -1,0 +1,55 @@
+<script>
+	$(function(){
+		$('#<?=$this->getId()?>-container').slider({
+			min : <?=$this->min?>,
+			max : <?=$this->max?>,
+			step : <?=$this->step?>,
+			tooltip : '<?=$this->tooltip ? 'show' : 'hide'?>',
+			orientation : '<?=$this->orientation?>',
+			<? if (!empty($this->getValueString())): ?>
+				value : <?=$this->getValueString()?>,
+			<? endif; ?>
+			enabled : <?=($this->getDisabled() === false ? 'true' : 'false')?>,
+			range: <?=$this->range === true ? 'true' : 'false'?>
+		}).on('slide', function(slideEvt) {
+
+			if (typeof slideEvt.value == 'object') {
+				<? foreach ($this->getValue() as $key => $value): ?>
+					$('input[name="<?=$this->getName()?>"]:eq(<?=$key?>)').val(slideEvt.value[<?=$key?>]);
+				<? endforeach; ?>
+
+				<? if ($this->minSelector !== null): ?>
+					$('<?=$this->getMinSelector()?>').text(slideEvt.value[0]);
+				<? endif; ?>
+
+				<? if ($this->maxSelector !== null): ?>
+					$('<?=$this->getMaxSelector()?>').text(slideEvt.value[1]);
+				<? endif; ?>
+			} else {
+				$('input[name="<?=$this->getName()?>"]').val(slideEvt.value);
+
+				<? if ($this->minSelector !== null): ?>
+					$('<?=$this->getMinSelector()?>').text(slideEvt.value);
+				<? endif; ?>
+			}
+
+            var $field = $(slideEvt.target);
+            $field
+                .closest('.form-group')
+                    .find('.percentageValue')
+                    .html($field.slider('getValue') + '%');
+
+            // Revalidate the field
+            $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>');
+
+		});
+
+		<? if ($this->minSelector !== null): ?>
+			$('<?=$this->getMinSelector()?>').text(<?=$this->getValue()[0]?>);
+		<? endif; ?>
+
+		<? if ($this->maxSelector !== null && count($this->getValue()) > 1): ?>
+			$('<?=$this->getMaxSelector()?>').text(<?=$this->getValue()[1]?>);
+		<? endif; ?>
+	})
+</script>

@@ -1,0 +1,112 @@
+<script>
+	$(function(){
+		Dropzone.autoDiscover = false;
+
+		$('#<?=$this->getId()?>').dropzone({
+			autoDiscover: false,
+			url: "/wx/form/upload",
+			paramName: 'image',
+			previewsContainer: '.dropzone-previews',
+			createImageThumbnails: false,
+			error: function(file, message){
+				alert(message);
+			},
+			init: function () {
+				<?=$this->getId()?> = this;
+			},
+			totaluploadprogress : function (progress) {
+				$('#<?=$this->getId()?>-progress').removeClass('hidden');
+				$('#<?=$this->getId()?>-progress .bar').css({width: progress + '%'});
+			},
+			maxFilesize: <?=$this->getMaxFileSize()?>,
+			acceptedFiles: '<?=$this->getAcceptedFiles()?>',
+			dictDefaultMessage: '<?=$this->getButtonLabel()?>',
+			success : function (file, response){
+				$('#<?=$this->getId()?>-progress').addClass('hidden');
+
+				var img = '<a href="<?=$this->getPreviewUrlBase()?>' + response.file + '" rel="group" class="image" style="background-image: url(<?=$this->getThumbnailUrlBase()?>' + response.file + ')"></a>',
+					input = '<input type="hidden" name="<?=$this->getName()?>[0][image]" value="' + response.file + '" />';
+
+				var previewBlock = '<div class="preview-block">';
+					previewBlock += img;
+					previewBlock += '<a href="" class="remove">x</a>';
+					previewBlock += input;
+
+
+				<? if ($this->hasFields()): ?>
+					<? foreach ($this->getFields() as $key => $field): ?>
+						previewBlock += '<input id="<?=$this->getId()?>-<?=$field["name"]?>" name="<?=$this->getName()?>[0][<?=$field["name"]?>]" placeholder="<?=$field["placeholder"]?>" />';
+					<? endforeach; ?>
+				<? endif; ?>
+
+				previewBlock += '</div>';
+
+
+				$('#<?=$this->getId()?>-previews').append(previewBlock);
+
+				refreshMultiimageKeys<?=$this->getId()?>();
+
+				$('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>');
+			},
+			sending : function (file, xhr, formData) {
+				formData.append('formDescriptor', $('#<?=$this->formIdentifier?> [name="formDescriptor"]').val());
+				formData.append('element', '<?=$this->getName(false)?>');
+				formData.append('type', 'image');
+				formData.append('_token', $('#<?=$this->formIdentifier?>').find('[name="_token"]').val());
+			}
+		});
+	
+		<? if ($this->hasLimit()): ?>
+			<?=$this->getId()?>.options.maxFiles = <?=$this->getLimit()?>;
+		<? endif; ?>
+
+		initRemoveImages<?=$this->getId()?>();
+
+		$('.image-previews').sortable({
+			change: function () {
+				refreshMultiimageKeys<?=$this->getId()?>();
+			}
+		});
+
+		$("#<?=$this->getId()?>-previews .image").fancybox();
+	})
+
+	function initRemoveImages<?=$this->getId()?> () {
+		var removeSelector = '#<?=$this->getId()?>-previews .preview-block .remove';
+
+		$(document).off('click', removeSelector).on('click', removeSelector, {} , function(e){
+			e.preventDefault();
+
+			$(this).closest('.preview-block').remove();
+
+			<? if ($this->hasLimit()): ?>
+				<?=$this->getId()?>.options.maxFiles = (parseInt(<?=$this->getId()?>.options.maxFiles) + 1);
+			<? endif; ?>
+
+			refreshMultiimageKeys<?=$this->getId()?>();
+		})
+	}
+
+	function refreshMultiimageKeys<?=$this->getId()?> () {
+		$('#<?=$this->getId()?>-previews .preview-block').each(function(key){
+			$(this).find('input').each(function(){
+				var nameParts = $(this).attr('name').split('['),
+					keyPart = nameParts.length - 2,
+					currentName = nameParts[keyPart].replace(']',''),
+					newName = '';
+
+				$.each(nameParts, function(k,v){
+					if (k == 0) {
+						newName += v;
+					} else if (k != keyPart) {
+						newName += '[' + v;
+					} else {
+						newName += '[' + key + ']';
+					}
+				})
+
+				$(this).attr('name', newName);
+			})
+		})
+	}
+</script>

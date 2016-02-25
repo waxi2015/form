@@ -1,0 +1,15 @@
+<div class="form-group wx-element wx-radiogroup <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	<?=$this->fetchTemplate('info')?>
+	<? foreach ($this->getItems() as $value => $label): ?>
+		<div class="radio wx-element wx-radio">
+			<label>
+				<input type="radio" name="<?=$this->getName()?>" value="<?=$value?>" <?=$this->getAdditionalAttributes($value)?> /> <?=$label?>
+			</label>
+		</div>
+	<? endforeach; ?>
+	<?=$this->fetchTemplate('description')?>
+	<?=$this->fetchTemplate('error')?>
+</div>
+
+<?=$this->fetchJavascript('validator.phtml')?>

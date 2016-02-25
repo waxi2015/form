@@ -1,0 +1,7 @@
+<input type="hidden" id="<?=$this->getId()?>" name="<?=$this->getName()?>" value="<?=($this->getName(false) == 'id'
+		? (
+			is_numeric($this->getValue())
+			? encode($this->getValue())
+			: $this->getValue()
+		)
+		: $this->getValue())?>" <?=$this->getData()?> />

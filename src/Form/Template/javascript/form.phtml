@@ -1,0 +1,19 @@
+<? if ($this->isInit()): ?>
+	<? $this->scriptCaptureStart(); ?>
+		$(function() {
+			$('#<?=$this->getId()?>').wxform();
+		})
+	<? $this->scriptCaptureEnd('PREPEND'); ?>
+<? endif; ?>
+
+<? if ($this->getSubmit()): ?>
+	<? $this->scriptCaptureStart(); ?>
+		$(function() {
+			$('<?=$this->getSubmit()?>').unbind('click').click(function(e){
+				e.preventDefault();
+				/*$('#<?=$this->getId()?>').submit();*/
+				$('#<?=$this->getId()?>').data('formValidation').validate();
+			});
+		})
+	<? $this->scriptCaptureEnd('PREPEND'); ?>
+<? endif; ?>

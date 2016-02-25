@@ -1,0 +1,37 @@
+<div class="<?=$this->getClass()?> form-group wx-element wx-multiimage <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	<?=$this->fetchTemplate('info')?>
+
+	<div class="input-group">
+		<div id="<?=$this->getId()?>-previews" class="image-previews">
+			<? if (!empty($this->getValue())): ?>
+				<? foreach ($this->getValue() as $key => $value): ?>
+					<div class="preview-block">
+						<a href="<?=$this->getPreviewUrl($value['image'])?>" class="image" rel="group" style="background-image: url(<?=$this->getThumbnailUrl($value['image'])?>)"></a>
+						<a href="" class="remove">x</a>
+						<input type="hidden" name="<?=$this->getName()?>[<?=$key?>][image]" value="<?=$value['image']?>" <?=$this->getAdditionalAttributes()?> />
+						<? if ($this->hasFields()): ?>
+							<? foreach ($this->getFields() as $field): ?>
+								<input placeholder="<?=$field['placeholder']?>" value="<?=$value[$field['name']]?>" name="<?=$this->getName()?>[<?=$key?>][<?=$field['name']?>]" <?=$this->getAdditionalAttributes()?> />
+							<? endforeach; ?>
+						<? endif; ?>
+					</div>
+				<? endforeach; ?>
+			<? endif; ?>
+		</div>
+
+		<div class="image-uploader-container">
+			<div id="<?=$this->getId()?>" class="dropzone add-image"></div>
+			<div id="<?=$this->getId()?>-progress" class="progress hidden"><div class="bar"></div></div>
+		</div>
+
+		<div class="dropzone-previews" style="display: none;"></div>
+	</div>
+
+	<?=$this->fetchTemplate('description')?>
+	<?=$this->fetchTemplate('error')?>
+</div>
+
+<?=$this->fetchJavascript()?>
+
+<?=$this->fetchJavascript('validator.phtml')?>

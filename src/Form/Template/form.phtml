@@ -1,0 +1,12 @@
+<form method="<?=$this->getMethod()?>" id="<?=$this->getId()?>" action="<?=$this->getAction()?>" class="<?=$this->getClass()?> wx-form" <?=$this->getData()?>>
+	<?=csrf_field()?>
+	<?=$this->renderLanguageSelectors()?>
+	<?=$this->renderSteps()?>
+	<?=$this->renderTabs()?>
+	<?=$this->renderSections()?>
+	<input type="hidden" name="formDescriptor" value="<?=encode(serialize($this->formDescriptor))?>" />
+	<?=$this->fetchJavascript()?>
+	<?=$this->fetchTemplate('condition')?>
+
+	<?=$this->renderCapturedScript()?>
+</form>

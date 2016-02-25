@@ -1,0 +1,33 @@
+body {
+	width: 656px;
+	margin: 0 auto;
+}
+
+p {
+	font-family: 'galanogrotesque-medium', sans-serif;
+	color: #575757;
+	font-size: 18px;
+	line-height: 30px;
+	margin-bottom: 20px;
+
+}
+
+b, strong {
+	font-family: 'galanogrotesque-bold', sans-serif;
+}
+
+a {
+	color: #1b75bc;
+	text-decoration: none
+}
+
+ul, li, ol {
+	font-family: 'galanogrotesque-medium', sans-serif;
+	color: #575757;
+	font-size: 18px;
+	line-height: 30px;
+}
+
+img {
+	width: 100%;
+}

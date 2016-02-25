@@ -1,0 +1,60 @@
+<script>
+	$(function(){
+		Dropzone.autoDiscover = false;
+
+		$('#<?=$this->getId()?>').dropzone({
+			autoDiscover: false,
+			url: "/wx/form/upload",
+			paramName: 'image',
+			previewsContainer: '.dropzone-previews',
+			createImageThumbnails: false,
+			uploadprogress: function(file, progress, bytesSent) {
+				$('#<?=$this->getId()?>-progress').show();
+				$('#<?=$this->getId()?>-progress .bar').css({width: progress + '%'});
+			},
+			maxFiles: 1,
+			error: function(file, message){
+				alert(message);
+			},
+			maxFilesize: <?=$this->getMaxFileSize()?>,
+			acceptedFiles: '<?=$this->getAcceptedFiles()?>',
+			dictDefaultMessage: '<?=$this->getButtonLabel()?>',
+			success : function (file, response){
+				$('#<?=$this->getId()?>-progress').hide();
+
+				$('#<?=$this->getId()?>-previews img').not('.image-default').remove();
+				$('#<?=$this->getId()?>-previews').append('<img class="image-preview" src="<?=$this->getImageUrlBase()?>' + response.file + '" />');
+
+				$('input[name="<?=$this->getName()?>"]').val(response.file).trigger('change');
+
+				$('#<?=$this->getId()?>-previews .image-default').addClass('hidden');
+				$('#remove-image-<?=$this->getId()?>').removeClass('hidden');
+			},
+			addedfile: function() {
+				if (this.files[1] != null){
+					this.removeFile(this.files[0]);
+				}
+			},
+			sending : function (file, xhr, formData) {
+				formData.append('formDescriptor', $('#<?=$this->formIdentifier?> [name="formDescriptor"]').val());
+				formData.append('element', '<?=$this->getName(false)?>');
+				formData.append('type', 'image');
+				formData.append('_token', $('#<?=$this->formIdentifier?>').find('[name="_token"]').val());
+			},
+			init : function () {
+				$('[name="<?=$this->getName()?>"]').bind('change',function(e) {
+		            $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>');
+		        });
+			}
+		});
+
+		$('#remove-image-<?=$this->getId()?>').unbind('click').bind('click', function(e){
+			e.preventDefault();
+
+			$('#<?=$this->getId()?>-previews img').not('.image-default').remove();
+			$('input[name="<?=$this->getName()?>"]').val('').trigger('change');
+			$('#<?=$this->getId()?>-previews .image-default').removeClass('hidden');
+			$('#remove-image-<?=$this->getId()?>').addClass('hidden');
+		})
+	})
+</script>

@@ -1,0 +1,7 @@
+<div class="wax-form-steps">
+	<? foreach ($this->getSteps() as $step): ?>
+		<a href="<?=$step['section']?>"><?=$step['label']?></a>
+	<? endforeach; ?>
+</div>
+
+<?=$this->fetchJavascript('steps.phtml')?>

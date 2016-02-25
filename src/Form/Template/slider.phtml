@@ -1,0 +1,20 @@
+<div class="form-group wx-element wx-slider <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	<?=$this->fetchTemplate('info')?>
+
+	<? // START DON'T TOUCH ?>
+		<input type="hidden" id="<?=$this->getId()?>-container" <?=$this->getAdditionalAttributes()?> />
+
+		<input type="hidden" id="<?=$this->getId()?>-0" name="<?=$this->getName()?>" value="<?=$this->getValue(0, true)?>" <?=$this->getDisabled()?> />
+		<? if ($this->range): ?>
+			<input type="hidden" id="<?=$this->getId()?>-1" name="<?=$this->getName()?>" value="<?=$this->getValue(1, true)?>" <?=$this->getDisabled()?> />
+		<? endif; ?>
+	<? // END DON'T TOUCH ?>
+
+	<?=$this->fetchTemplate('description')?>
+	<?=$this->fetchTemplate('error')?>
+</div>
+
+<?=$this->fetchJavascript()?>
+
+<?=$this->fetchJavascript('validator.phtml')?>

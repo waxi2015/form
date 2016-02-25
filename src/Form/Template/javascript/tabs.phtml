@@ -1,0 +1,20 @@
+<script>
+	$(function(){
+		var form = $('#<?=$this->formIdentifier?>');
+
+		form.find('section:not(:first)').hide();
+		form.find('.wax-form-tabs a:first').addClass('active');
+
+		form.find('.wax-form-tabs a').click(function(e){
+			e.preventDefault();
+
+			var section = $(this).attr('href');
+
+			form.find('.wax-form-tabs a').removeClass('active');
+			form.find('.wax-form-tabs a[href="' + section + '"]').addClass('active');
+
+			form.find('section').hide();
+			form.find('section#' + $(this).attr('href')).show();
+		})
+	})
+</script>

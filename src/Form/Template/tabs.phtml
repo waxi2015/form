@@ -1,0 +1,7 @@
+<div class="wax-form-tabs">
+	<? foreach ($this->getTabs() as $tab): ?>
+		<a href="<?=$tab['section']?>"><?=$tab['label']?></a>
+	<? endforeach; ?>
+</div>
+
+<?=$this->fetchJavascript('tabs.phtml')?>

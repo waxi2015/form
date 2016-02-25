@@ -1,0 +1,7 @@
+<div class="wax-form-language-selector">
+	<? foreach ($this->getLanguages() as $language): ?>
+		<a href="<?=$language['iso2']?>"><?=$language['name']?></a>
+	<? endforeach; ?>
+</div>
+
+<?=$this->fetchJavascript('languages.phtml')?>
