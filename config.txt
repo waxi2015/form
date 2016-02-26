@@ -1,0 +1,39 @@
+Provider:
+Waxis\Form\FormServiceProvider::class,
+
+Alias:
+'Form'  => Waxis\Form\Form::class,
+
+Gulp:
+mix.scripts([
+	'../libs/form/js/jquery.waxis.form.js',
+	'../libs/form/js/jquery.waxis.counter.js',
+	'../libs/form/libs/jquery-ui/jquery-ui.min.js',
+	'../libs/form/libs/form-validation-io/js/formValidation.popular.min.js',
+	'../libs/form/libs/form-validation-io/js/framework/bootstrap.min.js',
+	'../libs/form/libs/bootstrap-select/js/bootstrap-select.min.js',
+	'../libs/form/libs/bootstrap-switch/bootstrap-switch.min.js',
+	'../libs/form/libs/bootstrap-slider/bootstrap-slider.js',
+	'../libs/form/libs/typeahead/bloodhound.min.js',
+	'../libs/form/libs/typeahead/typeahead.jquery.min.js',
+	'../libs/form/libs/handlebars/handlebars-v3.0.3.js',
+	'../libs/form/libs/dropzone/dropzone.js',
+	'../libs/form/libs/serialize-object/jquery.serialize-object.min.js',
+	'../libs/form/libs/fancybox/jquery.fancybox.js',
+], 'public/js/form.js');
+
+mix.sass([
+	'../libs/form/css/form.scss',
+], 'resources/assets/libs/form/css/form.css');
+
+mix.styles([
+	'../libs/form/libs/jquery-ui/jquery-ui.min.css',
+	'../libs/form/libs/dropzone/dropzone.css',
+	'../libs/form/libs/typeahead/typeahead.css',
+	'../libs/form/libs/bootstrap-slider/bootstrap-slider.css',
+	'../libs/form/libs/bootstrap-switch/bootstrap-switch.css',
+	'../libs/form/libs/bootstrap-select/css/bootstrap-select.css',
+	'../libs/form/libs/form-validation-io/css/formValidation.css',
+	'../libs/form/libs/fancybox/jquery.fancybox.css',
+	'../libs/form/css/form.css',
+], 'public/css/form.css');

@@ -1,0 +1,140 @@
+.wx-form {
+	.wx-multicheckbox {
+		.btn-group {
+			width: 100%;		
+		}
+	}
+
+	.wx-image { width: 100%; margin-bottom: 10px; display: inline-block; }
+	.image-uploader { width: 100%; display: inline-block; }
+
+	.multi-uploader-image-container { float: left; width: 100%; }
+	.multi-uploader-image-container  * { box-sizing: border-box; }
+	.one-image { float: left;  width: 300px; margin-right: 20px; margin-top: 20px; border: 1px solid #e7e7e7; }
+	.one-image:first-child { border: 1px solid #000; }
+	.one-image .frame { width: 288px; height: 200px; margin: 5px 0 0 5px; }
+	.one-image img { max-width: 288px; max-height: 200px; }
+	.one-image .controls { margin: 10px 0; }
+	.one-image .controls .btn { font-size: 16px; padding: 7px 12px; }
+	.one-image .controls .text { width: 240px; margin-right: 10px; margin-left: 5px; }
+
+	.dropzone {
+	    width: initial;
+	    display: inline-block;
+	    min-height: initial;
+	    padding: 8px 20px;
+	    background: #4A4F50;
+	    color: #fff;
+	    text-transform: uppercase;
+	    font-weight: 700;
+	    font-size: 12px;
+	    border-radius: 5px;
+	    border: 0;
+	}
+
+	.dropzone .dz-message {
+		margin: 0;
+	}
+
+    .progress {
+    	display: inline-block;
+    	background: #fff;
+	    border-radius: 5px;
+	    height: 10px;
+	    width: 190px;
+	    margin-top: -5px;
+	    position: relative;
+	    margin: 0 0 0 20px;
+
+		.bar {
+		    background: #17B1E4;
+			height: 10px;
+			border-radius: 5px;
+			width: 0%;
+			position: absolute;
+		}
+    }
+
+	.wx-file {
+		.file-uploader-container {
+		}
+	}
+
+	.wx-image {
+		.image-previews {
+			position: relative;
+			display: table;
+			min-height: 50px;
+
+			img {
+				margin-bottom: 20px;
+				border-bottom: 1px;
+				margin-right: 20px;
+			}
+
+			.progress-background {
+				display: none;
+				background: rgba(0,0,0,0.8);
+			    position: absolute;
+			    z-index: 2;
+			    left: 0;
+			    right: 20px;
+			    top: 0;
+			    bottom: 20px;
+				min-height: 50px;
+				min-width: 50px;
+
+			    .progress {
+					width: 80%;
+					position: absolute;
+					top: 50%;
+					margin-top: -5px;
+			    }
+			}
+		}	
+	}
+
+	.wx-multiimage {
+		.preview-block {
+			display: inline-block;
+    		margin: 0 15px 15px 0;
+		    width: 250px;
+		    min-height: 250px;
+		    border: 1px solid #DCD8D8;
+		    position: relative;
+
+			.image {
+				display: inline-block;
+				width: 242px;
+				height: 242px;
+				margin: 3px;
+				background: center center no-repeat;
+				background-size: cover;
+			}
+
+			.remove {
+				display: inline-block;
+			    position: absolute;
+			    right: 3px;
+			    top: 3px;
+			    width: 30px;
+			    height: 30px;
+			    line-height: 30px;
+			    text-align: center;
+			    text-decoration: none;
+			    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
+			    color: #fff;
+			    font-weight: 700;
+			    font-size: 21px;
+			}
+
+			input {
+				width: 242px;
+			    line-height: 26px;
+			    margin: 0 3px 3px;
+			    padding-left: 8px;
+			    border: 1px solid #e7e7e7;
+			}
+		}
+	}
+}

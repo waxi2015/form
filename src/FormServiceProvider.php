@@ -17,6 +17,11 @@ class FormServiceProvider extends ServiceProvider
         if (! $this->app->routesAreCached()) {
             require __DIR__.'/routes.php';
         }
+
+        $this->publishes([
+            __DIR__.'/assets' => resource_path('assets/libs/form/'),
+            __DIR__.'/assets/libs/ckeditor' => public_path('libs/ckeditor'),
+        ]);
     }
 
     /**

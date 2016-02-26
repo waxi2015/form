@@ -111,7 +111,7 @@ class Multiimage extends Element {
 		return $this->limit - $existingImages;
 	}
 
-	public function setId ($id = null, $regenerateDefault = false) {
+	public function setId ($id = null, $regenerateDefault = false, $language = null) {
 		if ($id !== null) {
 			$this->id = $id;
 		} elseif ($this->id === null || $regenerateDefault) {
