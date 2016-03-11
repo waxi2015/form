@@ -1,18 +1,17 @@
-<div class="<?=$this->getClass()?> form-group wx-element wx-image <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="<?=$this->getClass()?> form-group wax-element wax-image <?=$this->hasError()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 
 	<div id="<?=$this->getId()?>-previews" class="image-previews">
 		<? if (!empty($this->getValue())): ?>
 			<img class="image-preview" src="<?=$this->getImageUrl()?>" />
 		<? endif; ?>
-		<img class="image-default<?=$this->renderDefaultHidden()?>" src="<?=$this->getDefaultImageUrl()?>" />
-		<div id="<?=$this->getId()?>-progress" class="progress-background"><span class="progress"><span class="bar"></span></span></div>
+		<?/*<img class="image-default<?=$this->renderDefaultHidden()?>" src="<?=$this->getDefaultImageUrl()?>" />*/?>
 	</div>
 
 	<div class="image-uploader-container">
-		<div id="<?=$this->getId()?>" class="dropzone add-image"></div>
+		<div id="<?=$this->getId()?>" class="dropzone add-image btn btn-primary"></div>
 		<a id="remove-image-<?=$this->getId()?>" href="" class="btn btn-default remove-image <?=$this->renderRemoveHidden()?>"><?=$this->getButtonDeleteLabel()?></a>
+		<div id="<?=$this->getId()?>-progress" class="progress hidden"><div class="bar"></div></div>
 	</div>
 
 	<input id="<?=$this->getId()?>" type="hidden" name="<?=$this->getName()?>" value="<?=$this->getValue()?>" <?=$this->getAdditionalAttributes()?> />

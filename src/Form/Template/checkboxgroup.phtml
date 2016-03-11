@@ -1,8 +1,7 @@
-<div class="form-group wx-element wx-checkboxgroup <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-checkboxgroup <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 	<? foreach ($this->getItems() as $value => $label): ?>
-		<div class="checkbox wx-element wx-checkbox">
+		<div class="checkbox wax-element wax-checkbox">
 			<label>
 				<input type="checkbox" name="<?=$this->getName()?>" value="<?=$value?>" <?=$this->getAdditionalAttributes($value)?> /> <?=$label?>
 			</label>

@@ -1,3 +1,6 @@
 <? if ($this->getLabel()): ?>
-	<label for="<?=$this->getId()?>"><?=$this->getLabel()?></label>
+	<label for="<?=$this->getLabelFor()?>">
+		<?=$this->getLabel()?>
+		<?=$this->fetchTemplate('info')?>
+	</label>
 <? endif; ?>

@@ -1,14 +1,13 @@
 <? foreach ($this->getInstances() as $language): ?>
 
-<div class="<?=$this->getClass()?> form-group wx-element wx-multifile <?=$this->hasError($language)?>" <?=$this->getData()?>>
+<div class="<?=$this->getClass()?> form-group wax-element wax-multifile <?=$this->hasError($language)?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 
 	<div id="<?=$this->getId($language)?>-previews" class="file-previews" <?=$this->renderLanguageData($language)?>>
 		<? if (!empty($this->getValue(false, $language))): ?>
 			<? foreach ($this->getValue(false, $language) as $key => $value): ?>
 				<div class="file">
-					<a href="" class="remove">x</a>
+					<a href="" class="remove"><span class="fa fa-remove"></span></a>
 					<a href="<?=$this->getFileUrl($value['file'], $language)?>" target="_blank" class="name"><?=$value['file']?></a>
 					<input name="<?=$this->getName(true, $language)?>[<?=$key?>][file]" value="<?=$value['file']?>" type="hidden" <?=$this->getAdditionalAttributes()?> />
 					<? if ($this->hasFields()): ?>

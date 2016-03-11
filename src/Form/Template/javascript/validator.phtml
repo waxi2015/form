@@ -1,112 +1,28 @@
 <? if ($this->hasFrontValidators()): ?>
 	<? $this->scriptCaptureStart(); ?>
 		<? foreach ($this->getInstances() as $language): ?>
-			$(function(){
-				$('#<?=$this->formIdentifier?>').formValidation('addField', "<?=$this->getFieldnameToValidate($language)?>", {
-					validators : {
-						<? foreach ($this->getFrontValidators() as $validator => $options): ?>
-							<?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),
-
-						<? endforeach; ?>
-					},
-					onError: function(e) {
-						var target = $(e.target),
-							tabs = $('#<?=$this->formIdentifier?>').find('.wax-form-tabs'),
-							steps = $('#<?=$this->formIdentifier?>').find('.wax-form-steps'),
-							languages = $('#<?=$this->formIdentifier?>').find('.wax-form-language-selector');
-
-						if (tabs.length > 0) {
-							var section = target.closest('section').attr('id'),
-								tab = tabs.find('a[href="' + section + '"]');
-
-							tab.addClass('contains-error');
-
-							if (window.scrolledToErrorField == false) {
-								window.scrolledToErrorField = true;
-
-								tab.trigger('click');
-
-								$('html, body').animate({
-							        scrollTop: target.offset().top
-							    }, 1000);
-							}
-						}
-
-						if (steps.length > 0) {
-							var section = target.closest('section').attr('id'),
-								step = steps.find('a[href="' + section + '"]');
-
-							step.addClass('contains-error').removeClass('disabled');
-
-							if (window.scrolledToErrorField == false) {
-								window.scrolledToErrorField = true;
-
-								step.trigger('click');
-
-								$('html, body').animate({
-							        scrollTop: target.offset().top
-							    }, 1000);
-							}
-						}
-
-						if (languages.length > 0) {
-							var language = target.attr('data-language'),
-								tab = target.closest('form').find('.wax-form-language-selector a[href="' + language + '"]');
-
-							tab.addClass('contains-error');
-
-							if (window.scrolledToErrorField == false) {
-								window.scrolledToErrorField = true;
-
-								tab.trigger('click');
-
-								$('html, body').animate({
-							        scrollTop: target.offset().top
-							    }, 1000);
-							}
-						}
-
-						if (window.scrolledToErrorField == false) {
-							window.scrolledToErrorField = true;
-
-							$('html, body').animate({
-						        scrollTop: target.offset().top
-						    }, 1000);
-						}
-					},
-					onSuccess: function(e) {
-						var target = $(e.target),
-							tabs = $('#<?=$this->formIdentifier?>').find('.wax-form-tabs'),
-							steps = $('#<?=$this->formIdentifier?>').find('.wax-form-steps'),
-							section = target.closest('section'),
-							sectionId = section.attr('id'),
-							tab = tabs.find('a[href="' + sectionId + '"]'),
-							step = steps.find('a[href="' + sectionId + '"]'),
-							language = target.attr('data-language');
-
-						if (section.find('.has-error').length == 0) {
-							tab.removeClass('contains-error');
-							step.removeClass('contains-error');
-						}
-
-						var languageContainsError = false;
-						target.closest('form').find('[data-language="' + language + '"]').each(function(k,v){
-							if ($(this).closest('.wx-element').hasClass('has-error')) {
-								languageContainsError = true;
-							}
-						})
-
-						if (!languageContainsError) {
-							target.closest('form').find('.wax-form-language-selector a[href="' + target.attr('data-language') + '"]').removeClass('contains-error');
-						}
-					}
-				});
-			})
+			$(function(){waxform.addValidator({form: '#<?=$this->formIdentifier?>',field: "<?=$this->getFieldnameToValidate($language)?>",validators: {<? foreach ($this->getFrontValidators() as $validator => $options): ?><?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),<? endforeach; ?>},<? if ($this->getType() == 'swap'): ?>icon: false,<? endif; ?>});})
 		<? endforeach; ?>
 	<? $this->scriptCaptureEnd('APPEND'); ?>
 <? endif; ?>
 
 <?/*
+	$(function(){waxform.addValidator({form: '#<?=$this->formIdentifier?>',field: "<?=$this->getFieldnameToValidate($language)?>",valdidators: {<? foreach ($this->getFrontValidators() as $validator => $options): ?><?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),<? endforeach; ?>},<? if ($this->getType() == 'swap'): ?>icon: false,<? endif; ?>});})
+	$(function(){
+		waxform.addValidator({
+			form: '#<?=$this->formIdentifier?>',
+			field: "<?=$this->getFieldnameToValidate($language)?>",
+			valdidators: {
+				<? foreach ($this->getFrontValidators() as $validator => $options): ?>
+					<?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),
+
+				<? endforeach; ?>
+			},
+			<? if ($this->getType() == 'swap'): ?>
+				icon: false,
+			<? endif; ?>
+		});
+	})
 
 	Validator plugin: http://formvalidation.io/
 

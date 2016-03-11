@@ -1,6 +1,5 @@
-<div class="form-group wx-element wx-multiselect <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-multiselect <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 	<select class="form-control" id="<?=$this->getId()?>" name="<?=$this->getName()?>" multiple="true" <?=$this->getAdditionalAttributes()?>>
 		<? foreach ($this->getItems() as $key => $item): ?>
 			<? if (is_array($item)): ?>

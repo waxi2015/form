@@ -219,23 +219,19 @@ class Form extends Ancestor {
 	}
 
 	public function isPermitted ($recordId = false) {
+		# @todo: megírni
 
-		# @todo
-
-		/*if ($this->getPermission() === null) {
+		if ($this->getPermission() === null) {
 			return true;
 		}
 
-		$class = APP_NAME . '_' . ucfirst($this->getPermission());
+		if (\Auth::guard($this->getPermission())->check()) {
 
-		if ($class::getInstance()->isLoggedIn()) {
 			if ($this->getOwnerField() !== null && $recordId) {
-				$db = Zend_Registry::get('db');
-				$query = $db->select()
-					->from($this->getTable())
-					->where('id = "' . $recordId . '"');
-				$results = $db->query($query)->fetchAll();
-				if (isset($results[0]) && $results[0][$this->getOwnerField()] == $class::getInstance()->getId()) {
+				$result = collect(\DB::table($this->getTable())
+					->where('id', $recordId)->first())->toArray();
+
+				if (isset($result[$this->getOwnerField()]) && $result[$this->getOwnerField()] == \Auth::guard('admin')->user()->id) {
 					return true;
 				}
 
@@ -245,9 +241,7 @@ class Form extends Ancestor {
 			}
 		}
 
-		return false;*/
-
-		return true;
+		return false;
 	}
 
 	public function getOwnerField () {
@@ -273,7 +267,6 @@ class Form extends Ancestor {
 		if (empty($raw)) {
 			$raw = array();
 		}
-
 
 		# (for translator) array of rows with the same connector
 		$relatives = [];
@@ -527,9 +520,12 @@ class Form extends Ancestor {
 			return;
 		}
 
+		$return = null;
 		foreach ($this->after as $one) {
-			$this->runMethod($one);
+			$return = $this->runMethod($one);
 		}
+
+		return $return;
 	}
 
 	public function runMethod ($obj) {

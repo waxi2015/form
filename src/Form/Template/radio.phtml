@@ -1,10 +1,9 @@
-<div class="form-group wx-element wx-radio <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-radio <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
 	<div class="radio">
 		<label>
 			<input type="radio" id="<?=$this->getId()?>" name="<?=$this->getName()?>" value="<?=$this->getValue()?>" <?=$this->getAdditionalAttributes()?> /> <?=$this->getLabel()?>
 		</label>
 	</div>
-	<?=$this->fetchTemplate('info')?>
 	<?=$this->fetchTemplate('description')?>
 	<?=$this->fetchTemplate('error')?>
 </div>

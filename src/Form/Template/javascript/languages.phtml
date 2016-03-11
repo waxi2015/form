@@ -1,25 +1,7 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-		var form = $('#<?=$this->formIdentifier?>'),
-			selectors = form.find('.wax-form-language-selector a'),
-			first = selectors.first(),
-			language = first.attr('href');
-
-		first.addClass('active');
-
-		form.find('.wax-translatable').hide();
-		form.find('.wax-translatable [data-language="' + language + '"]').closest('.wx-element').show();
-
-		selectors.click(function(e){
-			e.preventDefault();
-
-			selectors.removeClass('active');
-			$(this).addClass('active');
-
-			var language = $(this).attr('href');
-
-			form.find('.wax-translatable').hide();
-			form.find('.wax-translatable [data-language="' + language + '"]').closest('.wx-element').show();
-		})
+		waxform.languages({
+			form: '#<?=$this->formIdentifier?>'
+		});
 	})
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>

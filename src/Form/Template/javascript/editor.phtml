@@ -1,39 +1,10 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-		$("#<?=$this->getId()?>").ckeditor({
-			language : 'hu',
-			filebrowserBrowseUrl : '/js/plugins/ckeditor/plugins/kcfinder/browse.php?type=files',
-			filebrowserImageBrowseUrl : '/js/plugins/ckeditor/plugins/kcfinder/browse.php?type=images',
-			filebrowserFlashBrowseUrl : '/js/plugins/ckeditor/plugins/kcfinder/browse.php?type=flash',
-			filebrowserUploadUrl : '/js/plugins/ckeditor/plugins/kcfinder/upload.php?type=files',
-			filebrowserImageUploadUrl : '/js/plugins/ckeditor/plugins/kcfinder/upload.php?type=images',
-			filebrowserFlashUploadUrl : '/js/plugins/ckeditor/plugins/kcfinder/upload.php?type=flash',
-			fontSize_sizes : '11/11px,12/12px,13/13px,14/14px,15/15px,16/16px,17/17px,18/18px,19/19px,20/20px,21/21px,22/22px,23/23px,24/24px',
-			format_tags : 'p;h2;h3;h4;h5',
-			toolbar : 'Toolbar',
-			entities : false,
-			basicEntities : false,
-			entities_greek : false,
-			entities_latin : false,
-			entities_additional : '',
-			htmlEncodeOutput : false,
-			allowedContent : true,
-			extraPlugins : 'font,table,youtube,letterspacing',
-			//contentsCss  : '/plugins/ckeditor/profiles/'+profile+'.css?<?=time()?>',
-			forcePasteAsPlainText : true,
-
-			font_names : 'Arial,Times New Roman,Verdana,' + 'Open Sans/Open Sans,',
-
-			toolbar_Toolbar :
-			[
-				[ 'Format' ],
-				[ 'Bold', 'Italic', 'Underline', 'Strike'],
-				['BulletedList','NumberedList','Outdent','Indent'],
-				['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-				['Image','Youtube',',Table','Link','Unlink'],
-				['Undo','Redo'],
-				[ 'Source' ]
-			],
-		});
-	})
-</script>
+		waxform.editor({
+			form: '#<?=$this->getId()?>',
+			fieldId: '<?=$this->getId()?>',
+			fieldName: '<?=$this->getName(true, $language)?>',
+			css: '/css/editor/<?=$this->getCss()?>.css?<?=time()?>',
+		})
+	});
+<? $this->scriptCaptureEnd('PREPEND'); ?>

@@ -39,7 +39,6 @@ class Config {
 		'swap' => 'swap.phtml',
 		'slider' => 'slider.phtml',
 		'autocomplete' => 'autocomplete.phtml',
-		'multicheckbox' => 'multicheckbox.phtml',
 		
 		'editor' => 'editor.phtml',
 		
@@ -66,7 +65,6 @@ class Config {
 		'emptyCheckboxgroup' => 'Please select at least one',
 		'emptyRadio' => 'You must check this field',
 		'emptyRadiogroup' => 'Please select at least one',
-		'emptyMulticheckbox' => 'Please select at least one',
 		
 		'autocompleteNew' => 'Please select one from the list',
 	);

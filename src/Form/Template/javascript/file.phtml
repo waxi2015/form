@@ -1,61 +1,13 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-		Dropzone.autoDiscover = false;
-
-		$('#<?=$this->getId($language)?>').dropzone({
-			autoDiscover: false,
-			url: "/wx/form/upload",
-			paramName: 'file',
-			previewsContainer: '.dropzone-previews',
-			createImageThumbnails: false,
+		waxform.file({
+			form: '#<?=$this->formIdentifier?>',
+			fieldId: '<?=$this->getId($language)?>',
+			fieldName: '<?=$this->getName(true, $language)?>',
+			fieldPlainName: '<?=$this->getName(false)?>',
 			maxFilesize: <?=$this->getMaxFileSize()?>,
 			acceptedFiles: '<?=$this->getAcceptedFiles()?>',
 			dictDefaultMessage: '<?=$this->getButtonLabel()?>',
-			maxFiles: 1,
-			uploadprogress: function(file, progress, bytesSent) {
-				$('#<?=$this->getId($language)?>-progress').removeClass('hidden');
-				$('#<?=$this->getId($language)?>-progress .bar').css({width: progress + '%'});
-			},
-			error: function(file, message){
-				alert(message);
-			},
-			addedfile: function() {
-				if (this.files[1] != null){
-					this.removeFile(this.files[0]);
-				}
-			},
-			sending : function (file, xhr, formData) {
-				formData.append('formDescriptor', $('#<?=$this->formIdentifier?> [name="formDescriptor"]').val());
-				formData.append('element', '<?=$this->getName(false)?>');
-				formData.append('type', 'file');
-				formData.append('_token', $('#<?=$this->formIdentifier?>').find('[name="_token"]').val());
-			},
-			init : function () {
-				$('[name="<?=$this->getName(true, $language)?>"]').bind('change',function(e) {
-		            $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName(true, $language)?>');
-		        });
-			},
-			success : function (file, response){
-				$('#<?=$this->getId($language)?>-progress').addClass('hidden');
-
-				var preview =  '<div class="file">';
-					preview += '	<a href="" class="remove">x</a> <a href="' + response.path + response.file + '" target="_blank" class="name">' + response.file + '</span>';
-					preview += '</div>';
-
-				$('#<?=$this->getId($language)?>-previews').html(preview);
-
-				$('input[name="<?=$this->getName(true, $language)?>"]').val(response.file).trigger('change');
-			},
 		});
-
-		var removeSelector = '.file-previews .remove';
-
-		$(document).off('click', removeSelector).on('click', removeSelector, {} , function(e){
-			e.preventDefault();
-
-			$(this).closest('.wx-file').find('.value').val('').trigger('change');
-
-			$(this).parent().remove();
-		})
 	})
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>

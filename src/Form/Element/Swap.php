@@ -39,4 +39,8 @@ class Swap extends Checkbox {
 	public function getAdditionalAttributes ($value = null) {
 		return  $this->getChecked() . ' ' . $this->getDisabled() . ' ' . $this->getRel();
 	}
+
+	public function getLabelFor () {
+		return null;
+	}
 }

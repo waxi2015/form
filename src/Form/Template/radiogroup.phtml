@@ -1,8 +1,7 @@
-<div class="form-group wx-element wx-radiogroup <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-radiogroup <?=$this->getClass()?> <?=$this->hasError()?>" id="<?=$this->getId()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 	<? foreach ($this->getItems() as $value => $label): ?>
-		<div class="radio wx-element wx-radio">
+		<div class="radio wax-element wax-radio">
 			<label>
 				<input type="radio" name="<?=$this->getName()?>" value="<?=$value?>" <?=$this->getAdditionalAttributes($value)?> /> <?=$label?>
 			</label>

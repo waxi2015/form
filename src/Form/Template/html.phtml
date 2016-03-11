@@ -1,7 +1,7 @@
 <? if ($this->isPlain()): ?>
 	<?=$this->getContent()?>
 <? else: ?>
-	<div class="<?=$this->getClass()?> form-group wx-element wx-html" id="<?=$this->getId()?>" <?=$this->getData()?>>
+	<div class="<?=$this->getClass()?> form-group wax-element wax-html" id="<?=$this->getId()?>" <?=$this->getData()?>>
 		<?=$this->fetchTemplate('label')?>
 		<?=$this->getContent()?>
 		<?=$this->fetchTemplate('description')?>

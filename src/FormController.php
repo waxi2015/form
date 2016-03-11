@@ -17,6 +17,10 @@ class FormController extends Controller
 
 		$element = $form->getElementByName($request->element);
 
+		if (!$form->isPermitted()) {
+			return [];
+		}
+
 		switch ($request->type) {
 			case 'image':
 				$path = 'uploads/images/' . $element->getImageDescriptor();
@@ -63,8 +67,7 @@ class FormController extends Controller
 		$id = isset($rp[$idElement]) && !empty($rp[$idElement]) && !is_int($rp[$idElement]) ? decode($rp[$idElement]) : false;
 
 		if (!$form->isPermitted($id)) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$response = array(
@@ -102,8 +105,7 @@ class FormController extends Controller
 		$form = new \Form(unserialize(decode($rp['formDescriptor'])), array(), true);
 
 		if (!$form->isPermitted()) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$clone = $form->getClone($rp['nodeTree'], $rp['clones']);
@@ -145,8 +147,7 @@ class FormController extends Controller
 		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
 
 		if (!$form->isPermitted()) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$element = $form->getElementByName($rp['element']);
@@ -162,8 +163,7 @@ class FormController extends Controller
 		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
 
 		if (!$form->isPermitted()) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$element = $form->getElementByName($rp['element']);
@@ -179,8 +179,7 @@ class FormController extends Controller
 		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
 
 		if (!$form->isPermitted()) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$element = $form->getElementByName($rp['element']);
@@ -206,15 +205,14 @@ class FormController extends Controller
 		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
 
 		if (!$form->isPermitted()) {
-			$this->_forward('error', null, null, array('errorCode' => 901));
-			return false;
+			return [];
 		}
 
 		$element = $form->getElementByName($rp['element']);
 
 		$valid = false;
 		foreach ($element->validators as $validator => $options) {
-			if ($validator == 'remote') {
+			if ($validator === 'remote') {
 				$key = $rp['key'] == '' ? null : $rp['key'];
 				$value = $element->getRequestParam($rp['element'], $key);
 
@@ -227,182 +225,4 @@ class FormController extends Controller
 
 		return $return;
 	}
-
-	/*public function deletefileAction (Request $request) {
-		$rp = $request->all();
-
-		$file = UPLOAD_PATH . $rp['type'] . '/' . $rp['hash'] . '.' . $rp['ext'];
-		$fileTemp = UPLOAD_TEMP_PATH . $rp['type'] . '/' . $rp['hash'] . '.' . $rp['ext'];
-
-		if (file_exists($file)) {
-			unlink($file);
-		} else if (file_exists($fileTemp)) {
-			unlink($fileTemp);
-		}
-
-		if (isset($rp['table']) || isset($rp['dbModel'])) {
-			$modelParts = [];
-
-			if (isset($rp['dbModel'])) {
-				$modelParts = explode('_', $rp['dbModel']);
-			}
-
-			$table = isset($rp['table']) ? $rp['table'] : strtolower($modelParts[key($modelParts)]);
-			$field = isset($rp['field']) ? $rp['field'] : $rp['dbField'];
-
-			$db = Zend_Registry::get('db');
-			$db->update($table, array($field => null), 'id = "'.$rp['id'].'"');
-		}
-
-		$response = WX_Ajax_Response_Json::success();
-		die($response);
-	}
-
-	public function uploadfileAction (Request $request) {
-		$rp = $request->all();
-
-		if (isset($_FILES['upload-file'])) {
-			$file = $_FILES['upload-file'];
-			$fileinfo = pathinfo($file['name']);
-
-			$name = $fileinfo['filename'];
-			$ext = $fileinfo['extension'];
-			$hash = MD5(rand(5, 15) . time() . $name);
-
-			$directory = $rp['directoryPath'];
-
-			if (!file_exists($directory)) {
-				WX_Directory_Writer::getInstance()->makeDirectory($directory, 0777);
-			}
-
-			if (move_uploaded_file($file['tmp_name'], $directory . '/' . $hash . '.' . $ext)) {
-				$type = $rp['type'];
-				$file = $name . '.' .$ext;
-				// ez koráttban UPLOAD_TEMP_URL volt
-				$path = UPLOAD_URL . $type;
-				$responseData = array(
-					'file' 			=> $file,
-					'name'			=> $name,
-					//'downloadLink'=> $rp['downloadScript'] . '/' . $type . '/' . $hash . '/' . $name . '/' . $ext,
-					'downloadLink'	=> $path . '/' . $hash . '.' . $ext,
-					'hash' 			=> $hash,
-					'ext'			=> $ext
-				);
-
-				$response = WX_Ajax_Response_Json::success($responseData);
-			} else {
-				$message = t('ERROR_UNEXPECTED');
-				$response = WX_Ajax_Response_Json::error($message);
-			}
-
-			die($response);
-		}
-	}
-
-	public function uploadtempimageAction() {
-		$this->uploadimageAction(true);
-	}
-
-	public function uploadimageAction($isTemp = false, Request $request) {
-		$rp = $request->all();
-
-		$type = WX_Tools::getValue($rp, 'type');
-
-		$response = WX_Ajax_Response_Json::error('-1');
-		
-		if (isset($_FILES['upload-image'])) {
-			$file 	= $_FILES['upload-image'];
-			if (WX_Tools::isValidImage($file['tmp_name'])) {
-				$image 	= new WX_Image($type);
-
-				if ($isTemp) {
-					$image->uploadTemp($file);
-				} else {
-					$image->upload($file);
-				}
-
-				if ($image->hasErrors()) {
-					$response = WX_Ajax_Response_Json::error($image->getErrors());
-				} else {
-					$feedbackSize = isset($rp['size']) ? $rp['size'] : false;
-					$responseData = $image->get($feedbackSize);
-					$response = WX_Ajax_Response_Json::success($responseData);
-				}
-			}
-
-			die($response);
-		}
-	}
-
-	public function uploadmultitempimageAction() {
-		$this->uploadmultiimageAction(true);
-	}
-
-	public function uploadmultiimageAction($isTemp = false, Request $request) {
-		$rp = $request->all();
-
-		$type = $rp['type'];
-		$feedbackSize = $rp['size'];
-
-		$response = array();
-
-		foreach ($_FILES as $file) {
-			if (WX_Tools::isValidImage($file['tmp_name'])) {
-				$image 	= new WX_Image($type);
-
-				if ($isTemp) {
-					$image->uploadTemp($file);
-				} else {
-					$image->upload($file);
-				}
-
-				if (!$image->hasErrors()) {
-					$responseData = $image->get($feedbackSize);
-					$response[] = $responseData;
-				}
-			}
-		}
-
-		if (count($response)) {
-			$responseObj = WX_Ajax_Response_Json::success($response);
-		} else {
-			$responseObj = WX_Ajax_Response_Json::error();
-		}
-
-		die($responseObj);
-	}
-
-	public function deleteimageAction (Request $request) {
-		$rp = $request->all();
-
-		$response = WX_Ajax_Response_Json::success();
-
-		if (WX_Tools::getValue($rp, 'type', false) === false) {
-			$message = 'Missing "type" param';
-			WX_Exception::create($message);
-
-			return;
-		}
-		if (WX_Tools::getValue($rp, 'hash', false) === false) {
-			$message = 'Missing "hash" param';
-			WX_Exception::create($message);
-
-			return;
-		}
-		$type = WX_Tools::getValue($rp, 'type');
-		$hash = WX_Tools::getValue($rp, 'hash');
-		$temp = WX_Tools::getValue($rp, 'temp', false);
-
-		$image = WX_Image::getInstance($type);
-
-		if ($temp === false) {
-			$image->delete($hash);
-		} else {
-			$image->deleteTemp($hash);
-		}
-
-		$response = WX_Ajax_Response_Json::success();
-
-		die($response);
-	}*/
 }

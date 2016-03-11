@@ -21,6 +21,7 @@ class FormServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/assets' => resource_path('assets/libs/form/'),
             __DIR__.'/assets/libs/ckeditor' => public_path('libs/ckeditor'),
+            __DIR__.'/Descriptors/Example.php' => app_path('Descriptors/Form/Example.php'),
         ]);
     }
 

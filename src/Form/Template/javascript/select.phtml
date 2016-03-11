@@ -1,48 +1,23 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function() {
-
 		<? if (!$this->isOriginal()): ?>
-			$('[name="<?=$this->getName()?>"]')
-				.selectpicker()
-				.bind('change',function(e) {
-	                $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>');
-	            })
-
-			if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-			    $('[name="<?=$this->getName()?>"]').selectpicker('mobile');
-			}
+			waxform.bootstrapSelect({
+				form: '#<?=$this->formIdentifier?>',
+				fieldName: '<?=$this->getName()?>'
+			})
 		<? endif; ?>
 
 		<? foreach ($this->getElementsByConditionalSourceParamName($this->getName(false), 'select') as $element): $element->setNthInstance($this->getNthInstance()); ?>
 			<? if ($element->hasDynamicParams()): ?>
-
-				$('#<?=$this->getId()?>').bind('change', function () {
-					var params = {
-						descriptor : $('#<?=$this->formIdentifier?> input[name="formDescriptor"]').val(),
-						element : '<?=$element->getName(false)?>',
-						_token : $('#<?=$this->formIdentifier?>').find('input[name="_token"]').val()
-					};
-					<? foreach ($element->getDynamicParams() as $param) : ?>
-						<?
-							$isMultiple =  $element->isMultiple();
-							$brackets =  '['.$element->getNthInstance().']';
-							$paramsName = $param . ($isMultiple ? $brackets : '');
-						?>
-						
-						params.<?=$param?> = $(this).val();
-					<? endforeach; ?>
-
-					$.post('/wx/form/loaddata', params, function (response) {
-						$('[name="<?=$element->getName()?>"]')
-							.html(createOptionsFromJson(response))
-							.trigger('change');
-
-						<? if (!$element->isOriginal()): ?>
-							$('[name="<?=$element->getName()?>"]').selectpicker('refresh');
-						<? endif; ?>
-					})
-				})
+				waxform.select({
+					form: '#<?=$this->formIdentifier?>',
+					fieldId: '<?=$this->getId()?>',
+					fieldName: '<?=$element->getName()?>',
+					fieldPlainName: '<?=$element->getName(false)?>',
+					isOriginal: <?=$element->isOriginal() ? 'true' : 'false'?>,
+					params: ["<?=implode('\",\"',$element->getDynamicParams())?>"]
+				});
 			<? endif; ?>
 		<? endforeach; ?>
 	})
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>

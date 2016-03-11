@@ -1,6 +1,5 @@
-<div class="form-group wx-element wx-select <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-select <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 	<?=$this->getPrefix()?>
 	<select class="form-control" id="<?=$this->getId()?>" name="<?=$this->getName()?>" <?=$this->getPlaceholder()?> <?=$this->getAdditionalAttributes()?> <?=$this->getMultiple()?> <?=$this->getSearch()?>>
 		<? foreach ($this->getItems() as $key => $item): ?>

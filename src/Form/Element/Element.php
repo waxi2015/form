@@ -49,6 +49,10 @@ class Element extends Ancestor {
 	public $rel = null;
 	
 	public $translate = false;
+	
+	public $convert = null;
+	
+	public $load = true;
 
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
@@ -197,6 +201,14 @@ class Element extends Ancestor {
 			$this->translate = $descriptor['translate'];
 		}
 
+		if (isset($this->descriptor['convert'])) {
+			$this->convert = $descriptor['convert'];
+		}
+
+		if (isset($this->descriptor['load'])) {
+			$this->load = $descriptor['load'];
+		}
+
 		parent::__construct($descriptor, $nth);
 	}
 
@@ -214,6 +226,9 @@ class Element extends Ancestor {
 		return $return;
 	}
 
+	public function getLabelFor () {
+		return $this->getId();
+	}
 
 	public function getPlaceholder () {
 		if ($this->placeholder !== null) {
@@ -445,11 +460,13 @@ class Element extends Ancestor {
 					$newOptions['type'] = 'POST';
 					$newOptions['url'] = '/wx/form/validationremote';
 					$newOptions['data'] = [
-						'descriptor' => encode(serialize($this->formDescriptor)),
 						'element' => $this->getName(false),
 						'key' => $this->getValueKey(),
+						'descriptor' => encode(serialize($this->formDescriptor)),
 						'_token' => csrf_token()
 					];
+					unset($newOptions['class']);
+					unset($newOptions['method']);
 					$options = $newOptions;
 					break;
 
@@ -702,9 +719,9 @@ class Element extends Ancestor {
 			$data = array();
 		} elseif ($value !== null && !$this->disabled) {
 			if ($nth === null) {
-				$data[$name] = $this->filterData($value);
+				$data[$name] = $this->convertData($this->filterData($value));
 			} else {
-				$data[$name][$nth] = $this->filterData($value);
+				$data[$name][$nth] = $this->convertData($this->filterData($value));
 			}
 		} elseif ($this->disabled) {
 			$data = array();
@@ -713,6 +730,25 @@ class Element extends Ancestor {
 		}
 		
 		return $data;
+	}
+
+	public function convertData ($data) {
+		if ($this->convert === null) {
+			return $data;
+		}
+
+		$converter = $this->convert;
+
+		if (is_array($data)) {
+			foreach ($data as $key => $one) {
+				$return[$key] = $converter($one);
+			}
+		} else {
+			$return = $converter($data);
+		}
+
+
+		return $return;
 	}
 
 	public function filterData ($data) {

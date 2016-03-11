@@ -1,122 +1,40 @@
-<? /* ezt majd kéne kicsit refaktorizálni */ ?>
-
 <? $hasConditional = false; foreach ($elements as $key => $element): ?>
 	<? if ($element->hasCondition()) { $hasConditional = true; } ?>
 <? endforeach; ?>
 
 <? if ($hasConditional): ?>
-	<script>
+	<? $this->scriptCaptureStart(); ?>
 		$(function(){
 			<? foreach ($elements as $key => $element): ?>
 				<? if ($element->hasCondition()): ?>
 
 					<? foreach ($element->condition as $field => $value): ?>
-						$('#<?=$element->formIdentifier?>').find('[name="<?=$field?>"], [name="<?=$field?>[]"], [name^="<?=$field?>[<?=$element->getNthInstance()?>]"]').bind('change', function(e){
-							e.preventDefault();
+						<? 
+							if (is_array($value)):
+								$jsValue = '[' . implode(',', $value) . ']';
+							elseif (is_bool($value)):
+								$jsValue = $value ? 'true' : 'false';
+							else:
+								$jsValue = "'" . $value . "'";
+							endif;
+						?>
 
-							var domType = $(this)[0].tagName.toLowerCase(),
-								type = $(this).attr('type'),
-								element = $('#<?=$element->formIdentifier?>').find('[id^="<?=$element->getCleanId()?>"]'),
-								container = element.closest('<?=$hideSelector?>');
-
-							if (domType != 'input') {
-								type = domType;
-							}
-
-							switch (type) {
-								case 'checkbox':
-									if ($(this).is(':checked')) {
-										container.<?=(!is_array($value) && $value == true ? 'remove' : 'add')?>Class('hidden');
-
-										container.find('input, select, textarea')
-											.prop(
-												'disabled',
-												<?=(!is_array($value) && $value == true ? 'false' : 'true')?>
-											);
-
-										<? if ($element->getType() == 'switch'): ?>
-											$('[name="<?=$element->getName()?>"]').bootstrapSwitch('disabled', <?=(!is_array($value) && $value == true ? 'false' : 'true')?>);
-										<? endif; ?>
-
-										<? if ($element->getType() == 'slider'): ?>
-											$('#<?=$element->getId()?>-container').bootstrapSlider("<?=(!is_array($value) && $value == true ? 'enable' : 'disable')?>").bootstrapSlider('refresh').bootstrapSlider('relayout');
-										<? endif; ?>
-									} else {
-										container.<?=(!is_array($value) && $value == true ? 'add' : 'remove')?>Class('hidden');
-
-										container.find('input, select, textarea')
-											.prop(
-												'disabled',
-												<?=(!is_array($value) && $value == true ? 'true' : 'false')?>
-											);
-
-										<? if ($element->getType() == 'switch'): ?>
-											$('[name="<?=$element->getName()?>"]').bootstrapSwitch('disabled', <?=(!is_array($value) && $value == true ? 'true' : 'false')?>);
-										<? endif; ?>
-
-										<? if ($element->getType() == 'slider'): ?>
-											$('#<?=$element->getId()?>-container').bootstrapSlider("<?=(!is_array($value) && $value == true ? 'disable' : 'enable')?>").bootstrapSlider('refresh').bootstrapSlider('relayout');
-										<? endif; ?>
-									}
-									break;
-
-								case 'select':
-								case 'radio':
-									<? if (is_array($value)): ?>
-										var values = [];
-										<? foreach ($value as $vkey => $vvalue): ?>
-											values[<?=$vkey?>] = '<?=$vvalue?>';
-										<? endforeach; ?>
-
-										if (values.indexOf($(this).val()) != -1) {
-									<? else: ?>
-										if ($(this).val() == '<?=$value?>') {
-									<? endif; ?>
-										container.removeClass('hidden')
-
-										container.find('input, select, textarea')
-											.prop(
-												'disabled',
-												true
-											);
-										
-										<? if ($element->getType() == 'switch'): ?>
-											$('[name="<?=$element->getName()?>"]').bootstrapSwitch('disabled', true);
-										<? endif; ?>
-
-										<? if ($element->getType() == 'slider'): ?>
-											$('#<?=$element->getId()?>-container').bootstrapSlider("enable");
-										<? endif; ?>
-									} else {
-										container.addClass('hidden');	
-
-										container.find('input, select, textarea')
-											.prop(
-												'disabled',
-												false
-											);
-
-										<? if ($element->getType() == 'switch'): ?>
-											$('[name="<?=$element->getName()?>"]').bootstrapSwitch('disabled', false);
-										<? endif; ?>
-
-										<? if ($element->getType() == 'slider'): ?>
-											$('#<?=$element->getId()?>-container').bootstrapSlider("disable").bootstrapSlider('refresh').bootstrapSlider('relayout');
-										<? endif; ?>
-									}
-									break;
-							}
-
-							<? if ($element->getType() == 'select' && !$element->isOriginal()): ?>
-								$('[name="<?=$element->getName()?>"]').selectpicker('refresh');
-							<? endif; ?>
-						})
-
-					<? endforeach; ?>
-
+						waxform.addCondition({
+							form: '#<?=$element->formIdentifier?>',
+							conditionFieldName: '<?=$field?>',
+							targetFieldName: '<?=$element->getName()?>',
+							targetFieldId: '<?=$element->getId()?>',
+							nth: '<?=$element->getNthInstance()?>',
+							cleanId: '<?=$element->getCleanId()?>',
+							hideSelector: '<?=$hideSelector?>',
+							type: '<?=$element->getType()?>',
+							isValueArray: <?=is_array($value) ? 'true' : 'false'?>,
+							value: <?=$jsValue?>,
+							isOriginal: <?=method_exists($element, 'isOriginal') && !$element->isOriginal() ? 'false' : 'true'?>
+						});
+					<? endforeach; ?>x
 				<? endif; ?>
-
 			<? endforeach; ?>
 		})
-	</script>
+	<? $this->scriptCaptureEnd('PREPEND'); ?>
 <? endif; ?>

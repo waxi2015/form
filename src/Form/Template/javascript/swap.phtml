@@ -1,9 +1,10 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-		$("#<?=$this->getId()?>").bootstrapSwitch({
+		waxform.swap({
+			fieldId: '<?=$this->getId()?>',
 			size : '<?=$this->size?>',
 			onText : '<?=$this->onText?>',
 			offText : '<?=$this->offText?>'
 		});
 	})
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>

@@ -52,6 +52,15 @@
 					this.initDecorators();
 
 					this.initInputTooltip();
+					this.initCssHelpers();
+				},
+
+				initCssHelpers : function () {
+					$('#' + this.formId).find('.wax-element .input-group').each(function(k,v) {
+						if ($(this).find('.form-control + .input-group-addon').length > 0) {
+							$(this).closest('.wax-element').addClass('with-suffix');
+						}
+					})
 				},
 
 				initDecorators : function () {
@@ -136,7 +145,7 @@
 				addRemoveTag : function (element) {
 					var tree = element.attr('data-tree'),
 						cloneCount = $('input[name="clone-' + tree + '"').val() * 1,
-						removeTag = '<a href="" class="remove-clone-button" rel="' + tree + '">[X]</a>';
+						removeTag = '<a href="" class="remove-clone-button wax-remove-clone-button" rel="' + tree + '"><span class="fa fa-remove"></span></a>';
 
 					element.find('.remove-clone-button').detach();
 					element.prepend(removeTag);
@@ -158,7 +167,7 @@
 
 						wxform.getClone(nodeTree, function (response) {
 							if (!response.error) {
-								$(that).closest('.wx-clone-container').before(response.html);
+								$(that).closest('.wax-clone-container').before(response.html);
 								wxform.setRemoveCloneButtons();
 							}
 
@@ -219,7 +228,7 @@
 				setLanguageWithErrors : function () {
 					var form = $('#' + $(this.element).attr('id')),
 						target = form.find('.has-error:first'),
-						language = target.closest('.wx-element').find('[data-language]').attr('data-language'),
+						language = target.closest('.wax-element').find('[data-language]').attr('data-language'),
 						selectors = form.find('.wax-form-language-selector'),
 						tab = selectors.find('[href="' + language + '"]');
 
@@ -303,6 +312,8 @@
 						executeFunctionByName(before, window);
 
 						$.post('/wx/form/validateform', data, function (response) {
+							letLeave = true;
+							
 							executeFunctionByName(after, window, response);
 
 							if (response.valid  !== undefined && response.valid.toString() == 'true') {
@@ -312,7 +323,11 @@
 							}
 
 							if (response.message !== undefined && response.message.length > 0) {
-								//wx.dialog.message(response.message);
+								if (response.valid  !== undefined && response.valid.toString() == 'true') {
+									if (toastr) { toastr.success(response.message, 'Üzenet'); }
+								} else {
+									if (toastr) { toastr.error(response.message, 'Hiba'); }
+								}
 							}
 
 							form.replaceWith(response.html);

@@ -1,7 +1,6 @@
-<div class="form-group wx-element wx-swap <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-swap <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
-	<div class="checkbox">
+	<div class="swap">
 		<input type="checkbox" id="<?=$this->getId()?>" name="<?=$this->getName()?>" value="<?=$this->getValue()?>" <?=$this->getAdditionalAttributes()?>/>
 	</div>
 	<?=$this->fetchTemplate('description')?>

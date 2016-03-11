@@ -135,6 +135,11 @@ class Autocomplete extends Element {
 
 		}
 
+		foreach ($items as $key => $one) {
+			$temp[$key] = is_object($one) ? (array) $one : $one;
+		}
+		$items = $temp;
+
 		$this->items = $items;
 
 		return $this->items;
@@ -284,6 +289,12 @@ class Autocomplete extends Element {
 
 		$items = $dbQuery->get();
 
+		foreach ($items as $one) {
+			$one = (array) $one;
+			$temp[$one['id']] = $one;
+		}
+		$items = $temp;
+
 		return $items;
 	}
 
@@ -294,7 +305,7 @@ class Autocomplete extends Element {
 			$autocompletekey = $key;
 
 			if ($this->getSourceType() == 'db') {
-				$autocompletekey = $value->id;
+				$autocompletekey = $value['id'];
 			}
 
 			$temp[$i] = array(
@@ -327,7 +338,7 @@ class Autocomplete extends Element {
 		}
 
 		$params = $this->getSourceParams();
-
+		
 		if (empty($params)) {
 			return false;
 		}
@@ -474,7 +485,7 @@ class Autocomplete extends Element {
 		foreach ($items as $key => $one) {
 			if ($this->isKeyAsValue()) {
 				if ((string) $key === (string) $value) {
-					$display = $one[$this->getSource('display')];
+					$display = isset($one[$this->getSource('display')]) ? $one[$this->getSource('display')] : $one;
 					$found = true;
 				}
 			} else {

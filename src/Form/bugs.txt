@@ -1,8 +1,7 @@
 - autocomplete: ha disabled elem van megadva kondícionális változóként, akkor elküldésnél a kondícionális változó nem kap értéket és emiatt nem látja a lehetséges értékeket az autocomplete
 - default php validator error message is not shown as default only if overwritten with "message" paramter
-- switchnél rossz helyen jelenik az "x" validációkor, ha required
 - a checkboxgroupnál nem megy a validáció, használj helyette selectet multiple opcióval
 - autocompletenél a front validáció csak azt ellenőrzi, hogy ki van e töltve a mező, vagy sem
 - feltételes autocompletenél a feltétel teljesülése és az autocomplete mező megjelenése után az ac mező háttere szürke marad
 - ha feltételes és kötelező egy képfeltöltés és töröljük a képet akkor hibaüzenetet ír ki (mivel kötelező a mező), viszont a kondíció kikapcsolása esetén sem tűnik el (újra kéne validálni a kondíció változásakor a vonatkozó fieldeket) és nem lehet elmenteni (mivel a submit inaktív)
-- a fájlfeltöltést nem lehet klónozni
+- ha conditions használsz nem célszerű olyan kezdetű mező id-t megadni máshol, mint ami kondícionális (mert akkor az is megjelenik, mert a klónok miatt az id^= formában keres a csupaszított id-re )

@@ -1,16 +1,16 @@
 <? foreach ($this->getInstances() as $language): ?>
 
-<div class="form-group wx-element wx-textarea <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+<div class="form-group wax-element wax-editor <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<?=$this->fetchTemplate('info')?>
 	<?=$this->getPrefix()?>
 	<textarea class="form-control" id="<?=$this->getId($language)?>" name="<?=$this->getName(true, $language)?>" <?=$this->getPlaceholder()?> <?=$this->getAdditionalAttributes($language)?>><?=$this->getValue(false, $language)?></textarea>
 	<?=$this->getSuffix()?>
+	<?=($language?'<span class="language-indicator">'.$language.'</span>':'')?>
 	<?=$this->fetchTemplate('description')?>
 	<?=$this->fetchTemplate('error')?>
 </div>
 
-<?=$this->fetchJavascript()?>
+<?=$this->fetchJavascript(null, ['language' => $language])?>
 
 <? endforeach; ?>
 

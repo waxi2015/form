@@ -1,25 +1,7 @@
-<script>
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-		var form = $('#<?=$this->formIdentifier?>');
-
-		form.find('section:not(:first)').hide();
-		form.find('.wax-form-steps a:not(:first)').addClass('disabled');
-		form.find('.wax-form-steps a:first').addClass('active');
-
-		form.find('.wax-form-steps a, .wax-step-nav').click(function(e){
-			e.preventDefault();
-
-			if ($(this).hasClass('disabled')) {
-				return false;
-			}
-
-			var section = $(this).attr('href');
-
-			form.find('.wax-form-steps a').removeClass('active');
-			form.find('.wax-form-steps a[href="' + section + '"]').addClass('active').removeClass('disabled');
-
-			form.find('section').hide();
-			form.find('section#' + section).show();
-		})
+		waxform.steps({
+			form: '#<?=$this->formIdentifier?>'
+		});
 	})
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>

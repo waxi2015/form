@@ -31,7 +31,7 @@
 				// Custom counter message
 				msg: '',
 				// Custom counter message
-				className: 'counter',
+				className: 'wax-counter',
 				// Attributes from container element
 				inlineAttributes: false,
 			};

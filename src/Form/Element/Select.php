@@ -76,6 +76,10 @@ class Select extends Element {
 		return false;
 	}
 
+	public function isMultiselect () {
+		return $this->multiple;
+	}
+
 	public function isOriginal () {
 		return $this->original;
 	}
@@ -119,6 +123,27 @@ class Select extends Element {
 		} else {
 			return empty($this->items);
 		}
+	}
+
+	public function getName ($withSuffix = true, $language = null) {
+		$name = $this->getParam('name');
+
+		if ($language !== null && $this->translate && $this->isMultilingual()) {
+			$name .= "[$language]";
+		}
+
+		$suffix = '';
+
+		if ($withSuffix) {
+			$valueKey = $this->getValueKey();
+			$suffix = !is_null($valueKey) ? '['.$valueKey.']' : '';
+		}
+
+		if ($this->isMultiselect() && $withSuffix) {
+			$suffix .= '[]';
+		}
+
+		return $name . $suffix;
 	}
 
 	public function getItems () {
@@ -207,7 +232,11 @@ class Select extends Element {
 	public function getSelected ($value, $allowDefault = false) {
 		$requestValue = $this->getValue($allowDefault);
 
-		if ($value == $requestValue) {
+		if (
+			(!is_array($requestValue) && $value == $requestValue)
+			||
+			(is_array($requestValue) && in_array($value, $requestValue))
+		) {
 			return 'selected="selected"';
 		}
 

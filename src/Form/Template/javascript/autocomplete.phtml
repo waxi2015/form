@@ -1,155 +1,36 @@
-<script>
-
-	function selectFirstType () {
-		$("#autocomplete").typeahead("val","Jav");
-		$("#autocomplete").typeahead("open");
-	}
-
+<? $this->scriptCaptureStart(); ?>
 	$(function(){
-
-		var autocompleteNew = $('input[name="<?=$this->getName()?>[new]"]'),
-			autocompleteValue = $('input[name="<?=$this->getName()?>[value]"]');
-
-		var items = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('<?=$this->getDisplay()?>'),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			identify: function(obj) { return obj.<?=$this->getDisplay()?>.toLowerCase(); },
-
+		waxform.autocomplete({
+			form: '#<?=$this->formIdentifier?>',
+			fieldId: '<?=$this->getId()?>',
+			fieldName: '<?=$this->getName()?>',
+			fieldPlainName: '<?=$this->getName(false)?>',
+			display: '<?=$this->getDisplay()?>',
+			mode: '<?=$this->getMode()?>',
+			isKeyAsValue: <?=$this->isKeyAsValue() ? true : false?>,
+			hint: <?=$this->hint?>,
+			highlight: <?=$this->highlight?>,
+			minLength: <?=$this->minLength?>,
+			limit: <?=$this->getLimit()?>,
+			emptyHtml: '<?=$this->getEmptyHtml()?>',
+			suggestionHtml: '<?=$this->getSuggestionHtml()?>',
+			<? if ($this->getOnSelect()): ?>
+				onSelect: <?=$this->getOnSelect()?>,
+			<? endif; ?>
 			<? if ($this->getMode() == 'local'): ?>
-				local: [
-					<? foreach ($this->convertItemsToAutocompleteFormat($this->getItems()) as $key => $value): ?>{autocompletekey : <?=$key?>,<? foreach ($value as $vkey => $vvalue): ?><?=$vkey?> : "<?=$vvalue?>",<? endforeach; ?>},<? endforeach; ?>
-				]
-			<? elseif ($this->getMode() == 'prefetch'): ?>
-				prefetch : {
-					cache : false,
-					url :'/wx/form/prefetch/?element=<?=$this->getName(false)?>',
-					prepare : function (settings) {
-						settings.type = 'POST';
-						settings.data = {}
-						settings.data._token = $('#<?=$this->formIdentifier?>').find('input[name="_token"]').val();
-						settings.data.descriptor = $('#<?=$this->formIdentifier?> input[name="formDescriptor"]').val();
-						return settings;
-					}
-				}
-			<? elseif ($this->getMode() == 'remote'): ?>
-				remote : {
-					cache : true,
-					wildcard : '%QUERY',
-					url :'/wx/form/suggest/?element=<?=$this->getName(false)?>&query=%QUERY',
-					prepare : function (query, settings) {
-						settings.url = settings.url.replace('%QUERY', query);
-						settings.type = 'POST';
-						settings.data = {}
-						settings.data._token = $('#<?=$this->formIdentifier?>').find('input[name="_token"]').val();
-						<? if ($this->hasDynamicParams()): ?>
-							settings.data.test = $('#is-test').val();
-							<? foreach ($this->getDynamicParams() as $param): ?>
-								settings.data.<?=$param['name']?> = $('[name="<?=$param["selector"]?>"').val();
-							<? endforeach; ?>
-						<? endif; ?>
-						settings.data.descriptor = $('#<?=$this->formIdentifier?> input[name="formDescriptor"]').val();
-						
-						return settings;
-					}
-				}
+				local: [<? foreach ($this->convertItemsToAutocompleteFormat($this->getItems()) as $key => $value): ?>{autocompletekey : <?=$key?>,<? foreach ($value as $vkey => $vvalue): ?><?=$vkey?> : "<?=$vvalue?>",<? endforeach; ?>},<? endforeach; ?>],
+			<? endif; ?>
+			<? if ($this->hasDynamicParams()): ?>
+				dynamicParams: {
+					<? foreach ($this->getDynamicParams() as $param): ?>
+						<?=$param['name']?> : '<?=$param["selector"]?>',
+					<? endforeach; ?>
+				},
+			<? endif; ?>
+			<? if ($this->isDefaults() && $this->getMode() != 'remote'): ?>
+				itemsSync: [<? $i = 1; foreach ($this->convertItemsToAutocompleteFormat($this->getItems()) as $value): ?>'<?=strtolower($value[$this->getDisplay()])?>'<?=count($this->getItems()) == $i ? '' : ','?><? $i++; ?><? endforeach; ?>],
 			<? endif; ?>
 		});
-
-		function fetchItems (q, sync, async) {
-			if (q === '') {
-				<? if ($this->isDefaults() && $this->getMode() != 'remote'): ?> // defaults are not allowed at remote
-					sync(items.get(<? $i = 1; foreach ($this->convertItemsToAutocompleteFormat($this->getItems()) as $value): ?>'<?=strtolower($value[$this->getDisplay()])?>'<?=count($this->getItems()) == $i ? '' : ','?><? $i++; ?><? endforeach; ?>));
-				<? endif; ?>
-			} else {
-				<? if ($this->getMode() == 'remote'): ?>
-					items.search(q, sync, function(datums) {
-						replaceKeyValue(datums, q);
-						return async(datums);
-					});
-				<? else : ?>
-					items.search(q, function(datums) {
-						replaceKeyValue(datums, q);
-						return sync(datums);
-					});
-				<? endif; ?>
-			}
-		}
-
-		function replaceKeyValue (datums, q) {
-			var valueFound = false;
-
-			if (datums.length >= 1) {
-				var match = false;
-
-				$.each(datums, function(k, v) {
-					if (v.<?=$this->getDisplay()?>.toLowerCase() == q.toLowerCase()) {
-						match = v.autocompletekey;
-					}
-				})
-
-				if (match || match === 0 || match === '0') {
-					valueFound = true;
-
-					autocompleteNew.val('false');
-
-					<? if ($this->isKeyAsValue()): ?>
-						autocompleteValue.val(match);
-					<? else: ?>
-						autocompleteValue.val(q);
-					<? endif; ?>
-				}
-			}
-
-			if (!valueFound) {
-				autocompleteNew.val('true');
-				autocompleteValue.val(q);
-			}
-		}
-
-		$('#<?=$this->getId()?>').typeahead({
-			hint: 		<?=$this->hint?>,
-			highlight: 	<?=$this->highlight?>,
-			minLength: 	<?=$this->minLength?>
-		},
-		{
-			source: 	fetchItems,
-			limit: 		<?=$this->getLimit()?>,
-			display: 	'<?=$this->getSource('display')?>',
-			displayKey: '<?=$this->getSource('display')?>',
-			name: 		'<?=$this->getId()?>',
-			templates: {
-				empty: function (context) {
-					if (context.query === '') {
-						return false;
-					} else {
-						return ['<?=$this->getEmptyHtml()?>'].join('\n')
-					}
-				},
-				suggestion: Handlebars.compile('<?=$this->getSuggestionHtml()?>')
-			}
-		}).bind('typeahead:select', function(ev, suggestion) {
-			var value = suggestion.<?=$this->isKeyAsValue() ? 'autocompletekey' : $this->getDisplay()?>;
-
-			autocompleteValue.val(value);
-			autocompleteNew.val('false');
-
-			<? if ($this->getOnSelect()): ?>
-				executeFunctionByName(<?=$this->getOnSelect()?>, window, suggestion);
-			<? endif; ?>
-		})
-		.on('typeahead:selected', function(e, suggestion, dataSetName) {
-            $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>[display]');
-        })
-        .on('typeahead:closed', function(e) {
-            $('#<?=$this->formIdentifier?>').formValidation('revalidateField', '<?=$this->getName()?>[display]');
-        });;
-
-		$('#<?=$this->getId()?>').bind('keyup', function () {
-			if ($(this).val() == '') {
-				autocompleteValue.val('');
-				autocompleteNew.val('');
-			}
-		})
 	})
 
-</script>
+<? $this->scriptCaptureEnd('PREPEND'); ?>
