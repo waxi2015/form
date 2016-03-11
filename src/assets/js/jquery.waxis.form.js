@@ -180,7 +180,7 @@
 					var formDescriptor = $(this.element).find('[name=formDescriptor]').val(),
 						currentCloneCount = $(this.element).find('[data-tree="'+nodeTree+'"][data-clone="true"]').length;
 
-					$.post('/wx/form/clone',{nodeTree:nodeTree, clones:currentCloneCount, formDescriptor:formDescriptor, _token:$(this.element).find('[name="_token"]').val()}, function (response) {
+					$.post('/wx/form/cloning',{nodeTree:nodeTree, clones:currentCloneCount, formDescriptor:formDescriptor, _token:$(this.element).find('[name="_token"]').val()}, function (response) {
 						callback(response);
 					});
 				},
