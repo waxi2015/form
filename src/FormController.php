@@ -96,7 +96,7 @@ class FormController extends Controller
 		return $response;
 	}
 
-	public function clone (Request $request) {
+	public function cloning (Request $request) {
 		$rp = $request->all();
 
 		$error = false;
