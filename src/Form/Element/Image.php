@@ -10,9 +10,9 @@ class Image extends Element {
 
 	public $thumbnail = 'thumbnail';
 
-	public $buttonLabel = 'Kép feltöltése';
+	public $buttonLabel = 'form.button_image_upload';
 
-	public $buttonDeleteLabel = 'Kép törlése';
+	public $buttonDeleteLabel = 'form.button_image_delete';
 
 	public $maxFileSize = '25'; # in Mb
 
@@ -61,11 +61,11 @@ class Image extends Element {
 	}
 
 	public function getButtonLabel () {
-		return $this->buttonLabel;
+		return trans($this->buttonLabel);
 	}
 
 	public function getButtonDeleteLabel () {
-		return $this->buttonDeleteLabel;
+		return trans($this->buttonDeleteLabel);
 	}
 
 	public function getImageUrlBase () {

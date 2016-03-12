@@ -57,16 +57,16 @@ class Config {
 	);
 
 	public $messages = array(
-		'empty' => 'Please fill in this field',
-		'emptyAll' => 'Please fill all the fields',
-		'emptySelect' => 'Please choose one',
-		'emptyMultiselect' => 'Please select at least one',
-		'emptyCheckbox' => 'You must check this field',
-		'emptyCheckboxgroup' => 'Please select at least one',
-		'emptyRadio' => 'You must check this field',
-		'emptyRadiogroup' => 'Please select at least one',
+		'empty' => 'form.validators.empty.empty',
+		'emptyAll' => 'form.validators.empty.emptyAll',
+		'emptySelect' => 'form.validators.empty.emptySelect',
+		'emptyMultiselect' => 'form.validators.empty.emptyMultiselect',
+		'emptyCheckbox' => 'form.validators.empty.emptyCheckbox',
+		'emptyCheckboxgroup' => 'form.validators.empty.emptyCheckboxgroup',
+		'emptyRadio' => 'form.validators.empty.emptyRadio',
+		'emptyRadiogroup' => 'form.validators.empty.emptyRadiogroup',
 		
-		'autocompleteNew' => 'Please select one from the list',
+		'autocompleteNew' => 'form.validators.empty.autocompleteNew',
 	);
 
 	public $validators = array(
@@ -79,8 +79,8 @@ class Config {
 	);
 
 	public $decorators = array(
-		'charlimit' => ' character(s) left',
-		'wordlimit' => ' word(s) left',
+		'charlimit' => 'form.decorators.charlimit_text',
+		'wordlimit' => 'form.decorators.wordlimit_text',
 	);
 
 	public $uploads = array(
@@ -102,7 +102,7 @@ class Config {
 	}
 
 	public function getMessage ($key) {
-		return $this->messages[$key];
+		return trans($this->messages[$key]);
 	}
 
 	public function getValidators () {
@@ -118,7 +118,7 @@ class Config {
 	}
 
 	public function getDecorator ($key) {
-		return $this->decorator[$key];
+		return trans($this->decorators[$key]);
 	}
 
 	public function getUploads () {

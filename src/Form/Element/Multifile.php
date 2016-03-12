@@ -8,7 +8,7 @@ class Multifile extends Element {
 
 	public $fields = null;
 
-	public $buttonLabel = 'Fájlok feltöltése';
+	public $buttonLabel = 'form.button_files_upload';
 
 	public $maxFileSize = '25'; # in Mb
 
@@ -66,7 +66,7 @@ class Multifile extends Element {
 	}
 
 	public function getButtonLabel () {
-		return $this->buttonLabel;
+		return trans($this->buttonLabel);
 	}
 
 	public function hasLimit () {

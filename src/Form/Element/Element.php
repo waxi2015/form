@@ -232,14 +232,18 @@ class Element extends Ancestor {
 
 	public function getPlaceholder () {
 		if ($this->placeholder !== null) {
-			return 'placeholder="' . $this->placeholder . '"';
+			return 'placeholder="' . trans($this->placeholder) . '"';
 		}
 
 		return false;
 	}
 
 	public function getLabel () {
-		return $this->label;
+		if ($this->label === null) {
+			return null;
+		}
+
+		return trans($this->label);
 	}
 
 	public function getReadonly () {
@@ -673,7 +677,7 @@ class Element extends Ancestor {
 			return false;
 		}
 
-		return $this->info;
+		return trans($this->info);
 	}
 
 	public function getRequired () {
@@ -697,7 +701,7 @@ class Element extends Ancestor {
 			return false;
 		}
 
-		return 'title="' . $this->tooltip . '" data-toggle="tooltip" data-placement="bottom" data-trigger="focus"';
+		return 'title="' . trans($this->tooltip) . '" data-toggle="tooltip" data-placement="bottom" data-trigger="focus"';
 	}
 
 	public function getAdditionalAttributes ($language = null) {

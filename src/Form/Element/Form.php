@@ -402,7 +402,7 @@ class Form extends Ancestor {
 			# if could not be saved
 			return [
 				'valid' => false,
-				'message' => 'An error occured during saving, please refresh and try again.'
+				'message' => trans('form.error_during_save')
 			];
 		}
 

@@ -6,7 +6,7 @@ class File extends Element {
 
 	public $type = 'file';
 
-	public $buttonLabel = 'Fájl feltöltése';
+	public $buttonLabel = 'form.button_file_upload';
 
 	public $maxFileSize = '25'; # in Mb
 
@@ -46,7 +46,7 @@ class File extends Element {
 	}
 
 	public function getButtonLabel () {
-		return $this->buttonLabel;
+		return trans($this->buttonLabel);
 	}
 
 	public function getFileUrl ($language = null) {

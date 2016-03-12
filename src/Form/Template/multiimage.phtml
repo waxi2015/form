@@ -7,7 +7,7 @@
 				<? foreach ($this->getValue() as $key => $value): ?>
 					<div class="preview-block">
 						<a href="<?=$this->getPreviewUrl($value['image'])?>" class="image" rel="group" style="background-image: url(<?=$this->getThumbnailUrl($value['image'])?>)"></a>
-						<a href="" class="remove">x</a>
+						<a href="" class="remove"><span class="fa fa-remove"></span></a>
 						<input type="hidden" name="<?=$this->getName()?>[<?=$key?>][image]" value="<?=$value['image']?>" <?=$this->getAdditionalAttributes()?> />
 						<? if ($this->hasFields()): ?>
 							<? foreach ($this->getFields() as $field): ?>

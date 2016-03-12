@@ -34,7 +34,7 @@ class FormController extends Controller
 				$filename = $file->getClientOriginalName();
 
 				if (file_exists($path . $filename) && config('app.env') == 'production') {
-					return response('Már létezik fájl ezzel a névvel.', 500);
+					return response(trans('form.file_exits_with_name'), 500);
 				}
 
 				break;

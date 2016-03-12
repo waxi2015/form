@@ -4,7 +4,7 @@ namespace Waxis\Form\Form\Validator;
 
 class Autocomplete extends Ancestor {
 
-	public $message = 'Please select one from the list';
+	public $message = 'form.validators.autocomplete_msg';
 
    	public function isValid($value, $context, $name, $key = false){
         $valid = true;
@@ -31,7 +31,7 @@ class Autocomplete extends Ancestor {
         if ($valid) {
             return true;
         } else {
-        	$this->errors[] = $this->message;
+        	$this->errors[] = trans($this->message);
 
             return false;
         }

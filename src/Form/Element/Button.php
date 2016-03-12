@@ -23,6 +23,6 @@ class Button extends Element {
 	}
 
 	public function getText () {
-		return $this->text;
+		return trans($this->text);
 	}
 }

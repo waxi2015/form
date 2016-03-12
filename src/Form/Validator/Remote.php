@@ -4,7 +4,7 @@ namespace Waxis\Form\Form\Validator;
 
 class Remote extends Ancestor {
 
-	public $error = 'Field is incorrect.';
+	public $message = 'form.validators.remote_msg';
 
 	public function isValid($value, $context, $name, $key = false){
         $class = getValue($this->options, 'class');
@@ -21,7 +21,7 @@ class Remote extends Ancestor {
         if ($result === true) {
         	return true;
         } else {
-        	$this->errors[] = $this->error;
+            $this->errors[] = trans($this->message);
 
         	return false;
         }

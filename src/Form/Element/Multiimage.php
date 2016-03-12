@@ -14,7 +14,7 @@ class Multiimage extends Element {
 
 	public $thumbnail = 'thumbnail';
 
-	public $buttonLabel = 'Képek feltöltése';
+	public $buttonLabel = 'form.button_images_upload';
 
 	public $maxFileSize = '25'; # in Mb
 
@@ -81,7 +81,7 @@ class Multiimage extends Element {
 	}
 
 	public function getButtonLabel () {
-		return $this->buttonLabel;
+		return trans($this->buttonLabel);
 	}
 
 	public function getThumbnailUrlBase () {
