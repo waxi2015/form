@@ -14,11 +14,11 @@
 				maxFiles: <?=$this->getLimit()?>
 			<? endif; ?>
 			<? if ($this->hasFields()): ?>
-				fields: {
+				fields: [
 					<? foreach ($this->getFields() as $key => $one): ?>
 						{name: '<?=$one["name"]?>', placeholder: '<?=$one["placeholder"]?>'}
 					<? endforeach; ?>
-				}
+				]
 			<? endif; ?>
 		});
 	})

@@ -180,7 +180,7 @@
 					var formDescriptor = $(this.element).find('[name=formDescriptor]').val(),
 						currentCloneCount = $(this.element).find('[data-tree="'+nodeTree+'"][data-clone="true"]').length;
 
-					$.post('/wx/form/cloning',{nodeTree:nodeTree, clones:currentCloneCount, formDescriptor:formDescriptor, _token:$(this.element).find('[name="_token"]').val()}, function (response) {
+					$.post('/wx/form/cloning',{nodeTree:nodeTree, clones:currentCloneCount, formDescriptor:formDescriptor, locale:Lang.getLocale(), _token:$(this.element).find('[name="_token"]').val()}, function (response) {
 						callback(response);
 					});
 				},
@@ -202,7 +202,7 @@
 
 					tab.trigger('click');
 
-					$('html, body').animate({
+					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
 				    }, 1000);
 				},
@@ -220,7 +220,7 @@
 
 					step.trigger('click');
 
-					$('html, body').animate({
+					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
 				    }, 1000);
 				},
@@ -234,7 +234,7 @@
 
 					tab.addClass('contains-error').trigger('click');
 
-					$('html, body').animate({
+					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
 				    }, 1000);
 				},
@@ -243,7 +243,7 @@
 					var form = $('#' + $(this.element).attr('id')),
 						target = form.find('.has-error:first');
 
-					$('html, body').animate({
+					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
 				    }, 1000);
 				},
@@ -310,6 +310,8 @@
 						}
 
 						executeFunctionByName(before, window);
+
+						data += '&locale=' + Lang.getLocale();
 
 						$.post('/wx/form/validateform', data, function (response) {
 							letLeave = true;

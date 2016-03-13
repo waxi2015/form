@@ -355,7 +355,13 @@ class Form extends Ancestor {
 	public function runOnValid () {
 		# if we don't need job to be done
 		if ($this->save === null && $this->after === null) {
-			return array('valid' => true);
+			# if we have feedback for the result value
+			if ($this->feedback !== null) {
+				return $this->feedback['true'];
+			} else {
+				return array('valid' => true);
+			}
+
 		}
 
 		$result = true;
@@ -416,7 +422,6 @@ class Form extends Ancestor {
 			if (is_bool($result)) {
 				$result = trim(json_encode($result),'"');
 			}
-
 			return $this->feedback[$result];
 		}
 		

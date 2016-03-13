@@ -9,6 +9,12 @@ use App\Http\Controllers\Controller;
 
 class FormController extends Controller
 {
+	public function __construct (Request $request) {
+		if (isset($request->locale)) {
+			\Lang::setLocale($request->locale);
+		}
+	}
+	
 	public function upload(Request $request)
 	{
 		$descriptor = unserialize(decode($request->formDescriptor));

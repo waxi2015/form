@@ -151,6 +151,8 @@ var waxform = {
 				params[v] = $(that).val();
 			})
 
+			params['locale'] = Lang.getLocale();
+
 			$.post('/wx/form/loaddata', params, function (response) {
 				$('[name="'+options.fieldName+'"]')
 					.html(createOptionsFromJson(response))
@@ -271,6 +273,7 @@ var waxform = {
 				formData.append('formDescriptor', form.find('[name="formDescriptor"]').val());
 				formData.append('element', options.fieldPlainName);
 				formData.append('type', 'image');
+				formData.append('locale', Lang.getLocale());
 				formData.append('_token', form.find('[name="_token"]').val());
 			}
 		});
@@ -380,6 +383,7 @@ var waxform = {
 				formData.append('formDescriptor', form.find('[name="formDescriptor"]').val());
 				formData.append('element', options.fieldPlainName);
 				formData.append('type', 'file');
+				formData.append('locale', Lang.getLocale());
 				formData.append('_token', form.find('[name="_token"]').val());
 			}
 		});
@@ -440,6 +444,7 @@ var waxform = {
 				formData.append('formDescriptor', form.find('[name="formDescriptor"]').val());
 				formData.append('element', options.fieldPlainName);
 				formData.append('type', 'image');
+				formData.append('locale', Lang.getLocale());
 				formData.append('_token', form.find('[name="_token"]').val());
 			},
 			init : function () {
@@ -491,6 +496,7 @@ var waxform = {
 				formData.append('formDescriptor', form.find('[name="formDescriptor"]').val());
 				formData.append('element', options.fieldPlainName);
 				formData.append('type', 'file');
+				formData.append('locale', Lang.getLocale());
 				formData.append('_token', form.find('[name="_token"]').val());
 			},
 			init : function () {
@@ -620,6 +626,7 @@ var waxform = {
 						settings.type = 'POST';
 						settings.data = {}
 						settings.data._token = form.find('input[name="_token"]').val();
+						settings.data.locale = Lang.getLocale();
 						settings.data.descriptor = form.find('input[name="formDescriptor"]').val();
 						return settings;
 					}
@@ -636,6 +643,7 @@ var waxform = {
 						settings.type = 'POST';
 						settings.data = {}
 						settings.data._token = form.find('input[name="_token"]').val();
+						settings.data.locale = Lang.getLocale();
 						settings.data.descriptor = form.find('input[name="formDescriptor"]').val();
 
 						if (options.dynamicParams !== undefined) {
@@ -655,8 +663,8 @@ var waxform = {
 
 		function fetchItems (q, sync, async) {
 			if (q === '') {
-				if (options.syncItems !== undefined) {
-					sync(syncItems);
+				if (options.itemsSync !== undefined) {
+					sync(items.get(options.itemsSync));
 				}
 			} else {
 				if (options.mode == 'remote') {
@@ -861,7 +869,7 @@ var waxform = {
 
 						tab.trigger('click');
 
-						$('html, body').animate({
+						$('html, body, .st-container').animate({
 					        scrollTop: target.offset().top
 					    }, 1000);
 					}
@@ -878,7 +886,7 @@ var waxform = {
 
 						step.trigger('click');
 
-						$('html, body').animate({
+						$('html, body, .st-container').animate({
 					        scrollTop: target.offset().top
 					    }, 1000);
 					}
@@ -895,7 +903,7 @@ var waxform = {
 
 						tab.trigger('click');
 
-						$('html, body').animate({
+						$('html, body, .st-container').animate({
 					        scrollTop: target.offset().top
 					    }, 1000);
 					}
@@ -904,7 +912,7 @@ var waxform = {
 				if (window.scrolledToErrorField == false) {
 					window.scrolledToErrorField = true;
 
-					$('html, body').animate({
+					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
 				    }, 1000);
 				}

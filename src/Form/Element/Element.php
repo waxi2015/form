@@ -443,7 +443,7 @@ class Element extends Ancestor {
 		if ($this->required) {
 			$validators['notEmpty'] = array(
 				'enabled' => true,
-				'message' => $this->error !== null ? $this->error : $this->getConfigVar('messages')[$this->emptyMessageType]
+				'message' => trans($this->error !== null ? $this->error : $this->getConfigVar('messages')[$this->emptyMessageType])
 			);
 		}
 
@@ -455,7 +455,7 @@ class Element extends Ancestor {
 			$newOptions = array();
 
 			if (!isset($options['message'])) {
-				$options['message'] = $this->getValidatorMessage($value);
+				$options['message'] = trans($this->getValidatorMessage($value));
 			}
 
 			switch ($validator) {
@@ -467,6 +467,7 @@ class Element extends Ancestor {
 						'element' => $this->getName(false),
 						'key' => $this->getValueKey(),
 						'descriptor' => encode(serialize($this->formDescriptor)),
+						'locale' => \Lang::getLocale(),
 						'_token' => csrf_token()
 					];
 					unset($newOptions['class']);
@@ -625,7 +626,7 @@ class Element extends Ancestor {
 				$decorator = new \Waxis\Form\Form\Decorator($decorator['type'], $decorator);
 
 				foreach ($decorator->getOptions() as $option => $value) {
-					$data['decorator-' . $option] = $value;
+					$data['decorator-' . $option] = trans($value);
 				}
 			}	
 		}

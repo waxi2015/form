@@ -1,7 +1,7 @@
 <? $this->scriptCaptureStart(); ?>
 	$(function(){
 		waxform.editor({
-			form: '#<?=$this->getId()?>',
+			form: '#<?=$this->formIdentifier?>',
 			fieldId: '<?=$this->getId()?>',
 			fieldName: '<?=$this->getName(true, $language)?>',
 			css: '/css/editor/<?=$this->getCss()?>.css?<?=time()?>',

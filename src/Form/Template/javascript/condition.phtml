@@ -22,8 +22,8 @@
 						waxform.addCondition({
 							form: '#<?=$element->formIdentifier?>',
 							conditionFieldName: '<?=$field?>',
-							targetFieldName: '<?=$element->getName()?>',
-							targetFieldId: '<?=$element->getId()?>',
+							targetFieldName: '<?=method_exists($element,'getName') ? $element->getName() : ""?>',
+							targetFieldId: '<?=method_exists($element,'getId') ? $element->getId() : ""?>',
 							nth: '<?=$element->getNthInstance()?>',
 							cleanId: '<?=$element->getCleanId()?>',
 							hideSelector: '<?=$hideSelector?>',
@@ -32,7 +32,7 @@
 							value: <?=$jsValue?>,
 							isOriginal: <?=method_exists($element, 'isOriginal') && !$element->isOriginal() ? 'false' : 'true'?>
 						});
-					<? endforeach; ?>x
+					<? endforeach; ?>
 				<? endif; ?>
 			<? endforeach; ?>
 		})
