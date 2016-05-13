@@ -12,7 +12,13 @@
 					<input name="<?=$this->getName(true, $language)?>[<?=$key?>][file]" value="<?=$value['file']?>" type="hidden" <?=$this->getAdditionalAttributes()?> />
 					<? if ($this->hasFields()): ?>
 						<? foreach ($this->getFields() as $field): ?>
-							<input placeholder="<?=$field['placeholder']?>" value="<?=$value[$field['name']]?>" name="<?=$this->getName(true, $language)?>[<?=$key?>][<?=$field['name']?>]" <?=$this->getAdditionalAttributes()?> />
+							<? if (isset($field['type'])): ?>
+								<? if ($field['type'] == 'hidden'): ?>
+									<input type="hidden" value="<?=$value[$field['name']]?>" name="<?=$this->getName(true, $language)?>[<?=$key?>][<?=$field['name']?>]" <?=$this->getAdditionalAttributes()?> />
+								<? endif; ?>
+							<? else: ?>
+								<input placeholder="<?=$field['placeholder']?>" value="<?=$value[$field['name']]?>" name="<?=$this->getName(true, $language)?>[<?=$key?>][<?=$field['name']?>]" <?=$this->getAdditionalAttributes()?> />
+							<? endif; ?>
 						<? endforeach; ?>
 					<? endif; ?>
 				</div>

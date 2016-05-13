@@ -2,7 +2,6 @@
 	<?=csrf_field()?>
 	<?=$this->renderLanguageSelectors()?>
 	<?=$this->renderSteps()?>
-	<?=$this->renderTabs()?>
 	<?=$this->renderSections()?>
 	<input type="hidden" name="formDescriptor" value="<?=encode(serialize($this->formDescriptor))?>" />
 	<?=$this->fetchJavascript()?>

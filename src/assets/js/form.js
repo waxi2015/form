@@ -4,7 +4,7 @@ var waxform = {
 	tabs : function (options) {
 		var form = $(options.form);
 
-		form.find('section:not(:first)').hide();
+		form.find('section:not(:first):not(.no-tab)').hide();
 		form.find('.wax-form-tabs a:first').addClass('active');
 
 		form.find('.wax-form-tabs a').click(function(e){
@@ -15,7 +15,7 @@ var waxform = {
 			form.find('.wax-form-tabs a').removeClass('active');
 			form.find('.wax-form-tabs a[href="' + section + '"]').addClass('active');
 
-			form.find('section').hide();
+			form.find('section:not(.no-tab)').hide();
 			form.find('section#' + $(this).attr('href')).show();
 		})
 	},
@@ -432,7 +432,7 @@ var waxform = {
 
 				$('input[name="'+options.fieldName+'"]').val(response.file).trigger('change');
 
-				//$('#'+options.fieldId+'-previews .image-default').addClass('hidden');
+				$('#'+options.fieldId+'-previews .image-default').addClass('hidden');
 				$('#remove-image-'+options.fieldId).removeClass('hidden');
 			},
 			addedfile: function() {
@@ -459,7 +459,7 @@ var waxform = {
 
 			$('#'+options.fieldId+'-previews img').not('.image-default').remove();
 			$('input[name="'+options.fieldName+'"]').val('').trigger('change');
-			//$('#'+options.fieldId+'-previews .image-default').removeClass('hidden');
+			$('#'+options.fieldId+'-previews .image-default').removeClass('hidden');
 			$('#remove-image-'+options.fieldId).addClass('hidden');
 		})
 	},

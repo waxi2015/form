@@ -326,9 +326,9 @@
 
 							if (response.message !== undefined && response.message.length > 0) {
 								if (response.valid  !== undefined && response.valid.toString() == 'true') {
-									if (toastr) { toastr.success(response.message, Lang.get('form.success_msg_title')); }
+									if (toastr) { toastr.success(Lang.get(response.message), Lang.get('form.success_msg_title')); }
 								} else {
-									if (toastr) { toastr.error(response.message, Lang.get('form.error_msg_title')); }
+									if (toastr) { toastr.error(Lang.get(response.message), Lang.get('form.error_msg_title')); }
 								}
 							}
 

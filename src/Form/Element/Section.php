@@ -11,6 +11,8 @@ class Section extends Structure {
 	public $brows = array();
 
 	public $title = null;
+	
+	public $tabs = null;
 
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
@@ -25,6 +27,10 @@ class Section extends Structure {
 
 		if (isset($descriptor['title'])) {
 			$this->title = $descriptor['title'];
+		}
+
+		if (isset($descriptor['tabs'])) {
+			$this->tabs = $descriptor['tabs'];
 		}
 		
 		parent::__construct($descriptor, $nth, $constructParams);
@@ -166,5 +172,17 @@ class Section extends Structure {
 		}
 
 		return $data;
+	}
+
+	public function getTabs () {
+		return $this->tabs;
+	}
+
+	public function renderTabs () {
+		if ($this->getTabs() === null) {
+			return;
+		}
+
+		return $this->renderTemplate('tabs');
 	}
 }

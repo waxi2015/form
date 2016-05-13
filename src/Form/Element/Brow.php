@@ -10,6 +10,8 @@ class Brow extends Structure {
 
 	public $bcolumns = array();
 
+	public $tab = null;
+
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -19,6 +21,10 @@ class Brow extends Structure {
 
 		if (!isset($descriptor['bcolumns'])) {
 			$this->_setDefaultBcolumns();
+		}
+
+		if (isset($descriptor['tab'])) {
+			$this->tab = $descriptor['tab'];
 		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
@@ -156,5 +162,28 @@ class Brow extends Structure {
 		}
 
 		return $data;
+	}
+
+	public function getData () {
+		$data = $this->getParam('data');
+
+		if (empty($data)) {
+			$data = array();
+		}
+
+		$data['tree'] = $this->getNodeTreeString('-');
+		$data['clone'] = trim(json_encode($this->isClone),'"');
+		$data['clone-removable'] = $this->isClone && $this->isRemovable ? 'true' : 'false';
+
+		if ($this->tab !== null) {
+			$data['tab'] = $this->tab;
+		}
+
+		$return = '';
+		foreach ($data as $key => $value) {
+			$return .= ' data-' . $key . '="' . $value . '" ';
+		}
+
+		return $return;
 	}
 }

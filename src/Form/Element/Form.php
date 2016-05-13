@@ -50,8 +50,6 @@ class Form extends Ancestor {
 
 	public $preparedData = null; # this is the final data, after converting, etc.
 
-	public $tabs = null;
-
 	public $steps = null;
 
 	public function __construct ($descriptor) {
@@ -163,10 +161,6 @@ class Form extends Ancestor {
 			}
 		}
 
-		if (isset($descriptor['tabs'])) {
-			$this->tabs = $descriptor['tabs'];
-		}
-
 		if (isset($descriptor['steps'])) {
 			$this->steps = $descriptor['steps'];
 		}
@@ -200,18 +194,6 @@ class Form extends Ancestor {
 		}
 
 		return $this->renderTemplate('steps');
-	}
-
-	public function getTabs () {
-		return $this->tabs;
-	}
-
-	public function renderTabs () {
-		if ($this->getTabs() === null) {
-			return;
-		}
-
-		return $this->renderTemplate('tabs');
 	}
 
 	public function getPermission () {

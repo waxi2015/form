@@ -84,7 +84,7 @@ class Config {
 	);
 
 	public $uploads = array(
-		'file' => 'uploads/docs/',
+		'file' => 'uploads/documents/',
 	);
 
 	public $defaultElementType = 'text';

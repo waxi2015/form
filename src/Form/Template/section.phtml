@@ -2,5 +2,6 @@
 	<? if ($this->getTitle() !== null): ?>
 		<span class="wax-section-title"><?=$this->getTitle()?></span>
 	<? endif; ?>
+	<?=$this->renderTabs()?>
 	<?=$this->renderBrows()?>
 </section>
