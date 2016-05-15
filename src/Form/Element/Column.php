@@ -207,4 +207,10 @@ class Column extends Structure {
 
 		return $data;
 	}
+
+	public function saveExternalData () {
+		foreach ($this->elements as $key => $one) {
+			$one->saveExternalData();
+		}
+	}
 }

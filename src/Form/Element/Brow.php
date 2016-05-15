@@ -164,6 +164,12 @@ class Brow extends Structure {
 		return $data;
 	}
 
+	public function saveExternalData () {
+		foreach ($this->bcolumns as $key => $one) {
+			$one->saveExternalData();
+		}
+	}
+
 	public function getData () {
 		$data = $this->getParam('data');
 

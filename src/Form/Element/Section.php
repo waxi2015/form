@@ -174,6 +174,12 @@ class Section extends Structure {
 		return $data;
 	}
 
+	public function saveExternalData () {
+		foreach ($this->brows as $key => $one) {
+			$one->saveExternalData();
+		}
+	}
+
 	public function getTabs () {
 		return $this->tabs;
 	}

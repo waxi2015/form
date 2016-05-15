@@ -175,4 +175,10 @@ class Bcolumn extends Structure {
 
 		return $data;
 	}
+
+	public function saveExternalData () {
+		foreach ($this->rows as $key => $one) {
+			$one->saveExternalData();
+		}
+	}
 }

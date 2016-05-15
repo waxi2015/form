@@ -18,6 +18,8 @@ class Select extends Element {
 
 	public $placeholder = null;
 
+	public $emptyText = '---';
+
 	public $emptyMessageType = 'emptySelect';
 
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
@@ -25,11 +27,15 @@ class Select extends Element {
 			$this->descriptor = $descriptor;
 		}
 		
-		if (isset($this->descriptor['addEmpty']) && (empty($this->items) || $this->items[''] != '---')) {
-			$this->items[''] = '---';
+		if (isset($this->descriptor['emptyText'])) {
+			$this->emptyText = $this->descriptor['emptyText'];
 		}
 		
-		if (isset($this->descriptor['items']) && (empty($this->items) || (count($this->items) == 1 && $this->items[''] == '---'))) {
+		if (isset($this->descriptor['addEmpty']) && (empty($this->items) || $this->items[''] != $this->getEmptyText())) {
+			$this->items[''] = $this->getEmptyText();
+		}
+		
+		if (isset($this->descriptor['items']) && (empty($this->items) || (count($this->items) == 1 && $this->items[''] == $this->getEmptyText()))) {
 			$this->items = $this->items + $this->descriptor['items'];
 		}
 		
@@ -241,6 +247,10 @@ class Select extends Element {
 		}
 
 		return false;
+	}
+
+	public function getEmptyText () {
+		return $this->emptyText;
 	}
  }
 

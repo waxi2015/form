@@ -1,0 +1,11 @@
+<? $this->scriptCaptureStart(); ?>
+	$(function(){
+		waxform.tags({
+			id: '<?=$this->formIdentifier?>',
+			form: '#<?=$this->formIdentifier?>',
+			fieldName: '<?=$this->getName()?>',
+			items: [<? foreach ($this->getItems() as $key => $item): ?>{"id":"<?=$key?>","text":"<?=$item?>"},<? endforeach; ?>],
+			values: [<? foreach ($this->getValueArray() as $id => $text): ?>{"id":"<?=$id?>","text":"<?=$text?>"},<? endforeach; ?>],
+		});
+	})
+<? $this->scriptCaptureEnd('PREPEND'); ?>

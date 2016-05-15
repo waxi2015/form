@@ -147,4 +147,10 @@ class Row extends Structure {
 
 		return $data;
 	}
+
+	public function saveExternalData () {
+		foreach ($this->columns as $key => $one) {
+			$one->saveExternalData();
+		}
+	}
 }

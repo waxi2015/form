@@ -737,6 +737,10 @@ class Element extends Ancestor {
 		return $data;
 	}
 
+	public function saveExternalData () {
+		return true;
+	}
+
 	public function convertData ($data) {
 		if ($this->convert === null) {
 			return $data;

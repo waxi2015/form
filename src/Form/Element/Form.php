@@ -473,8 +473,16 @@ class Form extends Ancestor {
 
 			$result = true;
 		} catch (\Exception $e) {
-			DX($e->getMessage());
+			//DX($e->getMessage());
 			$result = false;
+		}
+
+		// Run external saving, eg for connection tables
+		// for example: tags
+		if ($result == true) {
+			foreach ($this->sections as $key => $one) {
+				$one->saveExternalData();
+			}
 		}
 
 		$this->preparedData = $data;

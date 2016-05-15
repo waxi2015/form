@@ -17,7 +17,6 @@ class Config {
 		'label' => 'label.phtml',
 		'info' => 'info.phtml',
 		'description' => 'description.phtml',
-		'html' => 'html.phtml',
 
 		'hidden' => 'hidden.phtml',
 		'text' => 'text.phtml',
@@ -39,7 +38,10 @@ class Config {
 		'swap' => 'swap.phtml',
 		'slider' => 'slider.phtml',
 		'autocomplete' => 'autocomplete.phtml',
+		'tags' => 'tags.phtml',
 		
+		'html' => 'html.phtml',
+		'table' => 'table.phtml',
 		'editor' => 'editor.phtml',
 		
 		'anchor' => 'anchor.phtml',
@@ -65,6 +67,7 @@ class Config {
 		'emptyCheckboxgroup' => 'form.validators.empty.emptyCheckboxgroup',
 		'emptyRadio' => 'form.validators.empty.emptyRadio',
 		'emptyRadiogroup' => 'form.validators.empty.emptyRadiogroup',
+		'emptyTags' => 'form.validators.empty.emptyTags',
 		
 		'autocompleteNew' => 'form.validators.empty.autocompleteNew',
 	);

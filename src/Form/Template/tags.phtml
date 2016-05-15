@@ -1,0 +1,14 @@
+<div class="form-group wax-element wax-tags <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+
+	<?=$this->getPrefix()?>
+	<input type="text" class="form-control" id="<?=$this->getId()?>" name="<?=$this->getName(true)?>" <?=$this->getPlaceholder()?> value="<?=$this->getValue(false)?>" <?=$this->getAdditionalAttributes()?> />
+	<?=$this->getSuffix()?>
+
+	<?=$this->fetchTemplate('description')?>
+	<?=$this->fetchTemplate('error')?>
+</div>
+
+<?=$this->fetchJavascript()?>
+
+<?=$this->fetchJavascript('validator.phtml')?>
