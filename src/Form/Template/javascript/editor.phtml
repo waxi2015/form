@@ -4,7 +4,8 @@
 			form: '#<?=$this->formIdentifier?>',
 			fieldId: '<?=$this->getId()?>',
 			fieldName: '<?=$this->getName(true, $language)?>',
-			css: '/css/editor/<?=$this->getCss()?>.css?<?=time()?>',
+			css: '<?=$this->getCss()?>?<?=time()?>',
+			toolbar: <?=json_encode($this->getToolbar())?>,
 		})
 	});
 <? $this->scriptCaptureEnd('PREPEND'); ?>

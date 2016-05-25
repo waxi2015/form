@@ -136,6 +136,14 @@ class Tags extends Select {
 
 		return $return;
 	}
+
+	public function getPlaceholder () {
+		if ($this->placeholder !== null) {
+			return 'placeholder="' . $this->placeholder . '"';
+		}
+
+		return false;
+	}
  }
 
  /* 
