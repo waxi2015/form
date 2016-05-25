@@ -109,6 +109,7 @@ class Brow extends Structure {
 		$bcolumnObj->formIdentifier = $this->formIdentifier;
 		//$bcolumnObj->descriptorName = $this->getDescriptorName();
 		$bcolumnObj->formDescriptor = $this->formDescriptor;
+		$bcolumnObj->viewMode = $this->viewMode;
 		$bcolumnObj->setTemplateDirectory($this->getTemplateDirectory());
 		$bcolumnObj->registryNamespace = $this->registryNamespace;
 		$bcolumnObj->setParent($this);

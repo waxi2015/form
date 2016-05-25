@@ -92,6 +92,7 @@ class Row extends Structure {
 		$columnObj->formIdentifier = $this->formIdentifier;
 		//$columnObj->descriptorName = $this->getDescriptorName();
 		$columnObj->formDescriptor = $this->formDescriptor;
+		$columnObj->viewMode = $this->viewMode;
 		$columnObj->setTemplateDirectory($this->getTemplateDirectory());
 		$columnObj->registryNamespace = $this->registryNamespace;
 		$columnObj->setParent($this);

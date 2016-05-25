@@ -1,0 +1,13 @@
+<div class="<?=$this->getClass()?> form-group wax-element wax-image <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+
+	<div class="image-container">
+		<div id="<?=$this->getId()?>-previews" class="image-previews">
+			<? if (!empty($this->getValue())): ?>
+				<img class="image-preview" src="<?=$this->getImageUrl()?>" />
+			<? endif; ?>
+			<img class="image-default<?=$this->renderDefaultHidden()?>" src="<?=$this->getDefaultImageUrl()?>" />
+		</div>
+	</div>
+
+</div>

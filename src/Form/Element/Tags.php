@@ -122,6 +122,20 @@ class Tags extends Select {
 		
 		$this->value = $value;
 	}
+
+	public function getSelectedTags () {
+		$tags = explode(',',$this->getValue());
+		$items = $this->getItems();
+
+		$return = [];
+		foreach ($tags as $tag) {
+			if (isset($items[$tag])) {
+				$return[$tag] = $items[$tag];
+			}
+		}
+
+		return $return;
+	}
  }
 
  /* 

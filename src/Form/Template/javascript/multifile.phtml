@@ -15,7 +15,7 @@
 			<? if ($this->hasFields()): ?>
 				fields: [
 					<? foreach ($this->getFields() as $key => $one): ?>
-						{name: '<?=$one["name"]?>', placeholder: '<?=$one["placeholder"]?>'},
+						{name: '<?=$one["name"]?>', placeholder: '<?=$one["placeholder"]?>', type: '<?=isset($one["type"])?$one["type"]:""?>'},
 					<? endforeach; ?>
 				]
 			<? endif; ?>

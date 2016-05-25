@@ -121,6 +121,7 @@ class Bcolumn extends Structure {
 		$rowObj->formIdentifier = $this->formIdentifier;
 		//$rowObj->descriptorName = $this->getDescriptorName();
 		$rowObj->formDescriptor = $this->formDescriptor;
+		$rowObj->viewMode = $this->viewMode;
 		$rowObj->setTemplateDirectory($this->getTemplateDirectory());
 		$rowObj->registryNamespace = $this->registryNamespace;
 		$rowObj->setParent($this);

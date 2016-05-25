@@ -118,6 +118,7 @@ class Section extends Structure {
 		$browObj->formIdentifier = $this->formIdentifier;
 		//$browObj->descriptorName = $this->getDescriptorName();
 		$browObj->formDescriptor = $this->formDescriptor;
+		$browObj->viewMode = $this->viewMode;
 		$browObj->setTemplateDirectory($this->getTemplateDirectory());
 		$browObj->registryNamespace = $this->registryNamespace;
 		$browObj->setParent($this);

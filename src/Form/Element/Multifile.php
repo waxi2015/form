@@ -57,6 +57,14 @@ class Multifile extends Element {
 		return $this->fields;
 	}
 
+	public function getFieldValue ($value, $field) {
+		if (isset($value[$field])) {
+			return $value[$field];
+		}
+
+		return;
+	}
+
 	public function getMaxFileSize () {
 		return $this->maxFileSize;
 	}

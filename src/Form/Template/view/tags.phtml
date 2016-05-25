@@ -1,0 +1,10 @@
+<div class="form-group wax-element wax-tags <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+
+	<div class="wax-element-view">
+		<? $i = 0; $count = count($this->getSelectedTags()); foreach ($this->getSelectedTags() as $tag): $i++; ?>
+			<?=$tag.($count>$i?', ':'')?>
+		<? endforeach; ?>
+	</div>
+	
+</div>

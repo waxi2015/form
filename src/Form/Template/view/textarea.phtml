@@ -1,0 +1,11 @@
+<? foreach ($this->getInstances() as $language): ?>
+
+<div class="<?=$this->getClass()?> form-group wax-element wax-textarea <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+
+	<div class="wax-element-view">
+		<?=nl2br($this->getValue(false, $language))?>
+	</div>
+</div>
+
+<? endforeach; ?>

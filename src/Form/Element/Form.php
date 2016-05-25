@@ -165,6 +165,10 @@ class Form extends Ancestor {
 			$this->steps = $descriptor['steps'];
 		}
 
+		if (isset($descriptor['viewMode'])) {
+			$this->viewMode = $descriptor['viewMode'];
+		}
+
 		$this->setSections();
 
 		parent::__construct($descriptor);
@@ -823,6 +827,7 @@ class Form extends Ancestor {
 		$sectionObj->formIdentifier = $this->formIdentifier;
 		//$sectionObj->descriptorName = $this->getDescriptorName();
 		$sectionObj->formDescriptor = $this->formDescriptor;
+		$sectionObj->viewMode = $this->viewMode;
 		$sectionObj->setTemplateDirectory($this->getTemplateDirectory());
 		$sectionObj->registryNamespace = $this->registryNamespace;
 		$sectionObj->setParent($this);

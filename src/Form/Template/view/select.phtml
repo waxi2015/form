@@ -1,0 +1,22 @@
+<div class="form-group wax-element wax-select <?=$this->getClass()?> <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	
+	<div class="wax-element-view">
+		<? foreach ($this->getItems() as $key => $item): ?>
+			<? if (is_array($item)): ?>
+				<b><?=$item['label']?></b><br />
+					<? foreach ($item['items'] as $value => $label): ?>
+						<? if ($this->getSelected($value, true)): ?>
+							<?=$label?><br />
+						<? endif; ?>
+					<? endforeach; ?>
+				</optgroup>
+			<? else: ?>
+				<? if ($this->getSelected($key, true)): ?>
+					<?=$item?><br />
+				<? endif; ?>
+			<? endif; ?>
+		<? endforeach; ?>
+	</div>
+	
+</div>

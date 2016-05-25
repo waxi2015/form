@@ -263,7 +263,7 @@ class Element extends Ancestor {
 	}
 
 	public function getDisabled () {
-		if ($this->disabled) {
+		if ($this->disabled || $this->viewMode === true) {
 			return 'disabled';
 		} else {
 			if ($this->hasCondition()) {

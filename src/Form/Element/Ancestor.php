@@ -74,6 +74,8 @@ class Ancestor {
 
 	public $multilingual = false;
 
+	public $viewMode = false;
+
 	public function __construct($descriptor, $nth = null) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -97,6 +99,10 @@ class Ancestor {
 
 		if (isset($this->descriptor['data'])) {
 			$this->data = $this->descriptor['data'];
+		}
+
+		if (isset($this->descriptor['viewMode'])) {
+			$this->viewMode = $this->descriptor['viewMode'];
 		}
 
 		$this->isCloneable = isset($this->descriptor['clone']) && $this->descriptor['clone'] ? true : false;
@@ -919,10 +925,26 @@ class Ancestor {
 	public function getTemplatesToRender () {
 		$config = $this->getConfig();
 
-		$pathToTemplate = $this->getTemplateDirectory() . $this->getTemplate();
+		$pathToTemplate = '';
+
+		if ($this->viewMode === true) {
+			$pathToTemplate = $this->templateDirectory . 'view/' . $this->getTemplate();
+
+			if (!file_exists($pathToTemplate)) {
+				$pathToTemplate = resource_path('views/form/') . 'view/' . $this->getTemplate();
+			}
+
+			if (!file_exists($pathToTemplate)) {
+				$pathToTemplate = $this->getTemplateDirectory() . 'view/' . $this->getTemplate();
+			}
+		}
 
 		if (!file_exists($pathToTemplate)) {
-			$pathToTemplate = $config->getTemplateDirectory() . $this->getTemplate();
+			$pathToTemplate = resource_path('views/form/') . $this->getTemplate();
+		}
+
+		if (!file_exists($pathToTemplate)) {
+			$pathToTemplate = $this->getTemplateDirectory() . $this->getTemplate();
 		}
 
 		$return = array(
@@ -952,7 +974,7 @@ class Ancestor {
 	public function getTemplateDirectory () {
 		if (!$this->templateDirectory) {
 			$config = $this->getConfig();
-			return __DIR__ . '/../' . $config->getTemplateDirectory();
+			return __DIR__ . '/..' . $config->getTemplateDirectory();
 		}
 
 		return $this->templateDirectory;
@@ -1027,6 +1049,8 @@ class Ancestor {
 		$paths = array(
 			$this->getTemplateDirectory() . $this->getType() . '/' . $name,
 			$this->getTemplateDirectory() . $name,
+			resource_path('views/form/') . $this->getType() . '/' . $name,
+			resource_path('views/form/') . $name,
 			$config->getTemplateDirectory() . $this->getType() . '/' . $name,
 			$config->getTemplateDirectory() . $name
 		);
@@ -1041,7 +1065,7 @@ class Ancestor {
 		}
 
 		if (!$pathToTemplate) {
-			throw new Exception('Template "'.$name.'" not found in paths: ' . implode($paths, ':'),1);
+			throw new \Exception('Template "'.$name.'" not found in paths: ' . implode($paths, ':'),1);
 			return false;
 		}
 

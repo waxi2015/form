@@ -93,7 +93,7 @@ class Config {
 	public $defaultElementType = 'text';
 
 	public function getTemplateDirectory () {
-		return __DIR__ . $this->templateDirectory;
+		return $this->templateDirectory;
 	}
 
 	public function getTemplate ($element) {

@@ -148,6 +148,7 @@ class Column extends Structure {
 		$elementObj->formIdentifier = $this->formIdentifier;
 		//$elementObj->descriptorName = $this->getDescriptorName();
 		$elementObj->formDescriptor = $this->formDescriptor;
+		$elementObj->viewMode = $this->viewMode;
 		$elementObj->setTemplateDirectory($this->getTemplateDirectory());
 		$elementObj->registryNamespace = $this->registryNamespace;
 		$elementObj->setParent($this);
