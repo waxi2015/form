@@ -459,10 +459,17 @@ class Form extends Ancestor {
 			$action = 'update';
 		}
 
+		# remove nosave data from data
+		# so that we can pass variables from
+		# before events to after events
+		# without effecting the query
+		$dbData = $data;
+		unset($dbData['nosave']);
+
 		try {
 			switch ($action) {
 				case 'insert':
-					\DB::table($this->table)->insert($data);
+					\DB::table($this->table)->insert($dbData);
 
 					$id = \DB::getPdo()->lastInsertId();
 					$data[$this->idField] = $id;
@@ -471,7 +478,7 @@ class Form extends Ancestor {
 					break;
 
 				case 'update':
-					\DB::table($this->table)->where($this->idField, $id)->update($data);
+					\DB::table($this->table)->where($this->idField, $id)->update($dbData);
 					break;
 			}
 
@@ -509,8 +516,13 @@ class Form extends Ancestor {
 			return;
 		}
 
+		$data = null;
 		foreach ($this->before as $one) {
-			$this->runMethod($one);
+			$this->runMethod($one, $data);
+
+			if ($one['updateData']) {
+				$data = $this->preparedData;
+			}
 		}
 	}
 
@@ -521,14 +533,26 @@ class Form extends Ancestor {
 
 		$return = null;
 		foreach ($this->after as $one) {
-			$return = $this->runMethod($one);
+			$data = null;
+
+			# this will pass exactly the data
+			# that is received by insert/update queries
+			# + nosave parameter so that before and after
+			# can communicate
+			if (isset($one['workWithSaveData']) && $one['workWithSaveData'] == true) {
+				$data = $this->preparedData;
+			}
+
+			$return = $this->runMethod($one, $data);
 		}
 
 		return $return;
 	}
 
-	public function runMethod ($obj) {
-		$data = $this->prepareRawData();
+	public function runMethod ($obj, $data = null) {
+		if ($data === null) {
+			$data = $this->prepareRawData();
+		}
 
 		if (is_array($obj)) {
 			$class = $obj['class'];

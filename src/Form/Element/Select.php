@@ -35,7 +35,7 @@ class Select extends Element {
 			$this->items[''] = $this->getEmptyText();
 		}
 		
-		if (isset($this->descriptor['items']) && (empty($this->items) || (count($this->items) == 1 && $this->items[''] == $this->getEmptyText()))) {
+		if (isset($this->descriptor['items']) && (empty($this->items) || (count($this->items) == 1 && isset($this->items['']) && $this->items[''] == $this->getEmptyText()))) {
 			$this->items = $this->items + $this->descriptor['items'];
 		}
 		

@@ -100,6 +100,10 @@ class FormController extends Controller
 			if (isset($result['params'])) {
 				$response['params'] = $result['params'];
 			}
+			
+			if (isset($result['after'])) {
+				$response['after'] = $result['after'];
+			}
 		}
 		$response['html'] = $form->fetch();
 
