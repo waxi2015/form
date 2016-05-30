@@ -520,7 +520,7 @@ class Form extends Ancestor {
 		foreach ($this->before as $one) {
 			$this->runMethod($one, $data);
 
-			if ($one['updateData']) {
+			if (isset($one['updateData']) && $one['updateData']) {
 				$data = $this->preparedData;
 			}
 		}

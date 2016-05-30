@@ -455,7 +455,7 @@ class Element extends Ancestor {
 			$newOptions = array();
 
 			if (!isset($options['message'])) {
-				$options['message'] = trans($this->getValidatorMessage($value));
+				$options['message'] = trans($this->getValidatorMessage($validator));
 			}
 
 			switch ($validator) {
