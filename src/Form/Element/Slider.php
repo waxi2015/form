@@ -25,6 +25,12 @@ class Slider extends Element {
 	public $minSelector = null;
 
 	public $maxSelector = null;
+	
+	public $format = false;
+	
+	public $prefix = false;
+
+	public $suffix = false;
 
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
@@ -69,6 +75,18 @@ class Slider extends Element {
 
 		if (isset($this->descriptor['maxSelector'])) {
 			$this->maxSelector = $this->descriptor['maxSelector'];
+		}
+
+		if (isset($this->descriptor['format'])) {
+			$this->format = $this->descriptor['format'];
+		}
+
+		if (isset($this->descriptor['prefix'])) {
+			$this->prefix = $this->descriptor['prefix'];
+		}
+
+		if (isset($this->descriptor['suffix'])) {
+			$this->suffix = $this->descriptor['suffix'];
 		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
@@ -145,6 +163,18 @@ class Slider extends Element {
 
 	public function getMaxSelector () {
 		return replacePatternToClassAsset('/(%[a-zA-Z0-9]+\({0,1}\){0,1})/', $this->maxSelector, $this);
+	}
+
+	public function isFormat () {
+		return $this->format;
+	}
+
+	public function getPrefix () {
+		return $this->prefix;
+	}
+
+	public function getSuffix () {
+		return $this->suffix;
 	}
 }
 

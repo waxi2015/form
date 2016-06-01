@@ -34,6 +34,15 @@
 
 	<div class="dropzone-previews" style="display: none;"></div>
 
+	<div id="<?=$this->getId($language)?>-preview-template" class="preview-template hidden">
+		<div class="file">
+			<a href="" class="remove"><span class="fa fa-remove"></span></a>
+			<a href="" target="_blank" class="name file-path-template file-name-template"></a>
+			<input type="hidden" class="file-name-input-template" />
+			<input class="input-template" />
+		</div>
+	</div>
+
 	<?=$this->fetchTemplate('description')?>
 	<?=$this->fetchTemplate('error', array('language' => $language))?>
 </div>

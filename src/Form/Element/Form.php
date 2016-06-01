@@ -373,6 +373,7 @@ class Form extends Ancestor {
 			# save form data
 			$result = $this->saveData();
 		}
+
 		# if it's a success
 		if ($result == true) {
 			# do multilingual converting
@@ -430,6 +431,8 @@ class Form extends Ancestor {
 		# decode the id
 		if (isset($data[$this->idElement]) && !empty($data[$this->idElement])) {
 			$data[$this->idElement] = decode($data[$this->idElement]);
+		} elseif (!empty($this->getRequestParam($this->idElement))) {
+			$data[$this->idElement] = $this->getRequestParam($this->idElement);
 		}
 
 		return $data;
@@ -484,7 +487,7 @@ class Form extends Ancestor {
 
 			$result = true;
 		} catch (\Exception $e) {
-			//DX($e->getMessage());
+			DX($e->getMessage());
 			$result = false;
 		}
 

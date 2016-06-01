@@ -1170,4 +1170,8 @@ class Ancestor {
 
 		return 0;
 	}
+
+	public function isViewMode () {
+		return $this->viewMode;
+	}
 }

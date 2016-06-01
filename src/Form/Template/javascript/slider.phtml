@@ -10,6 +10,9 @@
 			orientation : '<?=$this->orientation?>',
 			enabled : <?=($this->getDisabled() === false ? 'true' : 'false')?>,
 			range: <?=$this->range === true ? 'true' : 'false'?>,
+			format: <?=$this->isFormat() === true ? 'true' : 'false'?>,
+			prefix: '<?=$this->getPrefix()?>',
+			suffix: '<?=$this->getSuffix()?>',
 			<? if (!empty($this->getValueString())): ?>
 				value : <?=$this->getValueString()?>,
 			<? endif; ?>
