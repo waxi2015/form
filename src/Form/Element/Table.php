@@ -67,6 +67,10 @@ class Table extends Element {
 
 			foreach ($this->descriptor['assign'] as $fromVar => $toVar) {
 				if (isset($rp[$fromVar])) {
+					# bloody hack because on webaxis server ids were encoded for some reason...
+					if (!ctype_digit($rp[$fromVar]) && strlen($rp[$fromVar]) > 15) {
+						$rp[$fromVar] = decode($rp[$fromVar]);
+					}
 					$vars[$toVar] = $rp[$fromVar];
 				}
 			}
