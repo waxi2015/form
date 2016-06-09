@@ -21,4 +21,8 @@ class Textarea extends Element {
 
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
+
+	public function isAutogrow () {
+		return $this->autogrow;
+	}
 }

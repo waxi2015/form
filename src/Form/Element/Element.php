@@ -464,6 +464,7 @@ class Element extends Ancestor {
 					$newOptions['type'] = 'POST';
 					$newOptions['url'] = '/wx/form/validationremote';
 					$newOptions['data'] = [
+						'id' => $this->getRequestParam('id'),
 						'element' => $this->getName(false),
 						'key' => $this->getValueKey(),
 						'descriptor' => encode(serialize($this->formDescriptor)),

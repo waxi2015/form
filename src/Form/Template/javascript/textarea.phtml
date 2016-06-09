@@ -1,8 +1,10 @@
 <? $this->scriptCaptureStart(); ?>
+	<? if ($this->isAutogrow()): ?>
 	$(function(){
 		waxform.textarea({
 			form: '#<?=$this->formIdentifier?>',
 			fieldName: '<?=$this->getName(true, $language)?>',
 		});
 	})
+	<? endif; ?>
 <? $this->scriptCaptureEnd('PREPEND'); ?>

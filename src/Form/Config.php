@@ -79,6 +79,7 @@ class Config {
 		'uri' => '\Waxis\Form\Form\Validator\Uri',
 		'identical' => '\Waxis\Form\Form\Validator\Identical',
 		'autocomplete' => '\Waxis\Form\Form\Validator\Autocomplete',
+		'securePassword' => '\Waxis\Form\Form\Validator\SecurePassword',
 	);
 
 	public $decorators = array(

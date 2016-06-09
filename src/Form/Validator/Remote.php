@@ -11,11 +11,22 @@ class Remote extends Ancestor {
         $method = getValue($this->options, 'method');
         $table = getValue($this->options, 'table');
         $field = getValue($this->options, 'field');
+        $id = getValue($context, 'id');
+
+        if (!empty($id) && !ctype_digit($id)) {
+            $id = decode($id);
+        }
 
         if ($table && $field) {
-            $result = !(bool) \DB::table($table)->where($field, $value)->count();
+            $query = \DB::table($table)->where($field, $value);
+
+            if (!empty($id)) {
+                $query->where('id', '!=', $id);
+            }
+
+            $result = !(bool) $query->count();
         } else {
-            $result = $class::$method($value);
+            $result = $class::$method($value, $id);
         }
 
         if ($result === true) {
