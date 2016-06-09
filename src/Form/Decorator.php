@@ -22,6 +22,14 @@ class Decorator {
 			case 'wordlimit':
 				$class = new Decorator\Wordlimit($options);
 				break;
+
+			case 'colorpicker':
+				$class = new Decorator\Colorpicker($options);
+				break;
+
+			case 'datepicker':
+				$class = new Decorator\Datepicker($options);
+				break;
 			
 			default:
 				$class = new Decorator\Wordimit($options);

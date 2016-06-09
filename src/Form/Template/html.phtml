@@ -1,9 +1,5 @@
-<? if ($this->isPlain()): ?>
+<div class="<?=$this->getClass()?> form-group wax-element wax-html" id="<?=$this->getId()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
 	<?=$this->getContent()?>
-<? else: ?>
-	<div class="<?=$this->getClass()?> form-group wax-element wax-html" id="<?=$this->getId()?>" <?=$this->getData()?>>
-		<?=$this->fetchTemplate('label')?>
-		<?=$this->getContent()?>
-		<?=$this->fetchTemplate('description')?>
-	</div>
-<? endif; ?>
+	<?=$this->fetchTemplate('description')?>
+</div>

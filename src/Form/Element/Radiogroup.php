@@ -14,9 +14,29 @@ class Radiogroup extends Element {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
 		}
+
+		if (isset($this->descriptor['source']) && !isset($this->descriptor['items'])) {
+			$this->descriptor['items'] = $this->descriptor['source'];
+		}
 		
 		if (isset($this->descriptor['items'])) {
-			$this->items = $this->descriptor['items'];
+			$items = $this->descriptor['items'];
+
+			if (isset($items['class']) && isset($items['method'])) {
+				$class = $items['class'];
+				$method = $items['method'];
+				$items = new $class;
+				$items = $items->$method();
+			}
+
+			if (!is_array($items) && strstr($items, '::')){
+				$items = explode('::',$items);
+				$class = $items[0];
+				$method = $items[1];
+				$items = call_user_func($class . '::' . $method);
+			}
+
+			$this->items = $items;
 		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
@@ -40,8 +60,8 @@ class Radiogroup extends Element {
 		if ($requestValue === null && $this->defaultValue === null) {
 			return false;
 		}
-
-		if (($requestValue !== null && $value == $requestValue) || (!$this->isPost && $value == $this->defaultValue)) {
+		
+		if (($requestValue !== null && $value == $requestValue) || (!$this->isPost && $value == $this->defaultValue && $this->defaultValue !== null)) {
 			return 'checked="checked"';
 		}
 

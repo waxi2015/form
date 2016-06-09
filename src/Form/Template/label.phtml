@@ -1,6 +1,6 @@
 <? if ($this->getLabel()): ?>
 	<label for="<?=$this->getLabelFor()?>">
-		<?=$this->getLabel()?>
+		<?=$this->getLabel()?><? if ($this->required == true): ?><sup>*</sup><? endif; ?>
 		<?=$this->fetchTemplate('info')?>
 	</label>
 <? endif; ?>

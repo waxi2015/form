@@ -21,6 +21,8 @@ class Select extends Element {
 	public $emptyText = '---';
 
 	public $emptyMessageType = 'emptySelect';
+	
+	public $showCount = false;
 
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
@@ -54,6 +56,10 @@ class Select extends Element {
 		if (isset($this->descriptor['search'])) {
 			$this->search = $this->descriptor['search'];
 		}
+		
+		if (isset($this->descriptor['showCount'])) {
+			$this->showCount = $this->descriptor['showCount'];
+		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
@@ -76,7 +82,13 @@ class Select extends Element {
 
 	public function getMultiple () {
 		if ($this->multiple) {
-			return 'multiple';
+			$return = 'multiple';
+
+			if ($this->showCount === true) {
+				 $return .= ' data-selected-text-format="count"';
+			}
+
+			return $return;
 		}
 
 		return false;

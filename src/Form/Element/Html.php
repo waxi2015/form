@@ -18,7 +18,12 @@ class Html extends Element {
 		}
 
 		if (isset($descriptor['content'])) {
-			$this->content = $descriptor['content'];
+			if (strstr($descriptor['content'], '.phtml')) {
+				$this->content = $this->fetchTemplateByName($descriptor['content']);
+			} else {
+				$this->content = $descriptor['content'];
+			}
+
 		}
 
 		if (isset($descriptor['plain'])) {
