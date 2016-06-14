@@ -14,6 +14,8 @@ class Multifile extends Element {
 
 	public $acceptedFiles = '.pdf,.docx,.doc,.xls,.xlsx,.ppt,.pptx,.txt';
 
+	public $previewUrl = null;
+
 	public $folder = null;
 
 	public $limit = null;
@@ -40,6 +42,10 @@ class Multifile extends Element {
 
 		if (isset($descriptor['limit'])) {
 			$this->limit = $descriptor['limit'];
+		}
+
+		if (isset($descriptor['previewUrl'])) {
+			$this->previewUrl = $descriptor['previewUrl'];
 		}
 
 		if (isset($descriptor['folder'])) {
@@ -97,7 +103,15 @@ class Multifile extends Element {
 	}
 
 	public function getFileUrlBase () {
-		return '/' . $this->getConfig()->getUpload('file') . $this->getFolder();
+		$url = $this->getPreviewUrl();
+
+		if ($url === null) {
+			$url = '/' . $this->getConfig()->getUpload('file');
+		}
+
+		$url .= $this->getFolder();
+
+		return $url;
 	}
 
 	public function getFolder () {
@@ -178,5 +192,9 @@ class Multifile extends Element {
 
 	public function getAdditionalAttributes ($language = null) {
 		return $this->getReadonly() . ' ' . $this->getDisabled() . ' ' . $this->getTooltip() . ' ' . $this->getRequired() . ' ' . $this->getRel() . ' ' . $this->getElementData();
+	}
+
+	public function getPreviewUrl () {
+		return $this->previewUrl;
 	}
 }

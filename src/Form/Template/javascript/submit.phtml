@@ -1,0 +1,10 @@
+<? if ($this->canLoad()): ?>
+<? $this->scriptCaptureStart(); ?>
+	$(function(){
+		waxform.loader({
+			id: '<?=$this->getId()?>',
+			form: '#<?=$this->formIdentifier?>',
+		});
+	})
+<? $this->scriptCaptureEnd('PREPEND'); ?>
+<? endif; ?>

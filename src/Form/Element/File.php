@@ -12,6 +12,8 @@ class File extends Element {
 
 	public $acceptedFiles = '.pdf,.docx,.doc,.xls,.xlsx,.ppt,.pptx,.txt';
 
+	public $previewUrl = null;
+
 	public $folder = null;
 
 	public $translate = true;
@@ -28,6 +30,10 @@ class File extends Element {
 
 		if (isset($descriptor['acceptedFiles'])) {
 			$this->acceptedFiles = $descriptor['acceptedFiles'];
+		}
+
+		if (isset($descriptor['previewUrl'])) {
+			$this->previewUrl = $descriptor['previewUrl'];
 		}
 
 		if (isset($descriptor['folder'])) {
@@ -50,7 +56,15 @@ class File extends Element {
 	}
 
 	public function getFileUrl ($language = null) {
-		return '/' . $this->getConfig()->getUpload('file') . $this->getFolder() . $this->getValue(false, $language);
+		$url = $this->getPreviewUrl();
+
+		if ($url === null) {
+			$url = '/' . $this->getConfig()->getUpload('file');
+		}
+
+		$url .= $this->getFolder();
+
+		return $url . $this->getValue(false, $language);
 	}
 
 	public function getFolder () {
@@ -61,5 +75,9 @@ class File extends Element {
 		}
 
 		return $folder;	
+	}
+
+	public function getPreviewUrl () {
+		return $this->previewUrl;
 	}
 }

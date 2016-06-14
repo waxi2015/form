@@ -32,12 +32,23 @@ class FormController extends Controller
 				$path = 'uploads/images/' . $element->getImageDescriptor();
 				$file = $request->file('image');
 				$filename = md5($file->getClientOriginalName() . time()) . '.' . $file->getClientOriginalExtension();
+				$previewUrl = '/' . $path;
+				$returnFilename = $filename;
 				break;
 
 			case 'file':
 				$path = $form->getConfig()->getUpload('file') . $element->getFolder();
 				$file = $request->file('file');
-				$filename = $file->getClientOriginalName();
+				$filename = md5($file->getClientOriginalName() . time()) . '.' . $file->getClientOriginalExtension();
+				$previewUrl = $element->getPreviewUrl();
+
+				if ($previewUrl === null) {
+					$previewUrl = '/' . $path;
+				} else {
+					$previewUrl .=  $element->getFolder();
+				}
+
+				$returnFilename = $file->getClientOriginalName();
 
 				if (file_exists($path . $filename) && config('app.env') == 'production') {
 					return response(trans('form.file_exits_with_name'), 500);
@@ -56,6 +67,8 @@ class FormController extends Controller
 		$file->move($path, $filename);
 
 		return [
+			'previewUrl' => $previewUrl,
+			'filename' => $returnFilename,
 			'file' => $filename,
 			'path' => '/' . $path
 		];

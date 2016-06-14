@@ -1,7 +1,8 @@
 <? if (!$this->isViewMode()): ?>
 <div class="<?=$this->getClass()?> form-group wax-element wax-button wax-submit" <?=$this->getData()?>>
 	<?=$this->fetchTemplate('label')?>
-	<input type="submit" class="btn" id="<?=$this->getId()?>" value="<?=$this->getText()?>" name="<?=$this->getName()?>" />
+	<button class="btn" id="<?=$this->getId()?>" name="<?=$this->getName()?>"><?=$this->getText()?></button>
 	<?=$this->fetchTemplate('description')?>
 </div>
+<?=$this->fetchJavascript()?>
 <? endif; ?>

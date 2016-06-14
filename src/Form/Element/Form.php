@@ -212,12 +212,11 @@ class Form extends Ancestor {
 		}
 
 		if (\Auth::guard($this->getPermission())->check()) {
-
 			if ($this->getOwnerField() !== null && $recordId) {
 				$result = collect(\DB::table($this->getTable())
 					->where('id', $recordId)->first())->toArray();
 
-				if (isset($result[$this->getOwnerField()]) && $result[$this->getOwnerField()] == \Auth::guard('admin')->user()->id) {
+				if (isset($result[$this->getOwnerField()]) && $result[$this->getOwnerField()] == \Auth::guard($this->getPermission())->user()->id) {
 					return true;
 				}
 
@@ -358,20 +357,28 @@ class Form extends Ancestor {
 		# if we should save
 		if ($this->save !== null) {
 			# if we should do something before saving
+			$beforeResult = true;
 			if ($this->before !== null) {
-				$this->runBefore();
+				$beforeResult = $this->runBefore();
 			}
 
-			# do multilingual converting
-			if ($this->isMultilingual()) {
-				$this->convertMultilingual('before');
+			# we should break the process if anytime
+			# a before returns false
+			if ($beforeResult === false) {
+				$result = false;
+			} else {
+				# do multilingual converting
+				if ($this->isMultilingual()) {
+					$this->convertMultilingual('before');
+				}
+				
+
+				$this->preparedData = $this->convertMultiDataToJson($this->preparedData);
+
+				# save form data
+				$result = $this->saveData();
 			}
-			
 
-			$this->preparedData = $this->convertMultiDataToJson($this->preparedData);
-
-			# save form data
-			$result = $this->saveData();
 		}
 
 		# if it's a success
@@ -521,7 +528,11 @@ class Form extends Ancestor {
 
 		$data = null;
 		foreach ($this->before as $one) {
-			$this->runMethod($one, $data);
+			$result = $this->runMethod($one, $data);
+
+			if ($result === false) {
+				return false;
+			}
 
 			if (isset($one['updateData']) && $one['updateData']) {
 				$data = $this->preparedData;
@@ -547,6 +558,10 @@ class Form extends Ancestor {
 			}
 
 			$return = $this->runMethod($one, $data);
+
+			if ($return === false) {
+				return false;
+			}
 		}
 
 		return $return;
@@ -577,6 +592,10 @@ class Form extends Ancestor {
 			} else {
 				$instance = new $class($data, $params, $this);
 				$result = $instance->$method($data, $params, $this);
+			}
+
+			if ($result === false) {
+				return false;
 			}
 
 			if ($updateData) {
