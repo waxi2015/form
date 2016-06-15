@@ -187,7 +187,7 @@ class FormController extends Controller
 	public function prefetch (Request $request) {
 		$rp = $request->all();
 
-		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
+		$form = new \Form(unserialize(decode(urldecode($rp['descriptor']))), $rp);
 
 		if (!$form->isPermitted()) {
 			return [];
