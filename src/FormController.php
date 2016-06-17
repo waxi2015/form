@@ -171,7 +171,7 @@ class FormController extends Controller
 
 		$query = $rp['query'];
 
-		$form = new \Form(unserialize(decode($rp['descriptor'])), $rp);
+		$form = new \Form(unserialize(decode(urldecode($rp['descriptor']))), $rp);
 
 		if (!$form->isPermitted()) {
 			return [];

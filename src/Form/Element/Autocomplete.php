@@ -135,6 +135,7 @@ class Autocomplete extends Element {
 
 		}
 
+		$temp = [];
 		foreach ($items as $key => $one) {
 			$temp[$key] = is_object($one) ? (array) $one : $one;
 		}
