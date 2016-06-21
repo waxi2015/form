@@ -53,6 +53,10 @@
 
 					this.initInputTooltip();
 					this.initCssHelpers();
+
+					$('#' + this.formId).submit(function(e){
+						e.preventDefault();
+					});
 				},
 
 				initCssHelpers : function () {
@@ -64,6 +68,8 @@
 				},
 
 				initDecorators : function () {
+					var form = $('#' + this.formId);
+
 					$('#' + this.formId).find('[data-decorator-type]').each(function(){
 						switch ($(this).attr('data-decorator-type')) {
 							case 'charlimit':
@@ -91,12 +97,32 @@
 
 								$(this).counter(options);
 								break;
+
+							case 'colorpicker':
+								waxform.colorpicker($(this));
+								break;
+
+							case 'datepicker':
+								var that = this;
+
+								$(this).datepicker({
+									format: 'yyyy-mm-dd'
+								}).on('changeDate', function () {
+									form.formValidation('revalidateField', $(that).attr('name'));
+								});
+								break;
 						}
 					})
 				},
 
 				initValidation : function () {
 					var that = this;
+
+					if ($('#' + this.formId).attr('data-inited') == 'true') {
+						return;
+					}
+
+					$('#' + this.formId).attr('data-inited', 'true');					
 
 					$('#' + this.formId).formValidation({
 						framework: 'bootstrap',
@@ -121,8 +147,9 @@
 
 						if ($(that.element).attr('method').toLowerCase() == 'ajax') {
 			           		//e.preventDefault();
-							that.initAjaxSubmit();
+							//that.initAjaxSubmit();
 							//$(this.element).submit();
+							that.ajaxSubmit();
 						}
 			        })
 			        .on('prevalidate.form.fv', function(e) {
@@ -193,10 +220,10 @@
 				setSectionWithErrors : function () {
 					var form = $('#' + $(this.element).attr('id')),
 						target = form.find('.has-error:first'),
-						section = target.closest('section'),
-						sectionId = section.attr('id'),
+						brow = target.closest('.wax-brow'),
+						dataTab = brow.attr('data-tab'),
 						tabs = form.find('.wax-form-tabs'),
-						tab = tabs.find('[href="' + sectionId + '"]');
+						tab = tabs.find('[href="' + dataTab + '"]');
 
 					tab.addClass('contains-error');
 
@@ -204,7 +231,7 @@
 
 					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
-				    }, 1000);
+				    }, 500);
 				},
 
 				setStepWithErrors : function () {
@@ -222,7 +249,7 @@
 
 					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
-				    }, 1000);
+				    }, 500);
 				},
 
 				setLanguageWithErrors : function () {
@@ -236,7 +263,7 @@
 
 					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
-				    }, 1000);
+				    }, 500);
 				},
 
 				scrollToElementWithError : function () {
@@ -245,7 +272,7 @@
 
 					$('html, body, .st-container').animate({
 				        scrollTop: target.offset().top
-				    }, 1000);
+				    }, 500);
 				},
 
 				initRemoveCloneButton : function () {
@@ -287,6 +314,83 @@
 					$('#' + formId).formValidation('removeField', name);
 				},
 
+				ajaxSubmit : function () {
+					var wxform = this,
+						form = $(this.element),
+						success = form.attr('data-success') !== undefined ? form.attr('data-success') : false,
+						error = form.attr('data-error') !== undefined ? form.attr('data-error') : false,
+						before = form.attr('data-before') !== undefined ? form.attr('data-before') : false,
+						after = form.attr('data-after') !== undefined ? form.attr('data-after') : false;
+
+					var data = form.serialize();
+
+					if (wxform.settings.params !== undefined) {
+						$.each(wxform.settings.params, function (k,v) {
+							if (data.length > 0) {
+								data += '&'
+							}
+							data += k + '=' + v;
+						});
+					}
+
+					executeFunctionByName(before, window);
+
+					data += '&locale=' + Lang.getLocale();
+
+					form.find('.btn-can-load').button('loading');
+					$.post('/wx/form/validateform', data, function (response) {
+						if (window.letLeave === undefined) {
+							window.letLeave;
+						}
+
+						$('.btn-can-load').each(function(){
+							if ($(this).hasClass('disabled')) {
+								$(this).button('reset');
+							}
+						});
+						
+						executeFunctionByName(after, window, response);
+
+						if (response.after) {
+							$.each(response.after, function(k,func){
+								executeFunctionByName(func, window, response);
+							})
+						}
+
+						if (response.valid  !== undefined && response.valid.toString() == 'true') {
+							window.letLeave = true;
+							executeFunctionByName(success, window, response);
+						} else {
+							executeFunctionByName(error, window, response);
+						}
+
+						if (response.message !== undefined && response.message.length > 0) {
+							if (response.valid  !== undefined && response.valid.toString() == 'true') {
+								if (toastr) { toastr.success(Lang.get(response.message), Lang.get('form.success_msg_title')); }
+							} else {
+								if (toastr) { toastr.error(Lang.get(response.message), Lang.get('form.error_msg_title')); }
+							}
+						}
+
+						form.replaceWith(response.html);
+
+						if (response.valid.toString() == 'false') {
+							if ($('#' + form.attr('id')).find('.has-error').length > 0) {
+								if ($('#' + form.attr('id')).find('.wax-form-tabs, .wax-form-steps').length > 0) {
+									wxform.setSectionWithErrors();
+									wxform.setStepWithErrors();	
+								} else {
+									if ($('#' + form.attr('id')).find('.wax-form-language-selector').length > 0) {
+										wxform.setLanguageWithErrors();	
+									} else {
+										wxform.scrollToElementWithError();
+									}
+								}
+							}
+						}
+					});
+				},
+
 				initAjaxSubmit : function () {
 					var wxform = this,
 						form = $(this.element),
@@ -314,11 +418,20 @@
 						data += '&locale=' + Lang.getLocale();
 
 						$.post('/wx/form/validateform', data, function (response) {
-							letLeave = true;
+							if (window.letLeave === undefined) {
+								window.letLeave;
+							}
 							
 							executeFunctionByName(after, window, response);
 
+							if (response.after) {
+								$.each(response.after, function(k,func){
+									executeFunctionByName(func, window, response);
+								})
+							}
+
 							if (response.valid  !== undefined && response.valid.toString() == 'true') {
+								window.letLeave = true;
 								executeFunctionByName(success, window, response);
 							} else {
 								executeFunctionByName(error, window, response);

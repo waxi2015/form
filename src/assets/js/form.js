@@ -1,23 +1,231 @@
 var global = this;
 
 var waxform = {
+	loader: function (options) {
+		var form = $(options.form);
+
+		form.find('#' + options.id).addClass('btn-can-load');
+		form.find('#' + options.id).attr('data-loading-text', "<span class='fa fa-spinner fa-spin fa-3x fa-fw'></span>");
+	},
+	colorpicker : function (element) {
+		element.colorPicker({
+			customBG: '#222',
+			margin: '10px -2px 0',
+			doRender: 'div div',
+			cssAddon: // could also be in a css file instead
+				'.cp-color-picker{border:1px solid #e7e7e7; z-index: 100; padding:10px 10px 0;' +
+					'background:#fff; overflow:visible; border-radius:3px;}' +
+				'.cp-color-picker:after{content:""; display:block; ' +
+					'position:absolute; top:-15px; left:12px; border:8px solid #fff;' +
+					'border-color: transparent transparent #fff}' +
+				// simulate border...
+				'.cp-color-picker:before{content:""; display:block; ' +
+					'position:absolute; top:-16px; left:12px; border:8px solid #fff;' +
+					'border-color: transparent transparent #e7e7e7}' +
+				'.cp-xy-slider:active {cursor:none;}' +
+				'.cp-xy-slider{border:1px solid #e7e7e7; margin-bottom:10px;}' +
+				'.cp-xy-cursor{width:12px; height:12px; margin:-6px}' +
+				'.cp-z-slider{margin-left:10px; border:1px solid #e7e7e7;}' +
+				'.cp-z-cursor{border-width:5px; margin-top:-5px;}' +
+				'.cp-color-picker .cp-alpha{margin:10px 0 0; height:6px; border-radius:6px;' +
+					'overflow:visible; border:1px solid #e7e7e7; box-sizing:border-box;' +
+					'background: linear-gradient(to right, rgba(238,238,238,1) 0%,rgba(238,238,238,0) 100%);}' +
+				'.cp-color-picker .cp-alpha{margin:10px 0}' +
+				'.cp-alpha-cursor{background: #fff; border-radius: 100%;' +
+					'width:14px; height:14px; margin:-5px -7px; border:1px solid #666!important;' +
+					'box-shadow:inset -2px -4px 3px #ccc}',
+			renderCallback: function($elm, toggled) {
+				if (typeof toggled === 'boolean') {
+					$('.cp-alpha', this.$UI).css('display', 'none')
+				}
+			}
+		});
+	},
+	tags : function (options) {
+		var form = $(options.form);
+
+		var bloodhound = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			identify: function(obj) { return obj.text; },
+			local: options.items
+		});
+
+		var items = function (q, sync) {
+			if (q == '') {
+				sync(bloodhound.all());
+			}
+
+			else {
+				bloodhound.search(q, sync);
+			}
+		}
+		var elem = form.find('[name="'+options.fieldName+'"]');
+	
+		elem.tagsinput({
+			typeaheadjs: [{
+				minLength: 0,
+				highlight: true,
+			},{
+				limit: 50,
+				name: options.id,
+				displayKey: 'text',
+				source: items,
+			}],
+			itemText: 'text',
+			itemValue: 'id',
+			freeInput: false,
+			trimValue: true,
+			allowDuplicates: false,
+			onTagExists: function(item, $tag) {
+				$tag.hide().fadeIn();
+			}
+		});
+
+		elem.on('beforeItemAdd', function(event) {
+			var found = false;
+			$.each(elem.tagsinput('items'),function(k,v){
+				if (v.id == event.item.id) {
+					found = true;
+				}
+			})
+			if (found) {
+				event.cancel = true;
+			}
+		});
+
+		elem.bind('change',function(e) {
+            form.formValidation('revalidateField', options.fieldName);
+        })
+		
+		$.each(options.values, function(k,v){
+			elem.tagsinput('add', { id: v.id, text: v.text });
+		});
+	},
+
+	textarea : function (options) {
+		var form = $(options.form);
+
+		form.find('[name="'+options.fieldName+'"]').autogrow({vertical: true, horizontal: false});
+	},
+
 	tabs : function (options) {
 		var form = $(options.form);
 
-		form.find('section:not(:first):not(.no-tab)').hide();
-		form.find('.wax-form-tabs a:first').addClass('active');
+		var shouldShrink = function(section) {
+			var tabsContainer = section.find('.wax-form-tabs'),
+				tabsContainerWidth = tabsContainer.outerWidth(),
+				visibleTabs = tabsContainer.find('> a:not(.hided), .dropdown:not(.hided)'),
+				visibleTabsWidth = 0;
 
-		form.find('.wax-form-tabs a').click(function(e){
-			e.preventDefault();
+			visibleTabs.each(function(){
+				visibleTabsWidth += $(this).outerWidth();
+			});
 
-			var section = $(this).attr('href');
+			if (tabsContainerWidth < visibleTabsWidth) {
+				return true;
+			}
 
-			form.find('.wax-form-tabs a').removeClass('active');
-			form.find('.wax-form-tabs a[href="' + section + '"]').addClass('active');
+			return false;
+		}
 
-			form.find('section:not(.no-tab)').hide();
-			form.find('section#' + $(this).attr('href')).show();
-		})
+		var shrink = function (section) {
+			var tabsContainer = section.find('.wax-form-tabs');
+
+			var hided = tabsContainer.find('> a:not(.hided):last').addClass('hided');
+
+			section.find('.dropdown a[href="'+hided.attr('href')+'"]').removeClass('hided');
+
+			tabsContainer.find('.dropdown').removeClass('hided');
+
+			if (hided.hasClass('active')) {
+				tabsContainer.find('.dropdown-toggle').addClass('active');
+			}
+		}
+
+		var shouldGrow = function(section) {
+			var tabsContainer = section.find('.wax-form-tabs'),
+				tabsContainerWidth = tabsContainer.outerWidth(),
+
+				visibleTabs = tabsContainer.find('> a:not(.hided)'),
+				visibleTabsWidth = 0,
+				
+				dropdownTab = tabsContainer.find('> .dropdown'),
+				dropdownTabWidth = dropdownTab.outerWidth(),
+
+				firstInvisibleTab = tabsContainer.find('> a.hided:first'),
+				firstInvisibleTabWidth = firstInvisibleTab.outerWidth(),
+
+				hiddenTabsCount = tabsContainer.find('> a.hided').length;
+
+			visibleTabs.each(function(){
+				visibleTabsWidth += $(this).outerWidth();
+			});
+
+			if (hiddenTabsCount > 1) {
+				if (visibleTabsWidth + dropdownTabWidth + firstInvisibleTabWidth <= tabsContainerWidth) {
+					grow(section);
+				}
+			} else if (hiddenTabsCount == 1) {
+				if (visibleTabsWidth + firstInvisibleTabWidth <= tabsContainerWidth) {
+					grow(section);
+					tabsContainer.find('.dropdown').addClass('hided');
+				}
+			}
+		}
+
+		var grow = function (section) {
+			var tabsContainer = section.find('.wax-form-tabs');
+
+			var revealed = tabsContainer.find('> a.hided:first').removeClass('hided');
+
+			section.find('.dropdown a[href="'+revealed.attr('href')+'"]').addClass('hided');
+
+			if (revealed.hasClass('active')) {
+				tabsContainer.find('.dropdown-toggle').removeClass('active');
+			}
+		}
+
+		var resizeTabs = function (section) {
+			if (shouldShrink(section)) {
+				shrink(section);
+				resizeTabs(section);
+			} else if (shouldGrow(section)) {
+				grow(section);
+				resizeTabs(section);
+			}
+		}
+
+		form.find('section').each(function(){
+			var section = $(this);
+
+			setTimeout(function(){
+				resizeTabs(section);
+			}, 100);
+
+			$(window).resize(function(){
+				resizeTabs(section);
+			})
+
+			section.find('.wax-brow:not(:first):not(.no-tab)').addClass('hidden');
+			section.find('.wax-brow:first:not(.no-tab)').addClass('shown');
+			section.find('.wax-form-tabs a:first').addClass('active');
+
+			section.find('.wax-form-tabs a').click(function(e){
+				e.preventDefault();
+
+				var tab = $(this).attr('href');
+
+				if (tab != '') {
+					section.find('.wax-form-tabs a').removeClass('active');
+					section.find('.wax-form-tabs a[href="' + tab + '"]').addClass('active');
+					section.find('.wax-form-tabs a[href="' + tab + '"]:not(.hided)').closest('.dropdown').find('.dropdown-toggle').addClass('active');
+
+					section.find('.wax-brow:not(.no-tab)').removeClass('shown').addClass('hidden');
+					section.find('.wax-brow[data-tab="' + $(this).attr('href') + '"]').removeClass('hidden').addClass('shown');
+				}
+			});
+		});
 	},
 
 	steps : function (options) {
@@ -41,7 +249,38 @@ var waxform = {
 
 			form.find('section').hide();
 			form.find('section#' + section).show();
+
+			waxform.corrigateStepX(form);
+
+			$('html, body, .st-container').animate({
+		        scrollTop: form.offset().top
+		    }, 500);
 		})
+
+		form.find('.wax-step-nav').click(function(){
+			var lastActive = form.find('.wax-form-steps a.active').prev().addClass('completed');
+		});
+
+		$(window).resize(function(){
+			waxform.corrigateStepX(form);
+		})
+	},
+
+	corrigateStepX : function (form) {
+		var center = $(window).width() / 2,
+			active = form.find('.wax-form-steps a.active');
+
+		if (active.length == 0) {
+			return;
+		}
+
+		var activeLeft = active.offset().left,
+			activeCenter = (active.outerWidth() / 2) + activeLeft,
+			currentTransform = parseInt(form.find('.steps-container').css('transform').split(',')[4]) || 0,
+			correctionX = center - activeCenter,
+			newTransform = currentTransform + correctionX;
+
+		form.find('.wax-form-steps .steps-container').css({"transform":"translateX("+newTransform+"px)"});
 	},
 
 	languages : function (options) {
@@ -89,6 +328,10 @@ var waxform = {
 			range: options.range,
 		};
 
+		var format = options.format ? options.format : false,
+			prefix = options.prefix ? options.prefix : '',
+			suffix = options.suffix ? options.suffix : '';
+
 		if (options.value !== undefined) {
 			sliderOptions.value = options.value;
 		}
@@ -101,17 +344,35 @@ var waxform = {
 					})
 
 					if (options.minSelector !== undefined) {
-						$(options.minSelector).text(slideEvt.value[0]);
+						var value = slideEvt.value[0];
+
+						if (format) {
+							value = value.formatMoney(0, ',', ' ');
+						}
+
+						$(options.minSelector).text(prefix + value + suffix);
 					}
 
 					if (options.maxSelector !== undefined) {
-						$(options.maxSelector).text(slideEvt.value[1]);
+						var value = slideEvt.value[1];
+
+						if (format) {
+							value = value.formatMoney(0, ',', ' ');
+						}
+
+						$(options.maxSelector).text(prefix + value + suffix);
 					}
 				} else {
 					$('input[name="'+options.fieldName+'"]').val(slideEvt.value);
 
 					if (options.minSelector !== undefined) {
-						$(options.minSelector).text(slideEvt.value);
+						var value = slideEvt.value;
+
+						if (format) {
+							value = value.formatMoney(0, ',', ' ');
+						}
+
+						$(options.minSelector).text(prefix + value + suffix);
 					}
 				}
 
@@ -127,11 +388,23 @@ var waxform = {
 			});
 
 		if (options.minSelector !== undefined) {
-			$(options.minSelector).text(options.values[0]);
+			var value = options.values[0];
+			
+			if (format && typeof value == 'integer') {
+				value = value.formatMoney(0, ',', ' ');
+			}
+			
+			$(options.minSelector).text(prefix + value + suffix);
 		}
 
 		if (options.maxSelector !== undefined && options.values !== undefined) {
-			$(options.maxSelector).text(options.values[1]);
+			var value = options.values[1];
+
+			if (format && typeof value == 'integer') {
+				value = (value).formatMoney(0, ',', ' ');
+			}
+			
+			$(options.maxSelector).text(prefix + value + suffix);
 		}
 	},
 
@@ -359,19 +632,50 @@ var waxform = {
 			},
 			success : function (file, response){
 				$('#'+options.fieldId+'-progress').addClass('hidden');
+				$('#'+options.fieldId+'-previews .empty').addClass('hidden');
 
-				var previewBlock = '<div class="file">';
-					previewBlock += '	<a href="" class="remove"><span class="fa fa-remove"></a></a>';
-					previewBlock += '	<a class="name" href="' + options.fileBaseUrl + response.file + '">' + response.file + '</a>';
-					previewBlock += '	<input type="hidden" name="' + options.fieldName + '[0][file]" value="' + response.file + '" />';
+				var previewBlock = $('#'+options.fieldId+'-preview-template').find('.file').clone();
+
+				previewBlock.find('.file-path-template').attr('href', options.fileUrlBase + response.file).removeClass('file-path-template');
+				previewBlock.find('.file-name-template').html(response.filename).removeClass('file-name-template');
+				previewBlock.find('.file-name-download-template').attr('download', response.filename).removeClass('file-name-download-template');
+				previewBlock.find('.file-name-input-template').val(response.file).attr('name', options.fieldName + '[0][file]').removeClass('file-name-input-template');
+
+				var checkboxTemplate = previewBlock.find('.checkbox-template').clone();
+				var inputTemplate = previewBlock.find('.input-template').clone();
 
 				if (options.fields !== undefined) {
 					$.each(options.fields, function(k,v){
-						previewBlock += '<input id="'+options.fieldId+'-'+v.name+'" name="'+options.fieldName+'[0]['+v.name+']" placeholder="'+v.placeholder+'" />';
+						switch (v.type) {
+							case 'checkbox':
+								var checkboxInstance = checkboxTemplate.clone();
+								checkboxInstance.removeClass('checkbox-template');
+
+								checkboxInstance.attr('name', options.fieldName+'[0]['+v.name+']');
+
+								previewBlock.find('.input-template').before(checkboxInstance);
+								break;
+
+							case 'input':
+							case '':
+								var inputInstance = inputTemplate.clone();
+								inputInstance.removeClass('input-template');
+
+								inputInstance.attr('name', options.fieldName+'[0]['+v.name+']');
+								inputInstance.attr('placeholder', v.placeholder);
+
+								if (v.type.length > 0) {
+									inputInstance.attr('type', v.type);
+								}
+
+								previewBlock.find('.input-template').before(inputInstance);
+								break;
+						}
 					})
 				}
 
-				previewBlock += '</div>';
+				previewBlock.find('.checkbox-template').remove();
+				previewBlock.find('.input-template').remove();
 
 				$('#'+options.fieldId+'-previews').append(previewBlock);
 
@@ -508,7 +812,7 @@ var waxform = {
 				$('#'+options.fieldId+'-progress').addClass('hidden');
 
 				var preview =  '<div class="file">';
-					preview += '	<a href="" class="remove"><span class="fa fa-remove"></span></a> <a href="' + response.path + response.file + '" target="_blank" class="name">' + response.file + '</span>';
+					preview += '	<a href="" class="remove"><span class="fa fa-remove"></span></a> <a href="' + response.previewUrl + response.file + '" target="_blank" class="name">' + response.filename + '</span>';
 					preview += '</div>';
 
 				$('#'+options.fieldId+'-previews').html(preview);
@@ -583,16 +887,7 @@ var waxform = {
 
 			font_names : 'Arial,Times New Roman,Verdana,' + 'Open Sans/Open Sans,',
 
-			toolbar_Toolbar :
-			[
-				[ 'Format' ],
-				[ 'Bold', 'Italic', 'Underline', 'Strike'],
-				['BulletedList','NumberedList','Outdent','Indent'],
-				['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-				['Image','Youtube',',Table','Link','Unlink'],
-				['Undo','Redo'],
-				[ 'Source' ]
-			],
+			toolbar_Toolbar : options.toolbar,
 		});
 
 		$(window).resize(function(){
@@ -621,10 +916,11 @@ var waxform = {
 			case 'prefetch':
 				bloodhoundOptions.prefetch = {
 					cache: false,
-					url :'/wx/form/prefetch/?element=' + options.fieldPlainName,
+					url :'/wx/form/prefetch/',
 					prepare : function (settings) {
-						settings.type = 'POST';
+						settings.type = 'GET';
 						settings.data = {}
+						settings.data.element = options.fieldPlainName;
 						settings.data._token = form.find('input[name="_token"]').val();
 						settings.data.locale = Lang.getLocale();
 						settings.data.descriptor = form.find('input[name="formDescriptor"]').val();
@@ -640,7 +936,7 @@ var waxform = {
 					url :'/wx/form/suggest/?element=' + options.fieldPlainName + '&query=%QUERY',
 					prepare : function (query, settings) {
 						settings.url = settings.url.replace('%QUERY', query);
-						settings.type = 'POST';
+						settings.type = 'GET';
 						settings.data = {}
 						settings.data._token = form.find('input[name="_token"]').val();
 						settings.data.locale = Lang.getLocale();
@@ -792,14 +1088,17 @@ var waxform = {
 				}
 			};
 
-		form.find('[name="'+options.conditionFieldName+'"], [name="'+options.conditionFieldName+'[]"], [name^="'+options.conditionFieldName+'['+options.nth+']"]').bind('change', function(e){
-			e.preventDefault();
-
-			var domType = $(this)[0].tagName.toLowerCase(),
-				type = $(this).attr('type'),
+		var toggleFields = function (elem, compareWithElemValue) {
+			var domType = $(elem)[0].tagName.toLowerCase(),
+				type = $(elem).attr('type'),
 				element = form.find('[id^="'+options.cleanId+'"]'),
 				container = element.closest(options.hideSelector),
-				isValueTrue = options.isValueArray != true && options.value == true ? true : false;
+				isValueTrue = options.isValueArray != true && options.value == true ? true : false,
+				compareValue = $(elem).val();
+
+			if (compareWithElemValue === false) {
+				compareValue = $('[name="'+$(elem).attr('name')+'"]').val()
+			}
 
 			if (domType != 'input') {
 				type = domType;
@@ -807,7 +1106,7 @@ var waxform = {
 
 			switch (type) {
 				case 'checkbox':
-					if ($(this).is(':checked')) {
+					if ($(elem).is(':checked')) {
 						changeEnabled(true, container);
 					} else {
 						changeEnabled(false, container);
@@ -819,15 +1118,15 @@ var waxform = {
 					if (options.isValueArray) {
 						var values = options.value,
 							condition = false,
-							inputValue = $(this).val();
+							inputValue = compareValue;
 
 						$.each(values, function(k,v){
-							if (v == inputValue) {
+							if (v.toString() == inputValue.toString()) {
 								condition = true;
 							}
 						})
 					} else {
-						var condition = $(this).val() == options.value;
+						var condition = compareValue.toString() == options.value.toString();
 					}
 
 					if (condition) {
@@ -841,6 +1140,19 @@ var waxform = {
 			if (options.type == 'select' && !options.isOriginal) {
 				$('[name="'+options.targetFieldName+'"]').selectpicker('refresh');
 			}
+		}
+
+		var elems = form.find('[name="'+options.conditionFieldName+'"], [name="'+options.conditionFieldName+'[]"], [name^="'+options.conditionFieldName+'['+options.nth+']"]');
+
+		elems.bind('change', function(e){
+			e.preventDefault();
+
+			toggleFields(this, true);			
+		})
+
+		// for init
+		elems.each(function(){
+			toggleFields(this, false);			
 		})
 	},
 
@@ -859,8 +1171,8 @@ var waxform = {
 					languages = form.find('.wax-form-language-selector');
 
 				if (tabs.length > 0) {
-					var section = target.closest('section').attr('id'),
-						tab = tabs.find('a[href="' + section + '"]');
+					var brow = target.closest('.wax-brow').attr('data-tab'),
+						tab = tabs.find('a[href="' + brow + '"]');
 
 					tab.addClass('contains-error');
 
@@ -870,8 +1182,8 @@ var waxform = {
 						tab.trigger('click');
 
 						$('html, body, .st-container').animate({
-					        scrollTop: target.offset().top
-					    }, 1000);
+					        scrollTop: target.closest('.wax-element').offset().top
+					    }, 500);
 					}
 				}
 
@@ -887,8 +1199,8 @@ var waxform = {
 						step.trigger('click');
 
 						$('html, body, .st-container').animate({
-					        scrollTop: target.offset().top
-					    }, 1000);
+					        scrollTop: target.closest('.wax-element').offset().top
+					    }, 500);
 					}
 				}
 
@@ -904,8 +1216,8 @@ var waxform = {
 						tab.trigger('click');
 
 						$('html, body, .st-container').animate({
-					        scrollTop: target.offset().top
-					    }, 1000);
+					        scrollTop: target.closest('.wax-element').offset().top
+					    }, 500);
 					}
 				}
 
@@ -913,8 +1225,8 @@ var waxform = {
 					window.scrolledToErrorField = true;
 
 					$('html, body, .st-container').animate({
-				        scrollTop: target.offset().top
-				    }, 1000);
+				        scrollTop: target.closest('.wax-element').offset().top
+				    }, 500);
 				}
 			},
 			onSuccess: function(e) {
@@ -925,13 +1237,18 @@ var waxform = {
 					steps = form.find('.wax-form-steps'),
 					section = target.closest('section'),
 					sectionId = section.attr('id'),
-					tab = tabs.find('a[href="' + sectionId + '"]'),
+					brow = target.closest('.wax-brow'),
+					dataTab = brow.attr('data-tab'),
+					tab = tabs.find('a[href="' + dataTab + '"]'),
 					step = steps.find('a[href="' + sectionId + '"]'),
 					language = target.attr('data-language');
 
 				if (section.find('.has-error').length == 0) {
-					tab.removeClass('contains-error');
 					step.removeClass('contains-error');
+				}
+
+				if (brow.find('.has-error').length == 0) {
+					tab.removeClass('contains-error');
 				}
 
 				var languageContainsError = false;

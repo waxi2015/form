@@ -2,11 +2,39 @@ $brand-primary: darken(#428bca, 6.5%) !default;
 $brand-danger: #d9534f !default;
 $text-color: #000000 !default;
 $input-border-color: #e5e6e7 !default;
+$screen-lg: 1200px !default; 
+$screen-md: 992px !default; 
+$screen-sm: 768px !default;
+$screen-xs: 480px !default;
+$screen-md-max: ($screen-md + 1) !default;
+$screen-sm-max: ($screen-sm + 1) !default;
+$screen-xs-max: ($screen-xs + 1) !default;
+$label-width: 16.666667% !default; 
+$input-width: 83.333334% !default; 
+$input-height: 34px !default;
+$form-breakpoint: $screen-xs-max !default;
+
+@import '../libs/dropzone/dropzone';
+@import '../libs/typeahead/typeahead';
+@import '../libs/bootstrap-slider/bootstrap-slider';
+@import '../libs/bootstrap-switch/bootstrap-switch';
+@import '../libs/bootstrap-select/css/bootstrap-select';
+@import '../libs/bootstrap-tags/bootstrap-tagsinput';
+@import '../libs/form-validation-io/css/formValidation';
+@import '../libs/fancybox/jquery.fancybox';
+@import '../libs/bootstrap-datepicker/css/datepicker';
+
+.hided {
+	visibility: none;
+	opacity: 0;
+	position: absolute;
+	left: -10000px;
+}
 
 .wax-form {
 
 	.wax-clone-button {
-		margin-left: 16.666667%;
+		margin-left: $label-width;
 	    background: $brand-primary;
 	    color: #fff;
 	    padding: 2px 7px;
@@ -64,10 +92,12 @@ $input-border-color: #e5e6e7 !default;
 	}
 
 	.wax-form-tabs {
-	    width: calc(100% - 20px);
-	    margin: 20px 10px -20px 10px;
+	    width: calc(100% + 20px);
+	    margin: 0 0 0 -10px;
 	    position: relative;
 	    z-index: 1;
+	    //white-space: nowrap;
+	    font-size: 0;
 
 	    a {
 			display: inline-block;
@@ -75,6 +105,7 @@ $input-border-color: #e5e6e7 !default;
 		    color: #BDC5C7;
 		    font-weight: 600;
 		    font-size: 14px;
+		    min-height: 45px;
 
 			&.active {
 			    margin-bottom: -3px;
@@ -93,6 +124,25 @@ $input-border-color: #e5e6e7 !default;
 				}
 			}
 	    }
+
+	    .dropdown {
+	    	display: inline-block;
+	    	cursor: pointer;
+
+	    	.dropdown-menu {
+	    		right: 0;
+	    		left: initial;
+
+	    		a {
+		    		display: block;	
+
+		    		&.active {
+		    			border: 0;
+		    			margin: 0;
+		    		}
+	    		}
+	    	}
+	    }
 	}
 
 	.wax-form-steps {
@@ -100,6 +150,7 @@ $input-border-color: #e5e6e7 !default;
 	    margin: 20px 10px 0px 10px;
 	    position: relative;
         display: flex;
+	    white-space: nowrap;
 
 	    a {
 			display: inline-block;
@@ -152,6 +203,14 @@ $input-border-color: #e5e6e7 !default;
 		    font-size: 13px;
 		    color: #777;
 		}
+
+		&.empty {
+			.wax-brow {
+				background: none;
+			    border: 0;
+			    padding: 0;
+			}
+		}
 	}
 
 	.wax-brow {
@@ -160,15 +219,35 @@ $input-border-color: #e5e6e7 !default;
 	.wax-bcolumn {
 		.wax-clone-button {
 		    left: 0;
-		    margin: -2px 0 7px 16.666667%;
+		    margin: -2px 0 7px $label-width;
 		}
 
 		.wax-remove-clone-button {
-			left: 16.666667%;
+			left: $label-width;
 			right: initial;
 			margin: 0 0 0 -22px;
     		top: 4px;
 			text-align: left;
+		}
+	}
+
+	.wax-column {
+		padding: 0;
+
+		& > label {
+			float: left;
+		    width: 100%;
+		    padding: 0 30px 0 0;
+		    text-align: right;
+		    font-size: 14px;
+		    display: flex;
+		    align-items: center;
+		    justify-content: flex-end;
+		    height: $input-height;
+
+		    sup {
+		    	margin-left: 3px;
+		    }
 		}
 	}
 
@@ -179,17 +258,27 @@ $input-border-color: #e5e6e7 !default;
 
 		label {
 			float: left;
-		    width: 16.6666667%;
-		    padding: 6px 30px 0 10px;
+		    width: $label-width;
+		    padding: 0 30px 0 0;
 		    text-align: right;
+		    font-size: 14px;
+		    display: flex;
+		    align-items: center;
+		    justify-content: flex-end;
+		    height: $input-height;
+
+		    sup {
+		    	margin-left: 3px;
+		    }
 		}
 
 		.form-control {
-			width: 83.3333333%;
+			width: $input-width;
 			border: 1px solid $input-border-color;
 			transition: border .3s;
 			box-shadow: none !important;
 			border-radius: 1px;
+			-webkit-appearance: none;
 
 			&:focus {
 				border-color: $brand-primary;
@@ -197,7 +286,7 @@ $input-border-color: #e5e6e7 !default;
 		}
 
 		.input-group {
-			width: 83.3333333%;
+			width: $input-width;
 
 			.form-control {
 				width: 100%;
@@ -220,17 +309,19 @@ $input-border-color: #e5e6e7 !default;
 		}
 
 		.help-block {
-			padding-left: 16.6666667%;;
+			padding-left: $label-width;
+			font-size: 12px;
 		}
 
 		.form-control-feedback {
-			top: -1px;
+			top: ($input-height / 2 - 18px);
+			font-size: 14px;
 		}
 
 		.language-indicator {
 			position: absolute;
 		    right: 12px;
-		    top: 9px;
+		    top: ($input-height / 2 - 8);
 		    text-transform: uppercase;
 		    letter-spacing: 1px;
 		    z-index: 3;
@@ -272,14 +363,45 @@ $input-border-color: #e5e6e7 !default;
 		    color: #999;
 		}
 
+		span.twitter-typeahead {
+			.tt-suggestion {
+				&:hover {
+					color: initial;
+					background-color: #EAECEF;
+				}
+			}
+
+			.tt-hint {
+				background: transparent !important;
+			}
+		}
+
 		/* Specific elements */
 
+		&.wax-text {
+			&.wax-text-xs {
+				width: 52px;
+			}
+
+			.form-control {
+				height: $input-height;
+			}
+		}
+
+		&.wax-textarea {
+			&.wax-textarea-tall {
+				textarea {
+					height: 120px;
+				}
+			}
+		}
+
 		&.wax-html {
-			padding-left: 16.666667%;
+			padding-left: $label-width;
 		}
 
 		&.wax-anchor {
-			padding-left: 16.666667%;
+			padding-left: $label-width;
 		}
 
 		&.wax-select {
@@ -290,12 +412,14 @@ $input-border-color: #e5e6e7 !default;
 			.form-control {
 				padding-right: 0;
 				border: 0;
+				height: $input-height;
 
 				.dropdown-toggle {
 					border-color: $input-border-color;
 					border-radius: 1px;
 					outline: none !important;
 					transition: border .3s;
+					height: $input-height;
 
 					&:hover, &:focus, &:active {
 						background: #F7F7F7;
@@ -346,7 +470,7 @@ $input-border-color: #e5e6e7 !default;
 
 		&.wax-checkbox {
 			.checkbox {
-				padding-left: 16.666667%;
+				padding-left: $label-width;
 				margin-top: 0;
 			}
 
@@ -355,6 +479,9 @@ $input-border-color: #e5e6e7 !default;
 				text-align: left;
 				margin-left: 11px;
 				position: relative;
+				justify-content: flex-start;
+    			margin-left: 20px;
+    			height: ($input-height * 0.75);
 			}
 		}
 
@@ -362,14 +489,14 @@ $input-border-color: #e5e6e7 !default;
 			.checkbox {
 				padding: 0;
 			    float: right;
-			    width: 83.333333%;
+			    width: $input-width;
 			    margin-top: 0;
 			}
 		}
 
 		&.wax-radio {
 			.radio {
-				padding-left: 16.666667%;
+				padding-left: $label-width;
 				margin-top: 0;
 			}
 
@@ -378,6 +505,9 @@ $input-border-color: #e5e6e7 !default;
 				text-align: left;
 				margin-left: 11px;
 				position: relative;
+				justify-content: flex-start;
+    			margin-left: 20px;
+    			height: ($input-height * 0.75);
 			}
 		}
 
@@ -385,7 +515,7 @@ $input-border-color: #e5e6e7 !default;
 			.radio {
 				padding: 0;
 			    float: right;
-			    width: 83.333333%;
+			    width: $input-width;
 			    margin-top: 0;
 			}
 		}
@@ -393,7 +523,7 @@ $input-border-color: #e5e6e7 !default;
 		&.wax-swap {
 			.swap {
 				float: left;
-			    width: 83.333333%;
+			    width: $input-width;
 			    margin: 0;
 
 			    .bootstrap-switch {
@@ -429,8 +559,9 @@ $input-border-color: #e5e6e7 !default;
 		&.wax-autocomplete {
 			.twitter-typeahead {
 				float: left;
-				width: 83.333333%;
+				width: $input-width;
 				margin-bottom: 5px;
+				height: $input-height;
 
 				.form-control {
 					width: 100%;
@@ -457,41 +588,101 @@ $input-border-color: #e5e6e7 !default;
 		}
 
 		&.wax-image {
-			.image-previews {
-				img {
-					margin: 0 10px 10px 0;
+			.image-container {
+				float: left;
+				position: relative;
+
+				.image-previews {
+					background: #fff;
+				    padding: 10px;
+				    border-radius: 5px;
+				    border: 1px solid #e7e7e7;
+				    display: flex;
+				    align-items: center;
+				    justify-content: center;
+
+					img {
+						margin: 0;
+					}
 				}
-			}
 
-			.image-uploader-container {
-				float: right;
-    			width: 83.333333%;
-    			margin-bottom: 5px;
+				.image-uploader-container {
+					float: right;
+	    			width: $input-width;
+	    			//margin-bottom: 5px;
 
-				.dropzone {
-					background: $brand-primary;
-				    color: #fff;
-				    display: inline-block;
+					.dropzone {
+						background: $brand-primary;
+					    color: #fff;
+					    display: inline-block;
+					    border: 0;
+					    padding: 7px 13px;
+					    margin: 0;
+					    height: initial;
+					    min-height: 0;
+					    border-radius: 3px;
+					    position: absolute;
+					    left: 50%;
+					    transform: translate3d(-50%,0,0);
+					    transition: .3s;
+					    bottom: 0;
+					    opacity: 0;
+
+					    .dz-message {
+					    	margin: 0;
+					    }
+					}
+				}
+
+				.remove-image {
+					position: absolute;
+				    top: 0;
+				    right: 10px;
+				    content: " ";
+				    font-size: 0;
+				    padding: 0;
 				    border: 0;
-				    padding: 7px 13px;
-				    margin: 0;
-				    height: initial;
-				    min-height: 0;
-				    border-radius: 3px;
+				    color: #333;
+				    background: transparent !important;
+				    transition: .3s;
+				    opacity: 0;	
 
-				    .dz-message {
-				    	margin: 0;
+				    &:before {
+				    	content: "\f00d";
+				    	font-family: "FontAwesome";
+				    	font-size: 18px;
+				    	color: #ffffff;
+				    	text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
 				    }
 				}
+
+				&:hover {
+					.image-uploader-container {
+						.dropzone {
+							bottom: 10px;
+					    	opacity: 1;
+						}
+					}
+
+					.remove-image {
+						opacity: 1;
+						top: 6px;
+					}
+				}
+				
 			}
 
 			.progress {
 				display: inline-block;
-			    width: 180px;
-			    margin: 0 0 0px 7px;
 			    position: relative;
-			    top: 2px;
+			    width: 86%;
+    			margin: 0 7%;
     			height: 14px;
+    			border-radius: 20px;
+			    position: absolute;
+			    top: 50%;
+			    transform: translate3d(0,-50%,0);
+			    left: 0;
 
     			.bar {
 					background: $brand-primary;
@@ -592,7 +783,7 @@ $input-border-color: #e5e6e7 !default;
 		&.wax-file, &.wax-multifile {
 			.file-previews {
 				float: left;
-    			width: 83.33333%;
+    			width: $input-width;
 
     			.file {
     				float: left;
@@ -627,7 +818,7 @@ $input-border-color: #e5e6e7 !default;
 
 			.file-uploader-container {
 				float: right;
-    			width: 83.333333%;
+    			width: $input-width;
     			margin-bottom: 5px;
 
 				.dropzone {
@@ -684,24 +875,107 @@ $input-border-color: #e5e6e7 !default;
     		}
 
     		.form-control-feedback {
-    			top: 3px;
+    			top: ($input-height / 2 - 14);
     		}
 
     		.language-indicator {
-    			top: 13px;
+    			top: ($input-height / 2 - 4);
     		}
 		}
 
 		&.wax-html {
 			&.slider-display {
 				float: left;
-			    width: 83.333333%;
-				margin-left: 16.666667%;
+			    width: $input-width;
+				margin-left: $label-width;
 			}
 		}
 
 		&.wax-button {
-			padding-left: 16.666667%;
+			padding-left: $label-width;
+		}
+
+		&.wax-table {
+			.wax-repeater {
+				width: $input-width;
+
+				tr {
+					&:nth-of-type(even), &:nth-of-type(odd) {
+						background: transparent;
+					}
+
+					&:last-of-type {
+						& > td {
+							border-bottom: 0;
+						}
+					}
+
+					th {
+						color: #676a6c;
+
+						a {
+							color: #676a6c;
+						}
+					}
+				}
+
+				.wax-repeater-empty {
+					color: #999;
+				    height: 31px;
+				    display: flex;
+				    align-items: center;
+				    justify-content: flex-start;
+				    margin: 0;
+				    font-weight: 300;
+				    font-style: normal;
+				    font-size: 14px;
+				}
+			}
+
+			&.full-width {
+				.wax-repeater {
+					width: 100%;
+				}
+			}
+		}
+
+		&.wax-tags {
+			.bootstrap-tagsinput {
+				width: $input-width;
+			    box-shadow: none;
+			    border: 1px solid #e7e7e7;
+			    border-radius: 1px;
+			    padding: 9px 9px 7px;
+			    font-size: 0;
+			    line-height: 14px;
+			    position: relative;
+
+			    span.twitter-typeahead {
+			    	width: auto;
+			    	position: initial !important;
+
+			    	.tt-menu {
+			    		left: 0;
+			    		right: 0;
+			    	}
+			    }
+
+			    .tag {
+		    	    margin: 0 3px 3px 0;
+					color: #676a6c;
+			    }
+
+			    .label {
+			    	display: inline-block;
+				    padding: 6px 10px;
+				    font-size: 13px;
+				    font-weight: 400;
+			    }
+
+			    .label-info {
+			    	background-color: #E7E7E7;
+			    }
+			}
 		}
 
 		/* Modifiers */
@@ -737,6 +1011,14 @@ $input-border-color: #e5e6e7 !default;
 			.form-control-feedback.fa + .language-indicator {
 				right: 68px;
 			}
+		}
+
+		/* Element view */
+
+		.wax-element-view {
+			float: left;
+		    width: $input-width;
+		    margin: 6px 0 0;
 		}
 	}
 
@@ -782,131 +1064,59 @@ $input-border-color: #e5e6e7 !default;
 		}
 	}
 
+	.wax-column.full-size {
+		@import 'components/_full-size';
+	}
+
+	.wax-section {
+		&.col-lg-2 {
+			@import 'components/_form-breakpoint';
+		}
+	}
+
+	@media screen and (max-width: $form-breakpoint) {
+		@import 'components/_form-breakpoint';
+	}
+
+
+
 	/* Grid breakpoints */
 
-	[class*="-6"],[class*="-5"],[class*="-4"],[class*="-3"],[class*="-2"] {
-		.wax-clone-button {
-			margin-left: 0;
+	/*.col-lg-10,
+	.col-lg-9,
+	.col-lg-8,
+	.col-lg-7 {
+		@media screen and (max-width: $screen-lg) {
+			@import 'components/_narrow';
 		}
+	}
 
-		.wax-bcolumn {
-			.wax-clone-button {
-				margin-left: 0;
-			}
-			.wax-remove-clone-button {
-				left: 0;
-    			top: 28px;
-			}
-		}
+	.col-lg-6,
+	.col-lg-5,
+	.col-lg-4,
+	.col-lg-3,
+	.col-lg-2,
+	.col-lg-1 {
+		@import 'components/_smalls';
 
-		.wax-element {
+		@media screen and (max-width: $screen-lg) {
 			label {
-			 	text-align: left;
-			 	padding: 0;
-			 	width: 100% !important;
-			}
-
-			.form-control {
-				width: 100%;
-			}
-
-			.form-control-feedback {
-				top: 24px;
-			}
-
-			.input-group {
-				width: 100%;
-			}
-
-			.help-block {
-				padding-left: 0;
-			}
-
-			.language-indicator {
-				top: 34px;
-			}
-
-			.wax-description {
-				margin-left: 0;
-			}
-
-			&.wax-editor {
-				.cke {
-					width: 100%;
-				}
-
-				.form-control-feedback {
-					top: 26px;
-				}
-
-				.language-indicator {
-					top: 36px;
-				}
-			}
-
-			&.wax-html {
-				padding-left: 0;
-
-				&.slider-display {
-				    width: 100%;
-					margin-left: 0;
-				}
-			}
-
-			&.wax-anchor {
-				padding-left: 0;
-			}
-
-			&.wax-checkbox {
-				.checkbox {
-					padding-left: 0;
-				}
-			}
-
-			&.wax-radio {
-				.radio {
-					padding-left: 0;
-				}
-			}
-
-			&.wax-radiogroup {
-				.radio {
-					width: 100%;
-				}
-			}
-
-			&.wax-swap {
-				.swap {
-					width: 100%;
-				}
-			}
-
-			&.wax-autocomplete {
-				.twitter-typeahead {
-					width: 100%;
-				}
-			}
-
-			&.wax-image {
-				.image-uploader-container {
-	    			width: 100%;
-				}
-			}
-
-			&.wax-file {
-				.file-previews {
-	    			width: 100%;
-				}
-
-				.file-uploader-container {
-	    			width: 100%;
-				}
-			}
-
-			&.wax-button {
-				padding-left: 0;
+				text-align: left;
+			    padding-left: 0;
 			}
 		}
 	}
+
+	.wax-column.full-size {
+		@import 'components/_full-size';
+	}*/
+
+	/*[class*="-6"],[class*="-5"],[class*="-4"],[class*="-3"],[class*="-2"] {
+		@import 'components/_narrow';
+	}
+
+	@media screen and (max-width: $screen-sm) {
+		@import 'components/_narrow';	
+	}*/
 
 }

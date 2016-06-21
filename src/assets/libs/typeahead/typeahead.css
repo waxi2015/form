@@ -20,6 +20,11 @@ span.twitter-typeahead .tt-dropdown-menu {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
 }
+span.twitter-typeahead .tt-menu {
+    max-height: 189px;
+    overflow: scroll;
+    cursor: pointer;
+}
 span.twitter-typeahead .tt-suggestion {
   display: block;
   padding: 3px 20px;

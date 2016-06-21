@@ -1,0 +1,128 @@
+.form-control {
+	width: 100%;
+}
+
+.input-group {
+	width: 100%;
+}
+
+.help-block {
+	padding-left: 0;
+}
+
+.wax-description {
+	margin-left: 0;
+}
+
+.form-control-feedback {
+	right: 0;
+}
+
+.language-indicator {
+	right: 0;
+}
+
+&.wax-editor {
+	.form-control-feedback {
+		right: 0;
+	}
+
+	.language-indicator {
+		right: 0;
+	}
+}
+
+&.wax-editor {
+	.cke {
+		width: 100%;
+	}
+}
+
+&.wax-html {
+	padding-left: 0;
+
+	&.slider-display {
+	    width: 100%;
+		margin-left: 0;
+	}
+}
+
+&.wax-anchor {
+	padding-left: 0;
+}
+
+&.wax-checkbox {
+	float: left;
+	margin-left: 10px;
+	
+	.checkbox {
+		padding-left: 0;
+	}
+}
+
+&.wax-radio {
+	float: left;
+	margin-left: 10px;
+
+	.radio {
+		padding-left: 0;
+	}
+}
+
+&.wax-radiogroup {
+	& > label {
+		margin-bottom: 10px;
+	}
+
+	.radio {
+		width: 100%;
+	}
+}
+
+&.wax-swap {
+	.swap {
+		width: 100%;
+	}
+}
+
+&.wax-autocomplete {
+	.twitter-typeahead {
+		width: 100%;
+	}
+}
+
+&.wax-image {
+	.image-uploader-container {
+		width: 100%;
+	}
+}
+
+&.wax-file {
+	.file-previews {
+		width: 100%;
+	}
+
+	.file-uploader-container {
+		width: 100%;
+	}
+}
+
+&.wax-button {
+	padding-left: 0;
+}
+
+&.wax-table {
+	.wax-repeater {
+		width: 100%;
+	}
+}
+
+&.wax-tags {
+	.bootstrap-tagsinput {
+		width: 100%;
+	}
+}
+
+.wax-element-view {
+	width: 100%;
+}

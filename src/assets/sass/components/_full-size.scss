@@ -1,0 +1,178 @@
+& > label {
+    justify-content: flex-start;
+}
+
+.wax-clone-button {
+	margin-left: 0;
+}
+
+.wax-bcolumn {
+	.wax-clone-button {
+		margin-left: 0;
+	}
+}
+
+.wax-element {
+	label {
+	 	justify-content: flex-start;
+	 	padding: 0;
+	 	width: calc(100% - 20px) !important;
+	 	height: ($input-height * 0.75);
+	}
+
+	.form-control {
+		width: calc(100% - 20px);
+	}
+
+	.input-group {
+		width: 100%;
+	}
+
+	.help-block {
+		padding-left: 0;
+	}
+
+	.wax-description {
+		margin-left: 0;
+	}
+
+	.form-control-feedback {
+		top: ($input-height / 2 - 18);
+		right: 20px;
+	}
+
+	.language-indicator {
+		top: ($input-height / 2 - 18);
+		right: 20px;
+	}
+
+	&.wax-editor {
+		.form-control-feedback {
+			top: ($input-height / 2 - 18);
+			right: 20px;
+		}
+
+		.language-indicator {
+			top: ($input-height / 2 - 18);
+			right: 20px;
+		}
+	}
+
+	&.wax-editor {
+		.cke {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-html {
+		padding-left: 0;
+
+		&.slider-display {
+		    width: calc(100% - 20px);
+			margin-left: 0;
+		}
+	}
+
+	&.wax-anchor {
+		padding-left: 0;
+	}
+
+	&.wax-checkbox {
+		float: left;
+		margin-left: 10px;
+		
+		.checkbox {
+			padding-left: 0;
+		}
+	}
+
+	&.wax-radio {
+		float: left;
+		margin-left: 10px;
+
+		.radio {
+			padding-left: 0;
+		}
+	}
+
+	&.wax-radiogroup {
+		& > label {
+			margin-bottom: 10px;
+		}
+
+		.radio {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-swap {
+		.swap {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-autocomplete {
+		.twitter-typeahead {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-image {
+		.image-uploader-container {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-file {
+		.file-previews {
+			width: calc(100% - 20px);
+		}
+
+		.file-uploader-container {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-button {
+		padding-left: 0;
+	}
+
+	&.wax-table {
+		.wax-repeater {
+			width: calc(100% - 20px);
+		}
+	}
+
+	&.wax-tags {
+		.bootstrap-tagsinput {
+			width: calc(100% - 20px);
+		}
+	}
+
+	.wax-element-view {
+		width: calc(100% - 20px);
+	}
+}
+
+.wax-bcolumn {
+	.wax-remove-clone-button {
+		left: 0;
+		top: 0;
+	}
+}
+
+&:last-of-type {
+	@import '_width-100';
+}
+
+&.col-sm-12 {
+	@media screen and (max-width: $screen-sm-max) {
+		@import '_width-100';
+	}
+}
+
+&.col-xs-12 {
+	@media screen and (max-width: $screen-xs-max) {
+		@import '_width-100';
+	}
+}
