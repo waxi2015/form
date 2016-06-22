@@ -18,13 +18,21 @@ class Remote extends Ancestor {
         }
 
         if ($table && $field) {
-            $query = \DB::table($table)->where($field, $value);
-
-            if (!empty($id)) {
-                $query->where('id', '!=', $id);
+            if (empty($id)) {
+                $query = \DB::table($table)->where($field, $value);
+                $result = !(bool) $query->count();
+            } else {
+                $record = to_array(\DB::table($table)->find($id));
+                if ($record[$field] == $value) {
+                    $result = true;
+                } else {
+                    $query = \DB::table($table)
+                                ->where($field, $value)
+                                ->where('id', '!=', $id);
+                    $result = !(bool) $query->count();
+                }
             }
 
-            $result = !(bool) $query->count();
         } else {
             $result = $class::$method($value, $id);
         }
