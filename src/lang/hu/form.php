@@ -32,6 +32,7 @@ return [
 			'emptyCheckboxgroup' => 'Válassz legalább egyet',
 			'emptyRadio' => 'Mező megjelölése kötelező',
 			'emptyRadiogroup' => 'Válassz egyet',
+			'emptyTags' => 'Válassz legalább egyet a listából',
 			'autocompleteNew' => 'Válassz egyet a találatokból',
 		]
 	],
