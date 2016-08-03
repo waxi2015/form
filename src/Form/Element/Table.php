@@ -78,7 +78,7 @@ class Table extends Element {
 			$this->repeaterDescriptor['vars'] = $vars;
 		}
 
-		if (isset($this->repeaterDescriptor['actions'])) {
+		if (isset($this->repeaterDescriptor['actions']) && $this->viewMode !== true) {
 			$actions = $this->repeaterDescriptor['actions'];
 
 			if (in_array('edit', $actions)) {
@@ -99,9 +99,14 @@ class Table extends Element {
 
 				$this->repeaterDescriptor['buttons'][] = [
 					'type' => 'delete',
+					'class' => 'dont-refresh-url',
 					'label' => '<span class="fa fa-trash"></span>',
 				];
 			}
+		}
+
+		if ($this->viewMode === true && isset($this->repeaterDescriptor['actions'])) {
+			$this->repeaterDescriptor['actions'] = array_diff($this->repeaterDescriptor['actions'], ['edit','add','delete']);
 		}
 
 		$repeater = new \Repeater($this->repeaterDescriptor);

@@ -1,0 +1,11 @@
+<? foreach ($this->getInstances() as $language): ?>
+
+<div class="<?=$this->getClass()?> form-group wax-element wax-table <?=$this->hasError()?>" <?=$this->getData()?>>
+	<?=$this->fetchTemplate('label')?>
+	
+	<?=$this->renderTable()?>
+
+	<?=$this->fetchTemplate('description')?>
+</div>
+
+<? endforeach; ?>

@@ -24,6 +24,8 @@ class Select extends Element {
 	
 	public $showCount = false;
 
+	public $icons = null;
+
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -59,6 +61,10 @@ class Select extends Element {
 		
 		if (isset($this->descriptor['showCount'])) {
 			$this->showCount = $this->descriptor['showCount'];
+		}
+		
+		if (isset($this->descriptor['icons'])) {
+			$this->icons = $this->descriptor['icons'];
 		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
@@ -198,7 +204,7 @@ class Select extends Element {
 		if ($value === null) {
 		// if it has no value
 
-			if (!$this->hasEmptyItem()) {
+			if (!$this->hasEmptyItem() && !$this->isMultiselect()) {
 			// ... and it's not supposed to be blank
 				reset($items);
 				$this->setRequestParam($this->getName(false), key($items), $nthInstance);
@@ -263,6 +269,16 @@ class Select extends Element {
 
 	public function getEmptyText () {
 		return $this->emptyText;
+	}
+
+	public function getIcon ($key) {
+		if ($this->icons === null) {
+			return false;
+		}
+
+		if (isset($this->icons[$key])) {
+			return ' data-icon="glyphicon-'.$this->icons[$key].'"';
+		}
 	}
  }
 

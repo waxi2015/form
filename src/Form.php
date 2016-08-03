@@ -61,7 +61,6 @@ class Form extends Form\Element\Form {
 		}
 		
 		parent::__construct($descriptor);
-
 		// This is required for the clones to see default element values
 		// when checking for conditional default values
 		if (!$this->isLoad && !$this->isPost) {

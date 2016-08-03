@@ -133,8 +133,23 @@ class Slider extends Element {
 		if (count($value) > 1) {
 			return '['.$value[0].','.$value[1].']';
 		} else {
-			return $value[0];
+			if (isset($value[0])) {
+				return $value[0];
+			} else {
+				return false;
+			}
 		}
+
+	}
+
+	public function hasValue () {
+		$value = $this->getValueString();
+
+		if ($value !== false && $value !== '') {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function isRange () {
@@ -175,6 +190,32 @@ class Slider extends Element {
 
 	public function getSuffix () {
 		return $this->suffix;
+	}
+
+	public function fetchData () {
+		$nth = $this->getNthInstance();
+		$name = $this->getName(false);
+		$value = $this->getValue();
+
+		if ($this->range === false) {
+			$value = $value[0];
+		}
+
+		if ($this->static) {
+			$data = array();
+		} elseif ($value !== null && !$this->disabled) {
+			if ($nth === null) {
+				$data[$name] = $this->convertData($this->filterData($value));
+			} else {
+				$data[$name][$nth] = $this->convertData($this->filterData($value));
+			}
+		} elseif ($this->disabled) {
+			$data = array();
+		} else {
+			$data = array();
+		}
+
+		return $data;
 	}
 }
 

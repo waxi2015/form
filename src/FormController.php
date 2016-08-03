@@ -41,7 +41,6 @@ class FormController extends Controller
 				$file = $request->file('file');
 				$filename = md5($file->getClientOriginalName() . time()) . '.' . $file->getClientOriginalExtension();
 				$previewUrl = $element->getPreviewUrl();
-
 				if ($previewUrl === null) {
 					$previewUrl = '/' . $path;
 				} else {
@@ -106,6 +105,10 @@ class FormController extends Controller
 				$response['valid'] = false;
 			}
 			
+			if (!$form->isReplaceHtml()) {
+				$response['replaceHtml'] = false;
+			}
+			
 			if (isset($result['message'])) {
 				$response['message'] = $result['message'];
 			}
@@ -142,7 +145,9 @@ class FormController extends Controller
 		// when checking for conditional default values
 		$nth = (int) $rp['clones'] + 1;
 		foreach ($form->getElements() as $element) {
-			$form->setRequestParam($element->getName(false), $element->getValue(), $nth);
+			if ($element->isCloneable) {
+				$form->setRequestParam($element->getName(false), $element->getValue(), $nth);
+			}
 		}
 
 		if (!$clone) {

@@ -338,6 +338,8 @@ var waxform = {
 
 		$('#'+options.fieldId+'-container').slider(sliderOptions)
 			.on('slide', function(slideEvt) {
+				$(this).trigger('change');
+
 				if (typeof slideEvt.value == 'object') {
 					$.each(options.values, function(k,v){
 						$('input[name="'+options.fieldName+'"]:eq('+k+')').val(slideEvt.value[k]);	
@@ -386,6 +388,10 @@ var waxform = {
 	            form.formValidation('revalidateField', options.fieldName);
 
 			});
+
+			$('#'+options.fieldId+'-container').change(function(){
+				$('input[name="'+options.fieldName+'"]').val($(this).val());
+			})
 
 		if (options.minSelector !== undefined) {
 			var value = options.values[0];

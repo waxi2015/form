@@ -6,14 +6,14 @@
 			min: <?=$this->min?>,
 			max: <?=$this->max?>,
 			step: <?=$this->step?>,
-			tooltip : '<?=$this->tooltip ? 'show' : 'hide'?>',
+			tooltip : '<?=($this->tooltip ? (is_bool($this->tooltip) ? 'show' : $this->tooltip) : 'hide')?>',
 			orientation : '<?=$this->orientation?>',
 			enabled : <?=($this->getDisabled() === false ? 'true' : 'false')?>,
 			range: <?=$this->range === true ? 'true' : 'false'?>,
 			format: <?=$this->isFormat() === true ? 'true' : 'false'?>,
 			prefix: '<?=$this->getPrefix()?>',
 			suffix: '<?=$this->getSuffix()?>',
-			<? if (!empty($this->getValueString())): ?>
+			<? if ($this->hasValue()): ?>
 				value : <?=$this->getValueString()?>,
 			<? endif; ?>
 			<? if (is_array($this->getValue())): ?>

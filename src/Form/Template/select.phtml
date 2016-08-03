@@ -6,11 +6,11 @@
 			<? if (is_array($item)): ?>
 				<optgroup label="<?=$item['label']?>">
 					<? foreach ($item['items'] as $value => $label): ?>
-						<option value="<?=$value?>" <?=$this->getSelected($value, true)?>> <?=$label?> </option>
+						<option value="<?=$value?>" <?=$this->getSelected($value, true)?><?=$this->getIcon($key)?>> <?=$label?> </option>
 					<? endforeach; ?>
 				</optgroup>
 			<? else: ?>
-				<option value="<?=$key?>" label="<?=$item?>" <?=$this->getSelected($key, true)?>> <?=$item?> </option>
+				<option value="<?=$key?>" label="<?=$item?>" <?=$this->getSelected($key, true)?><?=$this->getIcon($key)?>> <?=$item?> </option>
 			<? endif; ?>
 		<? endforeach; ?>
 	</select>

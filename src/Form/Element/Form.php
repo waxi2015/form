@@ -52,6 +52,8 @@ class Form extends Ancestor {
 
 	public $steps = null;
 
+	public $replaceHtml = true;
+
 	public function __construct ($descriptor) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -169,9 +171,17 @@ class Form extends Ancestor {
 			$this->viewMode = $descriptor['viewMode'];
 		}
 
+		if (isset($descriptor['replaceHtml'])) {
+			$this->replaceHtml = $descriptor['replaceHtml'];
+		}
+
 		$this->setSections();
 
 		parent::__construct($descriptor);
+	}
+
+	public function isReplaceHtml () {
+		return $this->replaceHtml;
 	}
 
 	public function renderLanguageSelectors () {
@@ -304,7 +314,7 @@ class Form extends Ancestor {
 			if (is_array($value)) {	
 				$clones = count($value) - 1;
 
-				if ($element->isCloneable) {
+				if ($element->isCloneable || $element->isParentCloneable()) {
 					$cloneName = $element->getCloneTree('-');
 
 					if (!isset($params[$cloneName]) || (int) $params[$cloneName] < $clones) {
@@ -399,18 +409,25 @@ class Form extends Ancestor {
 			}
 
 		} else {
-			# if could not be saved
-			return [
-				'valid' => false,
-				'message' => trans('form.error_during_save')
-			];
+			# if could not be savedű
+			if ($this->feedback !== null) {
+				if (is_bool($result)) {
+					$result = trim(json_encode($result),'"');
+				}
+				return $this->feedback[$result];
+			} else {
+				return [
+					'valid' => false,
+					'message' => trans('form.error_during_save')
+				];
+			}
 		}
 
 		# if we need to reload data from db, after save / action
 		if ($this->reload) {
 			$this->reloadData();
 		}
-
+		
 		# if we have feedback for the result value
 		if ($this->feedback !== null) {
 			if (is_bool($result)) {
