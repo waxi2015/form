@@ -1,0 +1,8 @@
+<? $this->scriptCaptureStart(); ?>
+	$(function(){
+		waxform.radiogroup({
+			form: '#<?=$this->formIdentifier?>',
+			fieldName: '<?=$this->getName()?>',
+		});
+	})
+<? $this->scriptCaptureEnd('PREPEND'); ?>
