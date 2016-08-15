@@ -519,7 +519,7 @@ class Form extends Ancestor {
 		// for example: tags
 		if ($result == true) {
 			foreach ($this->sections as $key => $one) {
-				$one->saveExternalData();
+				$one->saveExternalData($data);
 			}
 		}
 

@@ -177,9 +177,9 @@ class Bcolumn extends Structure {
 		return $data;
 	}
 
-	public function saveExternalData () {
+	public function saveExternalData ($data) {
 		foreach ($this->rows as $key => $one) {
-			$one->saveExternalData();
+			$one->saveExternalData($data);
 		}
 	}
 }

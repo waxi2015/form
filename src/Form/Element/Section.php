@@ -175,9 +175,9 @@ class Section extends Structure {
 		return $data;
 	}
 
-	public function saveExternalData () {
+	public function saveExternalData ($data) {
 		foreach ($this->brows as $key => $one) {
-			$one->saveExternalData();
+			$one->saveExternalData($data);
 		}
 	}
 

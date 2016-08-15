@@ -738,7 +738,7 @@ class Element extends Ancestor {
 		return $data;
 	}
 
-	public function saveExternalData () {
+	public function saveExternalData ($data) {
 		return true;
 	}
 

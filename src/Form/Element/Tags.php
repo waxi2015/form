@@ -59,16 +59,34 @@ class Tags extends Select {
 		return $return;
 	}
 
-	public function saveExternalData () {
+	public function saveExternalData ($data = []) {
+
 		if ($this->save === null) {
 			return true;
 		}
 
 		$table = $this->save['table'];
 		$recordField = $this->save['recordField'];
+		$recordFieldParam = getValue($this->save, 'recordFieldParam', 'id');
 		$itemField = $this->save['itemField'];
 
-		$id = $this->getRequestParam('id');
+		$id = $this->getRequestParam($recordFieldParam);
+
+		if (empty($id) && isset($data[$recordFieldParam])) {
+			$id = $data[$recordFieldParam];
+		}
+
+		if (empty($id) && !empty($this->getRequestParam('id'))) {
+			$id = $this->getRequestParam('id');
+			if (!is_int($id)) {
+				$id = decode($id);
+			}
+
+			$record = to_array(\DB::table($this->formDescriptor['table'])->where('id', $id)->first());
+			$id = (int) $record[$recordFieldParam];
+		}
+
+
 		$this->setValue();
 		$values = explode(',',$this->getRequestParam($this->getName(false)));
 
@@ -99,6 +117,7 @@ class Tags extends Select {
 
 		$table = $this->save['table'];
 		$recordField = $this->save['recordField'];
+		$recordFieldParam = getValue($this->save, 'recordFieldParam', 'id');
 		$itemField = $this->save['itemField'];
 
 		$id = $this->getRequestParam('id');
@@ -108,6 +127,11 @@ class Tags extends Select {
 		} else {
 			if (!is_int($id)) {
 				$id = decode($id);
+			}
+
+			if ($recordFieldParam != 'id') {
+				$record = to_array(\DB::table($this->formDescriptor['table'])->where('id', $id)->first());
+				$id = $record[$recordFieldParam];
 			}
 
 			$values = to_array(\DB::table($table)->where($recordField, $id)->get());
