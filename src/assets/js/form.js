@@ -103,6 +103,14 @@ var waxform = {
 		});
 	},
 
+	radiogroup : function (options) {
+		var form = $(options.form);
+
+		form.find('[name="'+options.fieldName+'"]').change(function(){
+			$(this).closest('form').formValidation('revalidateField', $(this).attr('name'));
+		})
+	},
+
 	textarea : function (options) {
 		var form = $(options.form);
 

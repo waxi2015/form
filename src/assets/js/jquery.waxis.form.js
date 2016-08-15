@@ -171,7 +171,7 @@
 
 				addRemoveTag : function (element) {
 					var tree = element.attr('data-tree'),
-						cloneCount = $('input[name="clone-' + tree + '"').val() * 1,
+						cloneCount = $('input[name="clone-' + tree + '"]').val() * 1,
 						removeTag = '<a href="" class="remove-clone-button wax-remove-clone-button" rel="' + tree + '"><span class="fa fa-remove"></span></a>';
 
 					element.find('.remove-clone-button').detach();
@@ -372,7 +372,15 @@
 							}
 						}
 
-						form.replaceWith(response.html);
+						var replaceHtml = true;
+
+						if (response.replaceHtml !== undefined) {
+							replaceHtml = response.replaceHtml;
+						}
+
+						if (replaceHtml) {
+							form.replaceWith(response.html);
+						}
 
 						if (response.valid.toString() == 'false') {
 							if ($('#' + form.attr('id')).find('.has-error').length > 0) {
