@@ -186,6 +186,10 @@ class Form extends Ancestor {
 		parent::__construct($descriptor);
 	}
 
+	public function hasInitScripts () {
+		return (bool) $this->initScript;
+	}
+
 	public function getInitScripts () {
 		$scripts = $this->initScript;
 		if ($scripts === null) {

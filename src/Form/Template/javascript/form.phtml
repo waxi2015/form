@@ -3,10 +3,16 @@
 		$(function() {
 			$('#<?=$this->getId()?>').wxform();
 		})
+	<? $this->scriptCaptureEnd('PREPEND'); ?>
+<? endif; ?>
 
-		<? foreach ($this->getInitScripts() as $one): ?>
-			executeFunctionByName('<?=$one['script']?>', window, <?=json_encode($one['data'])?>)
-		<? endforeach; ?>
+<? if ($this->hasInitScripts()): ?>
+	<? $this->scriptCaptureStart(); ?>
+		$(function(){
+			<? foreach ($this->getInitScripts() as $one): ?>
+				executeFunctionByName('<?=$one['script']?>', window, <?=json_encode($one['data'])?>)
+			<? endforeach; ?>
+		})
 	<? $this->scriptCaptureEnd('PREPEND'); ?>
 <? endif; ?>
 
