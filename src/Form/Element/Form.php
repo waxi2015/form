@@ -22,6 +22,8 @@ class Form extends Ancestor {
 
 	public $init = true;
 
+	public $initScript = null;
+
 	public $submit = null;
 
 	public $dataId = null;
@@ -103,6 +105,10 @@ class Form extends Ancestor {
 			$this->init = $descriptor['init'];
 		}
 
+		if (isset($descriptor['initScript'])) {
+			$this->initScript = $descriptor['initScript'];
+		}
+
 		if (isset($descriptor['submit'])) {
 			$this->submit = $descriptor['submit'];
 		}
@@ -178,6 +184,19 @@ class Form extends Ancestor {
 		$this->setSections();
 
 		parent::__construct($descriptor);
+	}
+
+	public function getInitScripts () {
+		$scripts = $this->initScript;
+		if ($scripts === null) {
+			return [];
+		}
+
+		if (!isset($scripts[0])) {
+			$scripts = [$scripts];
+		}
+
+		return $scripts;
 	}
 
 	public function isReplaceHtml () {
