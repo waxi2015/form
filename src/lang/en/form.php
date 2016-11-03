@@ -19,6 +19,7 @@ return [
 	'validators' => [
 		'autcomplete_msg' => 'Please choose one from the list',
 		'digits_msg' => 'Please fill in only numbers',
+		'numeric_msg' => 'Please enter a valid number',
 		'email_msg' => 'Wrong email address',
 		'identical_msg' => 'Fields do not match',
 		'remote_msg' => 'It is already taken',

@@ -18,6 +18,7 @@ return [
 	'validators' => [
 		'autcomplete_msg' => 'Válassz egyet a találatokból',
 		'digits_msg' => 'Csak számokat adhatóak meg',
+		'numeric_msg' => 'Egy számot adj meg',
 		'email_msg' => 'Helytelen email cím',
 		'identical_msg' => 'A mezők nem egyeznek',
 		'remote_msg' => 'Már létezik ilyen',

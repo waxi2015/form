@@ -80,6 +80,7 @@ class Config {
 		'identical' => '\Waxis\Form\Form\Validator\Identical',
 		'autocomplete' => '\Waxis\Form\Form\Validator\Autocomplete',
 		'securePassword' => '\Waxis\Form\Form\Validator\SecurePassword',
+		'numeric' => '\Waxis\Form\Form\Validator\Numeric',
 	);
 
 	public $decorators = array(
