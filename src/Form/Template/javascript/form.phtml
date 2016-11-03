@@ -10,7 +10,7 @@
 	<? $this->scriptCaptureStart(); ?>
 		$(function(){
 			<? foreach ($this->getInitScripts() as $one): ?>
-				executeFunctionByName('<?=$one['script']?>', window, <?=json_encode($one['data'])?>)
+				executeFunctionByName('<?=$one['script']?>', window, <?=isset($one['data'])?json_encode($one['data']):'""'?>)
 			<? endforeach; ?>
 		})
 	<? $this->scriptCaptureEnd('PREPEND'); ?>
