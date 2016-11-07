@@ -10,9 +10,9 @@ class Numeric extends Ancestor {
    		$decimal = $this->options['decimalSeparator'];
 
    		if ($decimal == ',') {
-   			$reqex = "[\-\+]?[0-9]*(\,[0-9]+)?";
+   			$regex = "/[\-\+]?[0-9]*(\,[0-9]+)?/";
    		} else {
-   			$reqex = "[\-\+]?[0-9]*(\.[0-9]+)?";
+   			$regex = "/[\-\+]?[0-9]*(\.[0-9]+)?/";
    		}
 
    		if (preg_match($regex, $value)) {
