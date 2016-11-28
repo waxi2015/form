@@ -24,6 +24,8 @@ return [
 		'identical_msg' => 'Fields do not match',
 		'remote_msg' => 'It is already taken',
 		'uri_msg' => 'Wrong URL',
+		'vat_msg' => 'Wrong VAT number',
+		'regexp_msg' => 'Wrong input',
 
 		'empty' => [
 			'empty' => 'Please fill in this field',

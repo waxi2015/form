@@ -54,6 +54,8 @@ class Element extends Ancestor {
 	
 	public $load = true;
 
+	public $descriptionClass = null;
+
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -156,6 +158,10 @@ class Element extends Ancestor {
 		if (isset($descriptor['description'])) {
 			$this->description = $descriptor['description'];
 		}
+
+		if (isset($descriptor['descriptionClass'])) {
+			$this->descriptionClass = $descriptor['descriptionClass'];
+		}
 		
 		if (isset($this->descriptor['standalone'])) {
 			$this->standalone = $descriptor['standalone'];
@@ -210,6 +216,10 @@ class Element extends Ancestor {
 		}
 
 		parent::__construct($descriptor, $nth);
+	}
+
+	public function getDescriptionClass () {
+		return $this->descriptionClass;
 	}
 
 	public function getInstances () {

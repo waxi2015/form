@@ -81,6 +81,8 @@ class Config {
 		'autocomplete' => '\Waxis\Form\Form\Validator\Autocomplete',
 		'securePassword' => '\Waxis\Form\Form\Validator\SecurePassword',
 		'numeric' => '\Waxis\Form\Form\Validator\Numeric',
+		'vat' => '\Waxis\Form\Form\Validator\Vat',
+		'regexp' => '\Waxis\Form\Form\Validator\Regexp',
 	);
 
 	public $decorators = array(

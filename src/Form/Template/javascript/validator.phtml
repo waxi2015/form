@@ -1,7 +1,7 @@
 <? if ($this->hasFrontValidators()): ?>
 	<? $this->scriptCaptureStart(); ?>
 		<? foreach ($this->getInstances() as $language): ?>
-			$(function(){waxform.addValidator({form: '#<?=$this->formIdentifier?>',field: "<?=$this->getFieldnameToValidate($language)?>",validators: {<? foreach ($this->getFrontValidators() as $validator => $options): ?><?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),<? endforeach; ?>},<? if ($this->getType() == 'swap'): ?>icon: false,<? endif; ?>});})
+			$(function(){waxform.addValidator({form: '#<?=$this->formIdentifier?>',field: "<?=$this->getFieldnameToValidate($language)?>",validators: {<? foreach ($this->getFrontValidators() as $validator => $options): ?><?=$validator?>: $.parseJSON('<?=json_encode($options, JSON_FORCE_OBJECT)?>'),<? endforeach; ?>},<? if ($this->getType() == 'swap'): ?>icon: false,<? endif; ?><? if ($validator == 'regexp'): ?>regexp: new RegExp("<?=$options['regexp']?>"),<? endif; ?>});})
 		<? endforeach; ?>
 	<? $this->scriptCaptureEnd('APPEND'); ?>
 <? endif; ?>

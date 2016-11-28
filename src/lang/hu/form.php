@@ -23,6 +23,8 @@ return [
 		'identical_msg' => 'A mezők nem egyeznek',
 		'remote_msg' => 'Már létezik ilyen',
 		'uri_msg' => 'Hibás link',
+		'vat_msg' => 'Hibás adószám',
+		'regexp_msg' => 'Hibás érték',
 
 		'empty' => [
 			'empty' => 'Mező kitöltése kötelező',

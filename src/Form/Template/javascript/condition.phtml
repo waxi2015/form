@@ -11,7 +11,7 @@
 					<? foreach ($element->condition as $field => $value): ?>
 						<? 
 							if (is_array($value)):
-								$jsValue = '[' . implode(',', $value) . ']';
+								$jsValue = '["' . implode('","', $value) . '"]';
 							elseif (is_bool($value)):
 								$jsValue = $value ? 'true' : 'false';
 							else:

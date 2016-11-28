@@ -1,4 +1,4 @@
-﻿(function($) {
+(function($) {
     /**
      * Hungarian language package
      * Translated by @blackfyre
@@ -188,6 +188,7 @@
                     SK: 'Szlovákiában',
                     SM: 'San Marinoban',
                     TH: 'Thaiföldön',
+                    TR: 'Törökországban',
                     ZA: 'Dél-Afrikában'
                 }
             },

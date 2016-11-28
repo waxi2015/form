@@ -2,9 +2,9 @@
  * FormValidation (http://formvalidation.io)
  * The best jQuery plugin to validate form fields. Support Bootstrap, Foundation, Pure, SemanticUI, UIKit and custom frameworks
  *
- * @version     v0.7.0, built on 2015-08-01 4:57:16 PM
+ * @version     v0.8.1, built on 2016-07-29 1:10:54 AM
  * @author      https://twitter.com/formvalidation
- * @copyright   (c) 2013 - 2015 Nguyen Huu Phuoc
+ * @copyright   (c) 2013 - 2016 Nguyen Huu Phuoc
  * @license     http://formvalidation.io/license/
  */
 // Register the namespace
@@ -125,11 +125,13 @@ if (typeof jQuery === 'undefined') {
                         formInit:         this.$form.attr('data-' + ns + '-events-form-init'),
                         formPreValidate:  this.$form.attr('data-' + ns + '-events-form-prevalidate'),
                         formError:        this.$form.attr('data-' + ns + '-events-form-error'),
+                        formReset:        this.$form.attr('data-' + ns + '-events-form-reset'),
                         formSuccess:      this.$form.attr('data-' + ns + '-events-form-success'),
                         fieldAdded:       this.$form.attr('data-' + ns + '-events-field-added'),
                         fieldRemoved:     this.$form.attr('data-' + ns + '-events-field-removed'),
                         fieldInit:        this.$form.attr('data-' + ns + '-events-field-init'),
                         fieldError:       this.$form.attr('data-' + ns + '-events-field-error'),
+                        fieldReset:       this.$form.attr('data-' + ns + '-events-field-reset'),
                         fieldSuccess:     this.$form.attr('data-' + ns + '-events-field-success'),
                         fieldStatus:      this.$form.attr('data-' + ns + '-events-field-status'),
                         localeChanged:    this.$form.attr('data-' + ns + '-events-locale-changed'),
@@ -149,6 +151,7 @@ if (typeof jQuery === 'undefined') {
                     message:       this.$form.attr('data-' + ns + '-message'),
                     onPreValidate: this.$form.attr('data-' + ns + '-onprevalidate'),
                     onError:       this.$form.attr('data-' + ns + '-onerror'),
+                    onReset:       this.$form.attr('data-' + ns + '-onreset'),
                     onSuccess:     this.$form.attr('data-' + ns + '-onsuccess'),
                     row: {
                         selector: this.$form.attr('data-' + ns + '-row-selector') || this.$form.attr('data-' + ns + '-group'), // Support backward
@@ -248,6 +251,8 @@ if (typeof jQuery === 'undefined') {
                         // aren't defined by the 'button.selector' option
                         if (that.options.button.selector && !$button.is(that.options.button.selector) && !$button.is(that.$hiddenButton)) {
                             that.$form.off('submit.' + that._namespace).submit();
+                            // Fix the issue where 'formnovalidate' causes IE to send two postbacks to server
+                            return false;
                         }
                     }
                 });
@@ -283,6 +288,11 @@ if (typeof jQuery === 'undefined') {
             if (this.options.onError) {
                 this.$form.on(this.options.events.formError, function(e) {
                     FormValidation.Helper.call(that.options.onError, [e]);
+                });
+            }
+            if (this.options.onReset) {
+                this.$form.on(this.options.events.formReset, function(e) {
+                    FormValidation.Helper.call(that.options.onReset, [e]);
                 });
             }
         },
@@ -335,6 +345,7 @@ if (typeof jQuery === 'undefined') {
                 type      = fields.attr('type'),
                 updateAll = (total === 1) || ('radio' === type) || ('checkbox' === type),
                 trigger   = this._getFieldTrigger(fields.eq(0)),
+                clazz     = this.options.err.clazz.split(' ').join('.'),
                 events    = $.map(trigger, function(item) {
                     return item + '.update.' + ns;
                 }).join(' ');
@@ -355,7 +366,7 @@ if (typeof jQuery === 'undefined') {
                 }
 
                 // Remove all error messages and feedback icons
-                $message.find('.' + this.options.err.clazz.split(' ').join('.') + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]').remove();
+                $message.find('.' + clazz + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]').remove();
                 $parent.find('i[data-' + ns + '-icon-for="' + field + '"]').remove();
 
                 // Whenever the user change the field value, mark it as not validated yet
@@ -434,8 +445,27 @@ if (typeof jQuery === 'undefined') {
                 }
             }
 
+            // Sort the validators by priority
+            var sortedByPriority = [];
+            for (validatorName in validators) {
+                alias = validators[validatorName].alias || validatorName;
+
+                // Determine the priority
+                validators[validatorName].priority = parseInt(validators[validatorName].priority
+                                                            || FormValidation.Validator[alias].priority
+                                                            || 1, 10);
+                sortedByPriority.push({
+                    validator: validatorName,
+                    priority: validators[validatorName].priority
+                });
+            }
+            sortedByPriority = sortedByPriority.sort(function(a, b) {
+                return a.priority - b.priority;
+            });
+
             // Prepare the events
             fields
+                .data(ns + '.validators', sortedByPriority)
                 .on(this.options.events.fieldSuccess, function(e, data) {
                     var onSuccess = that.getOptions(data.field, null, 'onSuccess');
                     if (onSuccess) {
@@ -446,6 +476,12 @@ if (typeof jQuery === 'undefined') {
                     var onError = that.getOptions(data.field, null, 'onError');
                     if (onError) {
                         FormValidation.Helper.call(onError, [e, data]);
+                    }
+                })
+                .on(this.options.events.fieldReset, function(e, data) {
+                    var onReset = that.getOptions(data.field, null, 'onReset');
+                    if (onReset) {
+                        FormValidation.Helper.call(onReset, [e, data]);
                     }
                 })
                 .on(this.options.events.fieldStatus, function(e, data) {
@@ -717,7 +753,9 @@ if (typeof jQuery === 'undefined') {
                     validator.html5Attributes = $.extend({}, {
                                                     message: 'message',
                                                     onerror: 'onError',
+                                                    onreset: 'onReset',
                                                     onsuccess: 'onSuccess',
+                                                    priority: 'priority',
                                                     transformer: 'transformer'
                                                 }, validator.html5Attributes);
                     validators[v] = $.extend({}, html5AttrMap === true ? {} : html5AttrMap, validators[v]);
@@ -749,6 +787,7 @@ if (typeof jQuery === 'undefined') {
                     icon:        $field.attr('data-' + ns + '-icon') || $field.attr('data-' + ns + '-feedbackicons') || (this.options.fields && this.options.fields[field] ? this.options.fields[field].feedbackIcons : null), // Support backward
                     message:     $field.attr('data-' + ns + '-message'),
                     onError:     $field.attr('data-' + ns + '-onerror'),
+                    onReset:     $field.attr('data-' + ns + '-onreset'),
                     onStatus:    $field.attr('data-' + ns + '-onstatus'),
                     onSuccess:   $field.attr('data-' + ns + '-onsuccess'),
                     row:         $field.attr('data-' + ns + '-row') || $field.attr('data-' + ns + '-group') || (this.options.fields && this.options.fields[field] ? this.options.fields[field].group : null), // Support backward
@@ -1200,12 +1239,13 @@ if (typeof jQuery === 'undefined') {
                 }
             });
 
-            var total = fields.length;
+            var total = fields.length,
+                clazz = this.options.err.clazz.split(' ').join('.');
             for (var i = 0; i < total; i++) {
                 var $f      = fields[i],
                     field   = $f.attr('data-' + ns + '-field'),
                     $errors = $f.data(ns + '.messages')
-                                .find('.' + this.options.err.clazz.split(' ').join('.') + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]');
+                                .find('.' + clazz + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]');
 
                 if (this.options.fields && this.options.fields[field]
                     && (this.options.fields[field].enabled === 'false' || this.options.fields[field].enabled === false))
@@ -1351,8 +1391,7 @@ if (typeof jQuery === 'undefined') {
          * @returns {FormValidation.Base}
          */
         updateMessage: function(field, validator, message) {
-            var that    = this,
-                ns      = this._namespace,
+            var ns      = this._namespace,
                 $fields = $([]);
             switch (typeof field) {
                 case 'object':
@@ -1366,10 +1405,11 @@ if (typeof jQuery === 'undefined') {
                     break;
             }
 
+            var clazz = this.options.err.clazz.split(' ').join('.');
             $fields.each(function() {
                 $(this)
                     .data(ns + '.messages')
-                    .find('.' + that.options.err.clazz + '[data-' + ns + '-validator="' + validator + '"][data-' + ns + '-for="' + field + '"]').html(message);
+                    .find('.' + clazz + '[data-' + ns + '-validator="' + validator + '"][data-' + ns + '-for="' + field + '"]').html(message);
             });
 
             return this;
@@ -1411,7 +1451,8 @@ if (typeof jQuery === 'undefined') {
             var that  = this,
                 type  = fields.attr('type'),
                 row   = this.options.fields[field].row || this.options.row.selector,
-                total = ('radio' === type || 'checkbox' === type) ? 1 : fields.length;
+                total = ('radio' === type || 'checkbox' === type) ? 1 : fields.length,
+                clazz = this.options.err.clazz.split(' ').join('.');
 
             for (var i = 0; i < total; i++) {
                 var $field       = fields.eq(i);
@@ -1421,7 +1462,7 @@ if (typeof jQuery === 'undefined') {
 
                 var $parent      = $field.closest(row),
                     $message     = $field.data(ns + '.messages'),
-                    $allErrors   = $message.find('.' + this.options.err.clazz.split(' ').join('.') + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]'),
+                    $allErrors   = $message.find('.' + clazz + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]'),
                     $errors      = validatorName ? $allErrors.filter('[data-' + ns + '-validator="' + validatorName + '"]') : $allErrors,
                     $icon        = $field.data(ns + '.icon'),
                     // Support backward
@@ -1539,7 +1580,8 @@ if (typeof jQuery === 'undefined') {
                     fv: this,
                     field: field,
                     element: $field,
-                    status: status
+                    status: status,
+                    validator: validatorName
                 });
                 this._onFieldValidated($field, validatorName);
             }
@@ -1600,7 +1642,7 @@ if (typeof jQuery === 'undefined') {
 
             var that       = this,
                 type       = fields.attr('type'),
-                total      = ('radio' === type || 'checkbox' === type) ? 1 : fields.length,
+                total      = (('radio' === type || 'checkbox' === type) && this.options.live !== 'disabled') ? 1 : fields.length,
                 updateAll  = ('radio' === type || 'checkbox' === type),
                 validators = this.options.fields[field].validators,
                 verbose    = this.isOptionEnabled(field, 'verbose'),
@@ -1614,8 +1656,12 @@ if (typeof jQuery === 'undefined') {
                     continue;
                 }
 
-                var stop = false;
-                for (validatorName in validators) {
+                var stop             = false,
+                    sortedByPriority = $field.data(ns + '.validators'),
+                    numValidators    = sortedByPriority.length;
+
+                for (var j = 0; j < numValidators; j++) {
+                    validatorName = sortedByPriority[j].validator;
                     if ($field.data(ns + '.dfs.' + validatorName)) {
                         $field.data(ns + '.dfs.' + validatorName).reject();
                     }
@@ -1788,17 +1834,20 @@ if (typeof jQuery === 'undefined') {
             }
 
             // Remove messages and icons
+            var clazz = this.options.err.clazz.split(' ').join('.');
             for (field in this.options.fields) {
                 fields = this.getFieldElements(field);
                 row    = this.options.fields[field].row || this.options.row.selector;
                 for (i = 0; i < fields.length; i++) {
                     $field = fields.eq(i);
+                    // Remove all error messages
+                    var $messages = $field.data(ns + '.messages');
+                    if ($messages) {
+                        $messages.find('.' + clazz + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]').remove();
+                    }
                     $field
-                        // Remove all error messages
-                        .data(ns + '.messages')
-                            .find('.' + this.options.err.clazz.split(' ').join('.') + '[data-' + ns + '-validator][data-' + ns + '-for="' + field + '"]').remove().end()
-                            .end()
                         .removeData(ns + '.messages')
+                        .removeData(ns + '.validators')
                         // Remove feedback classes
                         .closest(row)
                             .removeClass(this.options.row.valid)
@@ -1981,12 +2030,13 @@ if (typeof jQuery === 'undefined') {
                     break;
             }
 
-            var filter = validator ? '[data-' + ns + '-validator="' + validator + '"]' : '';
+            var filter = validator ? '[data-' + ns + '-validator="' + validator + '"]' : '',
+                clazz  = this.options.err.clazz.split(' ').join('.');
             $fields.each(function() {
                 messages = messages.concat(
                     $(this)
                         .data(ns + '.messages')
-                        .find('.' + that.options.err.clazz + '[data-' + ns + '-for="' + $(this).attr('data-' + ns + '-field') + '"][data-' + ns + '-result="' + that.STATUS_INVALID + '"]' + filter)
+                        .find('.' + clazz + '[data-' + ns + '-for="' + $(this).attr('data-' + ns + '-field') + '"][data-' + ns + '-result="' + that.STATUS_INVALID + '"]' + filter)
                         .map(function() {
                             var v = $(this).attr('data-' + ns + '-validator'),
                                 f = $(this).attr('data-' + ns + '-for');
@@ -2086,9 +2136,10 @@ if (typeof jQuery === 'undefined') {
                     break;
             }
 
-            var total = $fields.length;
+            var i     = 0,
+                total = $fields.length;
             if (this.options.fields[field]) {
-                for (var i = 0; i < total; i++) {
+                for (i = 0; i < total; i++) {
                     for (var validator in this.options.fields[field].validators) {
                         $fields.eq(i).removeData(ns + '.dfs.' + validator);
                     }
@@ -2102,6 +2153,15 @@ if (typeof jQuery === 'undefined') {
 
             // Mark field as not validated yet
             this.updateStatus(field, this.STATUS_NOT_VALIDATED);
+
+            for (i = 0; i < total; i++) {
+                $fields.eq(i).trigger($.Event(this.options.events.fieldReset), {
+                    fv: this,
+                    field: field,
+                    element: $fields.eq(i),
+                    resetValue: resetValue
+                });
+            }
 
             return this;
         },
@@ -2122,6 +2182,11 @@ if (typeof jQuery === 'undefined') {
 
             // Enable submit buttons
             this.disableSubmitButtons(false);
+
+            this.$form.trigger($.Event(this.options.events.formReset), {
+                fv: this,
+                resetValue: resetValue
+            });
 
             return this;
         },
@@ -2262,11 +2327,13 @@ if (typeof jQuery === 'undefined') {
             formInit: 'init.form.fv',
             formPreValidate: 'prevalidate.form.fv',
             formError: 'err.form.fv',
+            formReset: 'rst.form.fv',
             formSuccess: 'success.form.fv',
             fieldAdded: 'added.field.fv',
             fieldRemoved: 'removed.field.fv',
             fieldInit: 'init.field.fv',
             fieldError: 'err.field.fv',
+            fieldReset: 'rst.field.fv',
             fieldSuccess: 'success.field.fv',
             fieldStatus: 'status.field.fv',
             localeChanged: 'changed.locale.fv',
@@ -2716,6 +2783,8 @@ if (typeof jQuery === 'undefined') {
     });
 
     FormValidation.Validator.callback = {
+        priority: 999,
+
         html5Attributes: {
             message: 'message',
             callback: 'callback'
@@ -3015,6 +3084,10 @@ if (typeof jQuery === 'undefined') {
                     length: [15],
                     prefix: ['34', '37']
                 },
+                DANKORT: {
+                    length: [16],
+                    prefix: ['5019']
+                },
                 DINERS_CLUB: {
                     length: [14],
                     prefix: ['300', '301', '302', '303', '304', '305', '36']
@@ -3032,6 +3105,16 @@ if (typeof jQuery === 'undefined') {
                              '622924', '622925', '644', '645', '646', '647', '648',
                              '649', '65']
                 },
+                ELO: {
+                    length: [16],
+                    prefix: ['4011', '4312', '4389', '4514', '4573', '4576',
+                             '5041', '5066', '5067', '509',
+                             '6277', '6362', '6363', '650', '6516', '6550']
+                },
+                FORBRUGSFORENINGEN: {
+                    length: [16],
+                    prefix: ['600722']
+                },
                 JCB: {
                     length: [16],
                     prefix: ['3528', '3529', '353', '354', '355', '356', '357', '358']
@@ -3042,7 +3125,7 @@ if (typeof jQuery === 'undefined') {
                 },
                 MAESTRO: {
                     length: [12, 13, 14, 15, 16, 17, 18, 19],
-                    prefix: ['5018', '5020', '5038', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766']
+                    prefix: ['5018', '5020', '5038', '5868', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766']
                 },
                 MASTERCARD: {
                     length: [16],
@@ -3058,6 +3141,10 @@ if (typeof jQuery === 'undefined') {
                              '62215', '62216', '62217', '62218', '62219', '6222', '6223',
                              '6224', '6225', '6226', '6227', '6228', '62290', '62291',
                              '622920', '622921', '622922', '622923', '622924', '622925']
+                },
+                VISA_ELECTRON: {
+                    length: [16],
+                    prefix: ['4026', '417500', '4405', '4508', '4844', '4913', '4917']
                 },
                 VISA: {
                     length: [16],
@@ -3214,8 +3301,8 @@ if (typeof jQuery === 'undefined') {
             }
 
             // Get the credit card number
-            var creditCard = validator.getFieldElements(options.creditCardField).val();
-            if (creditCard === '') {
+            var creditCard = validator.getFieldValue(options.creditCardField, 'creditCard');
+            if (creditCard === null || creditCard === '') {
                 return true;
             }
             
@@ -3226,6 +3313,10 @@ if (typeof jQuery === 'undefined') {
                 AMERICAN_EXPRESS: {
                     length: [15],
                     prefix: ['34', '37']
+                },
+                DANKORT: {
+                    length: [16],
+                    prefix: ['5019']
                 },
                 DINERS_CLUB: {
                     length: [14],
@@ -3244,6 +3335,16 @@ if (typeof jQuery === 'undefined') {
                              '622924', '622925', '644', '645', '646', '647', '648',
                              '649', '65']
                 },
+                ELO: {
+                    length: [16],
+                    prefix: ['4011', '4312', '4389', '4514', '4573', '4576',
+                             '5041', '5066', '5067', '509',
+                             '6277', '6362', '6363', '650', '6516', '6550']
+                },
+                FORBRUGSFORENINGEN: {
+                    length: [16],
+                    prefix: ['600722']
+                },
                 JCB: {
                     length: [16],
                     prefix: ['3528', '3529', '353', '354', '355', '356', '357', '358']
@@ -3254,7 +3355,7 @@ if (typeof jQuery === 'undefined') {
                 },
                 MAESTRO: {
                     length: [12, 13, 14, 15, 16, 17, 18, 19],
-                    prefix: ['5018', '5020', '5038', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766']
+                    prefix: ['5018', '5020', '5038', '5868', '6304', '6759', '6761', '6762', '6763', '6764', '6765', '6766']
                 },
                 MASTERCARD: {
                     length: [16],
@@ -3270,6 +3371,10 @@ if (typeof jQuery === 'undefined') {
                              '62215', '62216', '62217', '62218', '62219', '6222', '6223',
                              '6224', '6225', '6226', '6227', '6228', '62290', '62291',
                              '622920', '622921', '622922', '622923', '622924', '622925']
+                },
+                VISA_ELECTRON: {
+                    length: [16],
+                    prefix: ['4026', '417500', '4405', '4508', '4844', '4913', '4917']
                 },
                 VISA: {
                     length: [16],
@@ -3478,30 +3583,29 @@ if (typeof jQuery === 'undefined') {
 
             // Validate day, month, and year
             var valid     = FormValidation.Helper.date(year, month, day),
-                // declare the date, min and max objects
                 min       = null,
                 max       = null,
                 minOption = options.min,
                 maxOption = options.max;
 
             if (minOption) {
-                if (isNaN(Date.parse(minOption))) {
-                    minOption = validator.getDynamicOption($field, minOption);
-                }
+                min = (minOption instanceof Date)
+                    ? minOption
+                    : (this._parseDate(minOption, dateFormat, separator) ||
+                       this._parseDate(validator.getDynamicOption($field, minOption), dateFormat, separator));
 
-                min       = minOption instanceof Date ? minOption : this._parseDate(minOption, dateFormat, separator);
                 // In order to avoid displaying a date string like "Mon Dec 08 2014 19:14:12 GMT+0000 (WET)"
-                minOption = minOption instanceof Date ? this._formatDate(minOption, options.format) : minOption;
+                minOption = this._formatDate(min, options.format);
             }
 
             if (maxOption) {
-                if (isNaN(Date.parse(maxOption))) {
-                    maxOption = validator.getDynamicOption($field, maxOption);
-                }
+                max = (maxOption instanceof Date)
+                    ? maxOption
+                    : (this._parseDate(maxOption, dateFormat, separator) ||
+                       this._parseDate(validator.getDynamicOption($field, maxOption), dateFormat, separator));
 
-                max       = maxOption instanceof Date ? maxOption : this._parseDate(maxOption, dateFormat, separator);
                 // In order to avoid displaying a date string like "Mon Dec 08 2014 19:14:12 GMT+0000 (WET)"
-                maxOption = maxOption instanceof Date ? this._formatDate(maxOption, options.format) : maxOption;
+                maxOption = this._formatDate(max, options.format);
             }
 
             date = new Date(year, month -1, day, hours, minutes, seconds);
@@ -3536,7 +3640,7 @@ if (typeof jQuery === 'undefined') {
         /**
          * Return a date object after parsing the date string
          *
-         * @param {String} date   The date string to parse
+         * @param {Date|String} date   The date string to parse
          * @param {String} format The date format
          * The format can be:
          *   - date: Consist of DD, MM, YYYY parts which are separated by the separator option
@@ -3546,23 +3650,37 @@ if (typeof jQuery === 'undefined') {
          * @returns {Date}
          */
         _parseDate: function(date, format, separator) {
-            var minutes     = 0, hours = 0, seconds = 0,
-                sections    = date.split(' '),
-                dateSection = sections[0],
-                timeSection = (sections.length > 1) ? sections[1] : null;
-
-            dateSection = dateSection.split(separator);
-            var year  = dateSection[$.inArray('YYYY', format)],
-                month = dateSection[$.inArray('MM', format)],
-                day   = dateSection[$.inArray('DD', format)];
-            if (timeSection) {
-                timeSection = timeSection.split(':');
-                hours       = timeSection.length > 0 ? timeSection[0] : null;
-                minutes     = timeSection.length > 1 ? timeSection[1] : null;
-                seconds     = timeSection.length > 2 ? timeSection[2] : null;
+            if (date instanceof Date) {
+                return date;
+            }
+            if (typeof date !== 'string') {
+                return null;
             }
 
-            return new Date(year, month -1, day, hours, minutes, seconds);
+            // Ensure that the format must consist of year, month and day patterns
+            var yearIndex   = $.inArray('YYYY', format),
+                monthIndex  = $.inArray('MM', format),
+                dayIndex    = $.inArray('DD', format);
+            if (yearIndex === -1 || monthIndex === -1 || dayIndex === -1) {
+                return null;
+            }
+
+            var minutes     = 0, hours = 0, seconds = 0,
+                sections    = date.split(' '),
+                dateSection = sections[0].split(separator);
+            if (dateSection.length < 3) {
+                return null;
+            }
+
+            if (sections.length > 1) {
+                var timeSection = sections[1].split(':');
+                hours   = timeSection.length > 0 ? timeSection[0] : null;
+                minutes = timeSection.length > 1 ? timeSection[1] : null;
+                seconds = timeSection.length > 2 ? timeSection[2] : null;
+            }
+
+            return new Date(dateSection[yearIndex], dateSection[monthIndex] - 1, dateSection[dayIndex],
+                            hours, minutes, seconds);
         },
 
         /**
@@ -3680,7 +3798,7 @@ if (typeof jQuery === 'undefined') {
         init: function(validator, $field, options, validatorName) {
             var fields = options.field.split(',');
             for (var i = 0; i < fields.length; i++) {
-                var compareWith = validator.getFieldElements(fields[i]);
+                var compareWith = validator.getFieldElements($.trim(fields[i]));
                 validator.onLiveChange(compareWith, 'live_' + validatorName, function() {
                     var status = validator.getStatus($field, validatorName);
                     if (status !== validator.STATUS_NOT_VALIDATED) {
@@ -3701,7 +3819,7 @@ if (typeof jQuery === 'undefined') {
         destroy: function(validator, $field, options, validatorName) {
             var fields = options.field.split(',');
             for (var i = 0; i < fields.length; i++) {
-                var compareWith = validator.getFieldElements(fields[i]);
+                var compareWith = validator.getFieldElements($.trim(fields[i]));
                 validator.offLiveChange(compareWith, 'live_' + validatorName);
             }
         },
@@ -3726,7 +3844,7 @@ if (typeof jQuery === 'undefined') {
                 isValid = true;
 
             for (var i = 0; i < fields.length; i++) {
-                var compareWith = validator.getFieldElements(fields[i]);
+                var compareWith = validator.getFieldElements($.trim(fields[i]));
                 if (compareWith == null || compareWith.length === 0) {
                     continue;
                 }
@@ -3835,8 +3953,8 @@ if (typeof jQuery === 'undefined') {
             KANSAS_CITY: ['40', '44'],
             MEMPHIS: ['94', '95'],
             OGDEN: ['80', '90'],
-            PHILADELPHIA: ['33', '39', '41', '42', '43', '46', '48', '62', '63', '64', '66', '68', '71', '72', '73', '74', '75', '76', '77', '81', '82', '83', '84', '85', '86', '87', '88', '91', '92', '93', '98', '99'],
-            INTERNET: ['20', '26', '27', '45', '46'],
+            PHILADELPHIA: ['33', '39', '41', '42', '43', '48', '62', '63', '64', '66', '68', '71', '72', '73', '74', '75', '76', '77', '81', '82', '83', '84', '85', '86', '87', '88', '91', '92', '93', '98', '99'],
+            INTERNET: ['20', '26', '27', '45', '46', '47'],
             SMALL_BUSINESS_ADMINISTRATION: ['31']
         },
 
@@ -3975,6 +4093,17 @@ if (typeof jQuery === 'undefined') {
     });
 
     FormValidation.Validator.file = {
+        Error: {
+            EXTENSION: 'EXTENSION',
+            MAX_FILES: 'MAX_FILES',
+            MAX_SIZE: 'MAX_SIZE',
+            MAX_TOTAL_SIZE: 'MAX_TOTAL_SIZE',
+            MIN_FILES: 'MIN_FILES',
+            MIN_SIZE: 'MIN_SIZE',
+            MIN_TOTAL_SIZE: 'MIN_TOTAL_SIZE',
+            TYPE: 'TYPE'
+        },
+
         html5Attributes: {
             extension: 'extension',
             maxfiles: 'maxFiles',
@@ -4002,7 +4131,7 @@ if (typeof jQuery === 'undefined') {
          * - minTotalSize: The minimum size in bytes for all files
          * - message: The invalid message
          * - type: The allowed MIME type, separated by a comma
-         * @returns {Boolean}
+         * @returns {Boolean|Object}
          */
         validate: function(validator, $field, options, validatorName) {
             var value = validator.getFieldValue($field, validatorName);
@@ -4021,35 +4150,102 @@ if (typeof jQuery === 'undefined') {
                     total     = files.length,
                     totalSize = 0;
 
-                if ((options.maxFiles && total > parseInt(options.maxFiles, 10))        // Check the maxFiles
-                    || (options.minFiles && total < parseInt(options.minFiles, 10)))    // Check the minFiles
-                {
-                    return false;
+                // Check the maxFiles
+                if (options.maxFiles && total > parseInt(options.maxFiles, 10)) {
+                    return {
+                        valid: false,
+                        error: this.Error.MAX_FILES
+                    };
                 }
 
+                // Check the minFiles
+                if (options.minFiles && total < parseInt(options.minFiles, 10)) {
+                    return {
+                        valid: false,
+                        error: this.Error.MIN_FILES
+                    };
+                }
+
+                var metaData = {};
                 for (var i = 0; i < total; i++) {
                     totalSize += files[i].size;
                     ext        = files[i].name.substr(files[i].name.lastIndexOf('.') + 1);
+                    metaData   = {
+                        file: files[i],
+                        size: files[i].size,
+                        ext: ext,
+                        type: files[i].type
+                    };
 
-                    if ((options.minSize && files[i].size < parseInt(options.minSize, 10))                      // Check the minSize
-                        || (options.maxSize && files[i].size > parseInt(options.maxSize, 10))                   // Check the maxSize
-                        || (extensions && $.inArray(ext.toLowerCase(), extensions) === -1)                      // Check file extension
-                        || (files[i].type && types && $.inArray(files[i].type.toLowerCase(), types) === -1))    // Check file type
-                    {
-                        return false;
+                    // Check the minSize
+                    if (options.minSize && files[i].size < parseInt(options.minSize, 10)) {
+                       return {
+                           valid: false,
+                           error: this.Error.MIN_SIZE,
+                           metaData: metaData
+                       };
+                    }
+
+                    // Check the maxSize
+                    if (options.maxSize && files[i].size > parseInt(options.maxSize, 10)) {
+                        return {
+                            valid: false,
+                            error: this.Error.MAX_SIZE,
+                            metaData: metaData
+                        };
+                    }
+
+                    // Check file extension
+                    if (extensions && $.inArray(ext.toLowerCase(), extensions) === -1) {
+                        return {
+                            valid: false,
+                            error: this.Error.EXTENSION,
+                            metaData: metaData
+                        };
+                    }
+
+                    // Check file type
+                    if (files[i].type && types && $.inArray(files[i].type.toLowerCase(), types) === -1) {
+                        return {
+                            valid: false,
+                            error: this.Error.TYPE,
+                            metaData: metaData
+                        };
                     }
                 }
 
-                if ((options.maxTotalSize && totalSize > parseInt(options.maxTotalSize, 10))        // Check the maxTotalSize
-                    || (options.minTotalSize && totalSize < parseInt(options.minTotalSize, 10)))    // Check the minTotalSize
-                {
-                    return false;
+                // Check the maxTotalSize
+                if (options.maxTotalSize && totalSize > parseInt(options.maxTotalSize, 10)) {
+                    return {
+                        valid: false,
+                        error: this.Error.MAX_TOTAL_SIZE,
+                        metaData: {
+                            totalSize: totalSize
+                        }
+                    };
+                }
+
+                // Check the minTotalSize
+                if (options.minTotalSize && totalSize < parseInt(options.minTotalSize, 10)) {
+                    return {
+                        valid: false,
+                        error: this.Error.MIN_TOTAL_SIZE,
+                        metaData: {
+                            totalSize: totalSize
+                        }
+                    };
                 }
             } else {
                 // Check file extension
                 ext = value.substr(value.lastIndexOf('.') + 1);
                 if (extensions && $.inArray(ext.toLowerCase(), extensions) === -1) {
-                    return false;
+                    return {
+                        valid: false,
+                        error: this.Error.EXTENSION,
+                        metaData: {
+                            ext: ext
+                        }
+                    };
                 }
             }
 
@@ -4503,6 +4699,7 @@ if (typeof jQuery === 'undefined') {
                     SK: 'Slovakia',
                     SM: 'San Marino',
                     TH: 'Thailand',
+                    TR: 'Turkey',
                     ZA: 'South Africa'
                 }
             }
@@ -4518,7 +4715,7 @@ if (typeof jQuery === 'undefined') {
         // Supported country codes
         COUNTRY_CODES: [
             'BA', 'BG', 'BR', 'CH', 'CL', 'CN', 'CZ', 'DK', 'EE', 'ES', 'FI', 'HR', 'IE', 'IS', 'LT', 'LV', 'ME', 'MK', 'NL',
-            'PL', 'RO', 'RS', 'SE', 'SI', 'SK', 'SM', 'TH', 'ZA'
+            'PL', 'RO', 'RS', 'SE', 'SI', 'SK', 'SM', 'TH', 'TR', 'ZA'
         ],
 
         /**
@@ -5853,6 +6050,26 @@ if (typeof jQuery === 'undefined') {
         },
 
         /**
+         * Validate Turkish Identification Number
+         *
+         * @see https://en.wikipedia.org/wiki/Turkish_Identification_Number
+         * @param {String} value The ID
+         * @returns {Boolean}
+         */
+        _tr: function(value) {
+            if (value.length !== 11) {
+                return false;
+            }
+
+            var sum = 0;
+            for (var i = 0; i < 10; i++) {
+                sum += parseInt(value.charAt(i), 10);
+            }
+
+            return (sum % 10) === parseInt(value.charAt(10), 10);
+        },
+
+        /**
          * Validate South African ID
          *
          * @see http://en.wikipedia.org/wiki/National_identification_number#South_Africa
@@ -6144,8 +6361,8 @@ if (typeof jQuery === 'undefined') {
             options = $.extend({}, { ipv4: true, ipv6: true }, options);
 
             var locale    = validator.getLocale(),
-                ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-                ipv6Regex = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/,
+                ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([0-9]|[1-2][0-9]|3[0-2]))?$/,
+                ipv6Regex = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*(\/(\d|\d\d|1[0-1]\d|12[0-8]))?$/,
                 valid     = false,
                 message;
 
@@ -6532,7 +6749,7 @@ if (typeof jQuery === 'undefined') {
                 return true;
             }
 
-            return /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/.test(value);
+            return /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(value) || /^([0-9A-Fa-f]{4}\.){2}([0-9A-Fa-f]{4})$/.test(value);
         }
     };
 }(jQuery));
@@ -6704,10 +6921,19 @@ if (typeof jQuery === 'undefined') {
             if (value === '') {
                 return true;
             }
+
             var decimalSeparator   = options.separator || options.decimalSeparator || '.',
                 thousandsSeparator = options.thousandsSeparator || '';
-            decimalSeparator       = (decimalSeparator   === '.') ? '\\.' : decimalSeparator;
-            thousandsSeparator     = (thousandsSeparator === '.') ? '\\.' : thousandsSeparator;
+
+            // Support preceding zero numbers such as .5, -.5
+            if (value.substr(0, 1) === decimalSeparator) {
+                value = '0' + decimalSeparator + value.substr(1);
+            } else if (value.substr(0, 2) === '-' + decimalSeparator) {
+                value = '-0' + decimalSeparator + value.substr(2);
+            }
+
+            decimalSeparator   = (decimalSeparator   === '.') ? '\\.' : decimalSeparator;
+            thousandsSeparator = (thousandsSeparator === '.') ? '\\.' : thousandsSeparator;
 
             var testRegexp         = new RegExp('^-?[0-9]{1,3}(' + thousandsSeparator + '[0-9]{3})*(' + decimalSeparator + '[0-9]+)?$'),
                 thousandsReplacer  = new RegExp(thousandsSeparator, 'g');
@@ -6938,7 +7164,7 @@ if (typeof jQuery === 'undefined') {
                     // May start with 1, +1, or 1-; should discard
                     // Area code may be delimited with (), & sections may be delimited with . or -
                     // http://regexr.com/38mqi
-                    isValid = (/^(?:(1\-?)|(\+1 ?))?\(?(\d{3})[\)\-\.]?(\d{3})[\-\.]?(\d{4})$/).test(value);
+                    isValid = (/^(?:(1\-?)|(\+1 ?))?\(?\d{3}\)?[\-\.\s]?\d{3}[\-\.\s]?\d{4}$/).test(value);
                     break;
             }
 
@@ -6959,6 +7185,8 @@ if (typeof jQuery === 'undefined') {
     });
 
     FormValidation.Validator.promise = {
+        priority: 999,
+
         html5Attributes: {
             message: 'message',
             promise: 'promise'
@@ -7029,6 +7257,7 @@ if (typeof jQuery === 'undefined') {
     FormValidation.Validator.regexp = {
         html5Attributes: {
             message: 'message',
+            flags: 'flags',
             regexp: 'regexp'
         },
 
@@ -7050,6 +7279,10 @@ if (typeof jQuery === 'undefined') {
          * @param {jQuery} $field Field element
          * @param {Object} options Consists of the following key:
          * - regexp: The regular expression you need to check
+         * - flags: If specified, flags can have any combination of Javascript regular expression flags such as:
+         *      g: global match
+         *      i: ignore case
+         *      m: multiple line
          * @returns {Boolean}
          */
         validate: function(validator, $field, options, validatorName) {
@@ -7058,7 +7291,9 @@ if (typeof jQuery === 'undefined') {
                 return true;
             }
 
-            var regexp = ('string' === typeof options.regexp) ? new RegExp(options.regexp) : options.regexp;
+            var regexp = ('string' === typeof options.regexp)
+                        ? (options.flags ? new RegExp(options.regexp, options.flags) : new RegExp(options.regexp))
+                        : options.regexp;
             return regexp.test(value);
         }
     };
@@ -7073,7 +7308,10 @@ if (typeof jQuery === 'undefined') {
     });
 
     FormValidation.Validator.remote = {
+        priority: 1000,
+
         html5Attributes: {
+            async: 'async',
             crossdomain: 'crossDomain',
             data: 'data',
             datatype: 'dataType',
@@ -7103,6 +7341,7 @@ if (typeof jQuery === 'undefined') {
          * @param {FormValidation.Base} validator Plugin instance
          * @param {jQuery} $field Field element
          * @param {Object} options Can consist of the following keys:
+         * - async {Boolean} [optional] Indicate the Ajax request will be asynchronous or not. It's true by default
          * - crossDomain {Boolean} [optional]
          * - data {Object|Function} [optional]: By default, it will take the value
          *  {
@@ -7151,6 +7390,7 @@ if (typeof jQuery === 'undefined') {
             data[options.name || name] = value;
 
             var ajaxOptions = {
+                async: options.async === null || options.async === true || options.async === 'true',
                 data: data,
                 dataType: options.dataType || 'json',
                 headers: options.headers || {},
