@@ -181,6 +181,10 @@ class Form extends Ancestor {
 			$this->replaceHtml = $descriptor['replaceHtml'];
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		$this->setSections();
 
 		parent::__construct($descriptor);
@@ -317,6 +321,12 @@ class Form extends Ancestor {
 				if (!empty($value) && !is_int($value)) {
 					$value = encode($value);
 				}
+			}
+
+			if ($this->load === true && $element->getType() == 'hidden' && $element->isSecret()) {
+				if (!empty($value)) {
+					$value = encode($value);
+				}	
 			}
 
 			if (!is_array($value) && isJson($value)) {
@@ -480,6 +490,19 @@ class Form extends Ancestor {
 			$data[$this->idElement] = decode($data[$this->idElement]);
 		} elseif (!empty($this->getRequestParam($this->idElement))) {
 			$data[$this->idElement] = $this->getRequestParam($this->idElement);
+		}
+
+		# decode hidden secrets
+		$elements = $this->getElements();
+		foreach ($elements as $element) {
+			if ($element->getType() == 'hidden' && $element->isSecret()) {
+				$name = $element->getName(false);
+				if (isset($data[$name]) && !empty($data[$name])) {
+					$data[$name] = decode($data[$name]);
+				} elseif (!empty($this->getRequestParam($name))) {
+					$data[$name] = $this->getRequestParam($name);
+				}
+			}
 		}
 
 		return $data;
@@ -907,6 +930,10 @@ class Form extends Ancestor {
 			'isLoad' => $this->isLoad,
 			'multilingual' => $this->multilingual,
 		]);
+
+		if (getValue($section, 'renderStructure', null) === null) {
+			$sectionObj->renderStructure = $this->renderStructure;
+		}
 
 		$sectionObj->filters = $this->filters;
 		$sectionObj->formId = $this->formId;

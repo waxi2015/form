@@ -1,7 +1,11 @@
-<section class="<?=$this->getClass()?> wax-section" id="<?=$this->getId()?>" <?=$this->getData()?>><?=$this->getVar('customVar')?>
-	<? if ($this->getTitle() !== null): ?>
-		<span class="wax-section-title"><?=$this->getTitle()?></span>
-	<? endif; ?>
-	<?=$this->renderTabs()?>
+<? if ($this->shouldRenderStructure()): ?>
+	<section class="<?=$this->getClass()?> wax-section" id="<?=$this->getId()?>" <?=$this->getData()?>><?=$this->getVar('customVar')?>
+		<? if ($this->getTitle() !== null): ?>
+			<span class="wax-section-title"><?=$this->getTitle()?></span>
+		<? endif; ?>
+		<?=$this->renderTabs()?>
+		<?=$this->renderBrows()?>
+	</section>
+<? else: ?>
 	<?=$this->renderBrows()?>
-</section>
+<? endif; ?>

@@ -18,6 +18,10 @@ class Image extends Element {
 
 	public $acceptedFiles = 'image/*';
 
+	public $onSuccess = null;
+
+	public $onRemove = null;
+
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		$this->imageDescriptor = $descriptor['imageDescriptor'];
 
@@ -41,7 +45,23 @@ class Image extends Element {
 			$this->acceptedFiles = $descriptor['acceptedFiles'];
 		}
 
+		if (isset($descriptor['onSuccess'])) {
+			$this->onSuccess = $descriptor['onSuccess'];
+		}
+
+		if (isset($descriptor['onRemove'])) {
+			$this->onRemove = $descriptor['onRemove'];
+		}
+
 		parent::__construct($descriptor, $nth, $constructParams);
+	}
+
+	public function getOnSuccess () {
+		return $this->onSuccess;
+	}
+
+	public function getOnRemove () {
+		return $this->onRemove;
 	}
 
 	public function getImageDescriptor () {

@@ -47,6 +47,10 @@ class Column extends Structure {
 			$this->condition = $this->descriptor['condition'];
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
 

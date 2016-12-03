@@ -1,3 +1,7 @@
-<div class="<?=$this->getWidthString()?> wax-bcolumn" id="<?=$this->getId()?>" <?=$this->getData()?>>
-	<?=$this->getVar('customVar')?> <?=$this->renderRows()?>
-</div>
+<? if ($this->shouldRenderStructure()): ?>
+	<div class="<?=$this->getWidthString()?> wax-bcolumn" id="<?=$this->getId()?>" <?=$this->getData()?>>
+		<?=$this->renderRows()?>
+	</div>
+<? else: ?>
+	<?=$this->renderRows()?>
+<? endif; ?>

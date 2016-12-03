@@ -32,6 +32,10 @@ class Section extends Structure {
 		if (isset($descriptor['tabs'])) {
 			$this->tabs = $descriptor['tabs'];
 		}
+
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
 		
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
@@ -113,6 +117,11 @@ class Section extends Structure {
 		if ($this->condition !== null) {
 			$browObj->condition = $this->condition;
 		}
+
+		if (getValue($brow, 'renderStructure', null) === null) {
+			$browObj->renderStructure = $this->renderStructure;
+		}
+		
 		$browObj->filters = $this->filters;
 		$browObj->formId = $this->formId;
 		$browObj->formIdentifier = $this->formIdentifier;

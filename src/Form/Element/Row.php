@@ -21,6 +21,10 @@ class Row extends Structure {
 			$this->_setDefaultColumns();
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
 
@@ -87,6 +91,11 @@ class Row extends Structure {
 		if ($this->condition !== null) {
 			$columnObj->condition = $this->condition;
 		}
+
+		if (getValue($column, 'renderStructure', null) === null) {
+			$columnObj->renderStructure = $this->renderStructure;
+		}
+		
 		$columnObj->filters = $this->filters;
 		$columnObj->formId = $this->formId;
 		$columnObj->formIdentifier = $this->formIdentifier;

@@ -1,4 +1,4 @@
-<input type="hidden" id="<?=$this->getId()?>" name="<?=$this->getName()?>" value="<?=($this->getName(false) == 'id'
+<input type="hidden" id="<?=$this->getId()?>" name="<?=$this->getName()?>" value="<?=($this->getName(false) == 'id' || $this->isSecret()
 		? (
 			is_numeric($this->getValue())
 			? encode($this->getValue())

@@ -1,5 +1,9 @@
-<div class="<?=$this->getWidthString()?> <?=$this->getClass()?> wax-column" id="<?=$this->getId()?>" <?=$this->getData()?>>
+<? if ($this->shouldRenderStructure()): ?>
+	<div class="<?=$this->getWidthString()?> <?=$this->getClass()?> wax-column" id="<?=$this->getId()?>" <?=$this->getData()?>>
+		<?=$this->renderElements()?>
+		<?=$this->fetchTemplate('description')?>
+		<?=$this->fetchTemplate('error')?>
+	</div>
+<? else: ?>
 	<?=$this->renderElements()?>
-	<?=$this->fetchTemplate('description')?>
-	<?=$this->fetchTemplate('error')?>
-</div>
+<? endif; ?>

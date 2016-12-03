@@ -27,6 +27,10 @@ class Bcolumn extends Structure {
 			$this->width = $descriptor['width'];
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
 
@@ -116,6 +120,11 @@ class Bcolumn extends Structure {
 		if ($this->condition !== null) {
 			$rowObj->condition = $this->condition;
 		}
+
+		if (getValue($row, 'renderStructure', null) === null) {
+			$rowObj->renderStructure = $this->renderStructure;
+		}
+		
 		$rowObj->filters = $this->filters;
 		$rowObj->formId = $this->formId;
 		$rowObj->formIdentifier = $this->formIdentifier;

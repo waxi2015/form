@@ -1,3 +1,7 @@
-<div class="<?=$this->getClass()?> row wax-brow" id="<?=$this->getId()?>" <?=$this->getData()?>>
-	<?=$this->getVar('customVar')?> <?=$this->renderBcolumns()?>
-</div>
+<? if ($this->shouldRenderStructure()): ?>
+	<div class="<?=$this->getClass()?> row wax-brow" id="<?=$this->getId()?>" <?=$this->getData()?>>
+		<?=$this->renderBcolumns()?>
+	</div>
+<? else: ?>
+	<?=$this->renderBcolumns()?>
+<? endif; ?>

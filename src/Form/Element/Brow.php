@@ -27,6 +27,10 @@ class Brow extends Structure {
 			$this->tab = $descriptor['tab'];
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		parent::__construct($descriptor, $nth, $constructParams);
 	}
 
@@ -104,6 +108,11 @@ class Brow extends Structure {
 		if ($this->condition !== null) {
 			$bcolumnObj->condition = $this->condition;
 		}
+
+		if (getValue($bcolumn, 'renderStructure', null) === null) {
+			$bcolumnObj->renderStructure = $this->renderStructure;
+		}
+
 		$bcolumnObj->filters = $this->filters;
 		$bcolumnObj->formId = $this->formId;
 		$bcolumnObj->formIdentifier = $this->formIdentifier;

@@ -91,10 +91,10 @@ class FormController extends Controller
 		$response = array(
 			'valid' => false
 		);
+
 		// itt megadható akár más adat is, mint ami kezdetben az rp-ben ment át a WX_Form 2. paramétereként
 		if ($form->isValid()) {
 			$response['valid'] = true;
-
 			$result = $form->runOnValid();
 
 			if ($result === true || $result['valid'] == true){

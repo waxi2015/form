@@ -1,3 +1,7 @@
-<div class="<?=$this->getClass()?> row wax-row" id="<?=$this->getId()?>" <?=$this->getData()?>>
-	<?=$this->getVar('customVar')?> <?=$this->renderColumns()?>
-</div>
+<? if ($this->shouldRenderStructure()): ?>
+	<div class="<?=$this->getClass()?> row wax-row" id="<?=$this->getId()?>" <?=$this->getData()?>>
+		<?=$this->renderColumns()?>
+	</div>
+<? else: ?>
+	<?=$this->renderColumns()?>
+<? endif; ?>

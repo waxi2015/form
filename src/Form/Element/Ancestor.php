@@ -75,6 +75,8 @@ class Ancestor {
 	public $multilingual = false;
 
 	public $viewMode = false;
+	
+	public $renderStructure = true;
 
 	public function __construct($descriptor, $nth = null) {
 		if ($this->descriptor === null) {
@@ -105,7 +107,15 @@ class Ancestor {
 			$this->viewMode = $this->descriptor['viewMode'];
 		}
 
+		if (isset($descriptor['renderStructure'])) {
+			$this->renderStructure = $descriptor['renderStructure'];
+		}
+
 		$this->isCloneable = isset($this->descriptor['clone']) && $this->descriptor['clone'] ? true : false;
+	}
+
+	public function shouldRenderStructure () {
+		return $this->renderStructure;
 	}
 
 	public function isMultilingual () {
