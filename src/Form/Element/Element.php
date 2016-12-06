@@ -42,6 +42,10 @@ class Element extends Ancestor {
 
 	public $info = null;
 
+	public $infoHtml = false;
+
+	public $infoPlacement = 'bottom';
+
 	public $placeholder = null;
 
 	public $emptied = false;
@@ -215,7 +219,23 @@ class Element extends Ancestor {
 			$this->load = $descriptor['load'];
 		}
 
+		if (isset($this->descriptor['infoHtml'])) {
+			$this->infoHtml = $descriptor['infoHtml'];
+		}
+
+		if (isset($this->descriptor['infoPlacement'])) {
+			$this->infoPlacement = $descriptor['infoPlacement'];
+		}
+
 		parent::__construct($descriptor, $nth);
+	}
+
+	public function getInfoPlacement () {
+		return $this->infoPlacement;
+	}
+
+	public function isInfoHtml () {
+		return $this->infoHtml;
 	}
 
 	public function getDescriptionClass () {
