@@ -409,6 +409,9 @@ class Form extends Ancestor {
 			# a before returns false
 			if ($beforeResult === false) {
 				$result = false;
+			} elseif (isset($beforeResult['form_result'])) {
+				$result = $beforeResult['form_result'];
+				$feedback = isset($beforeResult['form_feedback']) ? $beforeResult['form_feedback'] : false;
 			} else {
 				# do multilingual converting
 				if ($this->isMultilingual()) {
@@ -434,16 +437,24 @@ class Form extends Ancestor {
 			# if we should do something after validation or saving
 			if ($this->after !== null) {
 				$after = $this->runAfter();
-
 				# if after has return value
 				if ($after !== null) {
-					$result = $after;
+					if (isset($after['form_result'])) {
+						$result = $after['form_result'];
+						$feedback = isset($after['form_feedback']) ? $after['form_feedback'] : false;
+					} else {
+						$result = $after;
+					}
 				}
 			}
 
 		} else {
 			# if could not be savedű
 			if ($this->feedback !== null) {
+				if (isset($feedback)) {
+					$result = $feedback;
+				}
+
 				if (is_bool($result)) {
 					$result = trim(json_encode($result),'"');
 				}
@@ -463,6 +474,10 @@ class Form extends Ancestor {
 		
 		# if we have feedback for the result value
 		if ($this->feedback !== null) {
+			if (isset($feedback)) {
+				$result = $feedback;
+			}
+			
 			if (is_bool($result)) {
 				$result = trim(json_encode($result),'"');
 			}
@@ -597,6 +612,10 @@ class Form extends Ancestor {
 				return false;
 			}
 
+			if (isset($result['form_result']) && $result['form_result'] === false) {
+				return $result;
+			}
+
 			if (isset($one['updateData']) && $one['updateData']) {
 				$data = $this->preparedData;
 			}
@@ -624,6 +643,10 @@ class Form extends Ancestor {
 
 			if ($return === false) {
 				return false;
+			}
+
+			if (isset($return['form_result']) && $return['form_result'] === false) {
+				return $return;
 			}
 		}
 
