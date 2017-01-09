@@ -1,12 +1,12 @@
 <div class="wax-form-tabs">
 	<? foreach ($this->getTabs() as $tab): ?>
-		<a href="<?=$tab['tab']?>"><?=$tab['label']?></a>
+		<a href="javascript:void(0)" data-href="<?=$tab['tab']?>"><?=$tab['label']?></a>
 	<? endforeach; ?>
 	<div class="dropdown hided">
-		<a href="" class="more-tabs dropdown-toggle" data-toggle="dropdown">More <span class="fa fa-caret-down"></span></a>
+		<a href="" class="more-tabs dropdown-toggle no-tab" data-toggle="dropdown">More <span class="fa fa-caret-down"></span></a>
 		<ul class="dropdown-menu">
 		    <? foreach ($this->getTabs() as $tab): ?>
-				<a href="<?=$tab['tab']?>" class="hided"><?=$tab['label']?></a>
+				<a href="javascript:void(0)" data-href="<?=$tab['tab']?>" class="hided"><?=$tab['label']?></a>
 			<? endforeach; ?>
 		</ul>
 	</div>

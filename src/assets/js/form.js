@@ -1,6 +1,21 @@
 var global = this;
 
 var waxform = {
+	password: function (options) {
+		var form = $(options.form),
+			field = form.find('[name="' + options.fieldName + '"]'),
+			container = field.closest('.wax-password');
+
+		container.find('.wax-show-password').click(function(e){
+			e.preventDefault();
+
+			if (field.attr('type') == 'password') {
+				field.attr('type', 'text');
+			} else {
+				field.attr('type', 'password');
+			}
+		});
+	},
 	loader: function (options) {
 		var form = $(options.form);
 
@@ -142,7 +157,7 @@ var waxform = {
 
 			var hided = tabsContainer.find('> a:not(.hided):last').addClass('hided');
 
-			section.find('.dropdown a[href="'+hided.attr('href')+'"]').removeClass('hided');
+			section.find('.dropdown a[data-href="'+hided.attr('data-href')+'"]').removeClass('hided');
 
 			tabsContainer.find('.dropdown').removeClass('hided');
 
@@ -187,7 +202,7 @@ var waxform = {
 
 			var revealed = tabsContainer.find('> a.hided:first').removeClass('hided');
 
-			section.find('.dropdown a[href="'+revealed.attr('href')+'"]').addClass('hided');
+			section.find('.dropdown a[data-href="'+revealed.attr('data-href')+'"]').addClass('hided');
 
 			if (revealed.hasClass('active')) {
 				tabsContainer.find('.dropdown-toggle').removeClass('active');
@@ -222,18 +237,27 @@ var waxform = {
 			section.find('.wax-form-tabs a').click(function(e){
 				e.preventDefault();
 
-				var tab = $(this).attr('href');
+				var tab = $(this).attr('data-href');
 
-				if (tab != '') {
+				if (tab !== undefined && tab != '') {
 					section.find('.wax-form-tabs a').removeClass('active');
-					section.find('.wax-form-tabs a[href="' + tab + '"]').addClass('active');
-					section.find('.wax-form-tabs a[href="' + tab + '"]:not(.hided)').closest('.dropdown').find('.dropdown-toggle').addClass('active');
+					section.find('.wax-form-tabs a[data-href="' + tab + '"]').addClass('active');
+					section.find('.wax-form-tabs a[data-href="' + tab + '"]:not(.hided)').closest('.dropdown').find('.dropdown-toggle').addClass('active');
 
 					section.find('.wax-brow:not(.no-tab)').removeClass('shown').addClass('hidden');
-					section.find('.wax-brow[data-tab="' + $(this).attr('href') + '"]').removeClass('hidden').addClass('shown');
+					section.find('.wax-brow[data-tab="' + $(this).attr('data-href') + '"]').removeClass('hidden').addClass('shown');
 				}
 			});
 		});
+
+		var anchor = window.location.hash;
+		if (anchor !== undefined && anchor != '') {
+			anchor = anchor.substring(1);
+
+			setTimeout(function(){
+				form.find('.wax-form-tabs a[data-href="'+anchor+'"]').click();
+			},150);
+		}
 	},
 
 	steps : function (options) {
@@ -344,67 +368,74 @@ var waxform = {
 			sliderOptions.value = options.value;
 		}
 
-		$('#'+options.fieldId+'-container').slider(sliderOptions)
-			.on('slide', function(slideEvt) {
-				$(this).trigger('change');
+		var onChange = function (slideEvt) {
+			$(this).trigger('change');
 
-				if (typeof slideEvt.value == 'object') {
-					$.each(options.values, function(k,v){
-						$('input[name="'+options.fieldName+'"]:eq('+k+')').val(slideEvt.value[k]);	
-					})
+			if (typeof slideEvt.value == 'object') {
+				$.each(options.values, function(k,v){
+					$('input[name="'+options.fieldName+'"]:eq('+k+')').val(slideEvt.value[k]);	
+				})
 
-					if (options.minSelector !== undefined) {
-						var value = slideEvt.value[0];
+				if (options.minSelector !== undefined) {
+					var value = slideEvt.value[0];
 
-						if (format) {
-							value = value.formatMoney(0, ',', ' ');
-						}
-
-						$(options.minSelector).text(prefix + value + suffix);
+					if (format) {
+						value = value.formatMoney(0, ',', ' ');
 					}
 
-					if (options.maxSelector !== undefined) {
-						var value = slideEvt.value[1];
-
-						if (format) {
-							value = value.formatMoney(0, ',', ' ');
-						}
-
-						$(options.maxSelector).text(prefix + value + suffix);
-					}
-				} else {
-					$('input[name="'+options.fieldName+'"]').val(slideEvt.value);
-
-					if (options.minSelector !== undefined) {
-						var value = slideEvt.value;
-
-						if (format) {
-							value = value.formatMoney(0, ',', ' ');
-						}
-
-						$(options.minSelector).text(prefix + value + suffix);
-					}
+					$(options.minSelector).text(prefix + value + suffix);
 				}
 
-	            var $field = $(slideEvt.target);
+				if (options.maxSelector !== undefined) {
+					var value = slideEvt.value[1];
 
-	            $field
-	                .closest('.form-group')
-	                    .find('.percentageValue')
-	                    .html($field.slider('getValue') + '%');
+					if (format) {
+						value = value.formatMoney(0, ',', ' ');
+					}
 
-	            form.formValidation('revalidateField', options.fieldName);
+					$(options.maxSelector).text(prefix + value + suffix);
+				}
+			} else {
+				$('input[name="'+options.fieldName+'"]').val(slideEvt.value);
 
+				if (options.minSelector !== undefined) {
+					var value = slideEvt.value;
+
+					if (format) {
+						value = value.formatMoney(0, ',', ' ');
+					}
+
+					$(options.minSelector).text(prefix + value + suffix);
+				}
+			}
+
+            var $field = $(slideEvt.target);
+
+            $field
+                .closest('.form-group')
+                    .find('.percentageValue')
+                    .html($field.slider('getValue') + '%');
+
+            form.formValidation('revalidateField', options.fieldName);
+		}
+
+		$('#'+options.fieldId+'-container').slider(sliderOptions)
+			.on('slide', function(slideEvt) {
+				onChange(slideEvt);
+			})
+			.on('slideStop', function(slideEvt) {
+				onChange(slideEvt);
 			});
 
-			$('#'+options.fieldId+'-container').change(function(){
-				$('input[name="'+options.fieldName+'"]').val($(this).val());
-			})
+		$('#'+options.fieldId+'-container').change(function(){
+			$('input[name="'+options.fieldName+'"]').val($(this).val());
+		})
 
 		if (options.minSelector !== undefined) {
-			var value = options.values[0];
+			var value = parseInt(options.values[0]);
 			
-			if (format && typeof value == 'integer') {
+			//if (format && typeof value == 'integer') {
+			if (format) {
 				value = value.formatMoney(0, ',', ' ');
 			}
 			
@@ -414,7 +445,8 @@ var waxform = {
 		if (options.maxSelector !== undefined && options.values !== undefined) {
 			var value = options.values[1];
 
-			if (format && typeof value == 'integer') {
+			//if (format && typeof value == 'integer') {
+			if (format) {
 				value = (value).formatMoney(0, ',', ' ');
 			}
 			
@@ -752,6 +784,10 @@ var waxform = {
 
 				$('#'+options.fieldId+'-previews .image-default').addClass('hidden');
 				$('#remove-image-'+options.fieldId).removeClass('hidden');
+
+				if (options.onSuccess.length > 0) {
+					executeFunctionByName(options.onSuccess, window);
+				}
 			},
 			addedfile: function() {
 				if (this.files[1] != null){
@@ -779,6 +815,10 @@ var waxform = {
 			$('input[name="'+options.fieldName+'"]').val('').trigger('change');
 			$('#'+options.fieldId+'-previews .image-default').removeClass('hidden');
 			$('#remove-image-'+options.fieldId).addClass('hidden');
+
+			if (options.onRemove.length > 0) {
+				executeFunctionByName(options.onRemove, window);
+			}
 		})
 	},
 
@@ -1182,7 +1222,10 @@ var waxform = {
 				var target = $(e.target),
 					tabs = form.find('.wax-form-tabs'),
 					steps = form.find('.wax-form-steps'),
-					languages = form.find('.wax-form-language-selector');
+					languages = form.find('.wax-form-language-selector'),
+					buttons = $('.btn-can-load');
+
+				buttons.button('reset');
 
 				if (tabs.length > 0) {
 					var brow = target.closest('.wax-brow').attr('data-tab'),

@@ -284,25 +284,52 @@
 
 						var nodeTree = $(this).attr('rel'),
 							dom = $(this).closest('[data-tree="'+nodeTree+'"]'),
-							brackets = new RegExp("\[[0-9]{1,}\]");
+							brackets = new RegExp("\[[0-9]{1,}\]"),
+							changedFields = [],
+							form = $(this).closest('form');
 
 						dom.find('[name*="["]').each(function() {
 							var removableNumber = parseInt($(this).attr('name').match(brackets)[0].replace(/\[(.*?)\]/g,"$1")),
-								removableName = $(this).attr('name').replace(brackets,'');
+								removableName = $(this).attr('name').replace(brackets,''),
+								lastCloneNumber = removableNumber;
 
-							wxform.removeValidation($(this).attr('name'))
+							var checkNextCloneNumber = true;
+							while (checkNextCloneNumber == true) {
+								if ($('[name="'+removableName+'['+(lastCloneNumber + 1)+']"]').length > 0) {
+									lastCloneNumber++;
+								} else {
+									checkNextCloneNumber = false;
+								}
+							}
 
-							$(this).closest('form').find('[name*="["]').each(function() {
+							var removeValidationName = removableName + '['+lastCloneNumber+']';
+							wxform.removeValidation(removeValidationName);
+
+							form.find('[name*="["]').each(function() {
 								var number = parseInt($(this).attr('name').match(brackets)[0].replace(/\[(.*?)\]/g,"$1")),
 									name = $(this).attr('name').replace(brackets,'');
 
 								if (number > removableNumber && name == removableName) {
-									$(this).attr('name', $(this).attr('name').replace(number, number - 1))
+									$(this).attr('name', $(this).attr('name').replace(number, number - 1));
+									$(this).attr('data-fv-field', $(this).attr('data-fv-field').replace(number, number - 1));
+									$(this).attr('id', $(this).attr('id').replace(number, number - 1));
+
+									var element = $(this).closest('.wax-element');
+									element.find('[data-fv-for]').attr('data-fv-for', element.find('[data-fv-for]').attr('data-fv-for').replace(number, number - 1));
+									element.find('[data-fv-icon-for]').attr('data-fv-icon-for', element.find('[data-fv-icon-for]').attr('data-fv-icon-for').replace(number, number - 1));
+
+									changedFields.push($(this).attr('name'));
 								}
 							})
 						});
 
 						dom.remove();
+
+						$.each(changedFields, function(k,fieldName){
+							var validationOptions = form.data('formValidation').getOptions(fieldName);
+							form.data('formValidation').removeField(fieldName);
+							form.data('formValidation').addField(fieldName, validationOptions);
+						})
 
 						wxform.refreshCloneCount(nodeTree);
 					})
@@ -348,21 +375,6 @@
 								$(this).button('reset');
 							}
 						});
-						
-						executeFunctionByName(after, window, response);
-
-						if (response.after) {
-							$.each(response.after, function(k,func){
-								executeFunctionByName(func, window, response);
-							})
-						}
-
-						if (response.valid  !== undefined && response.valid.toString() == 'true') {
-							window.letLeave = true;
-							executeFunctionByName(success, window, response);
-						} else {
-							executeFunctionByName(error, window, response);
-						}
 
 						if (response.message !== undefined && response.message.length > 0) {
 							if (response.valid  !== undefined && response.valid.toString() == 'true') {
@@ -380,6 +392,21 @@
 
 						if (replaceHtml) {
 							form.replaceWith(response.html);
+						}
+						
+						executeFunctionByName(after, window, response);
+
+						if (response.after) {
+							$.each(response.after, function(k,func){
+								executeFunctionByName(func, window, response);
+							})
+						}
+
+						if (response.valid  !== undefined && response.valid.toString() == 'true') {
+							window.letLeave = true;
+							executeFunctionByName(success, window, response);
+						} else {
+							executeFunctionByName(error, window, response);
 						}
 
 						if (response.valid.toString() == 'false') {
