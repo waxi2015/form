@@ -10,7 +10,7 @@
 			dictDefaultMessage: '<?=$this->getButtonLabel()?>',
 			fileUrlBase: '<?=$this->getFileUrlBase()?>',
 			<? if ($this->hasLimit()): ?>
-				maxFiles: <?=$this->getLimit()?>
+				maxFiles: <?=$this->getLimit()?>,
 			<? endif; ?>
 			<? if ($this->hasFields()): ?>
 				fields: [
