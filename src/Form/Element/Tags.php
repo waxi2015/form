@@ -12,6 +12,8 @@ class Tags extends Select {
 
 	public $save = null;
 
+	public $freeInput = false;
+
 	public function __construct ($descriptor, $nth = 0, $constructParams = null) {
 		if ($this->descriptor === null) {
 			$this->descriptor = $descriptor;
@@ -21,8 +23,16 @@ class Tags extends Select {
 			$this->save = $this->descriptor['save'];
 			$this->static = true;
 		}
+		
+		if (isset($this->descriptor['freeInput'])) {
+			$this->freeInput = $this->descriptor['freeInput'];
+		}
 
 		parent::__construct($descriptor, $nth, $constructParams);
+	}
+
+	public function isFreeInput () {
+		return $this->freeInput;
 	}
 
 	public function getName ($withSuffix = true, $language = null) {
@@ -101,6 +111,22 @@ class Tags extends Select {
 		\DB::table($table)->where($recordField, $id)->delete();
 
 		foreach ($values as $value) {
+			if ($this->isFreeInput()) {
+				$sourceTable = $this->save['sourceTable'];
+
+				$tag = \DB::table($sourceTable)
+						->where('name', $value)
+						->first();
+
+				if (empty($tag)) {
+					\DB::table($sourceTable)
+						->insert(['name' => $value]);
+					$value = \DB::getPdo()->lastInsertId();
+				} else {
+					$value = $tag->id;
+				}
+			}
+
 			\DB::table($table)->insert([
 				$recordField => $id,
 				$itemField => $value,
@@ -134,16 +160,35 @@ class Tags extends Select {
 				$id = $record[$recordFieldParam];
 			}
 
-			$values = to_array(\DB::table($table)->where($recordField, $id)->get());
+			$valuesQuery = \DB::table($table)
+						->where($recordField, $id);
+
+			if ($this->isFreeInput()) {
+				$sourceTable = $this->save['sourceTable'];
+				
+				$valuesQuery->leftJoin(
+					$sourceTable,
+					$table . '.' . $itemField,
+					'=', $sourceTable . '.id'
+				);
+			}
+
+			$values = $valuesQuery->get();
+
+			$values = to_array($values);
 
 			$value = [];
 			foreach ($values as $one) {
-				$value[] = $one[$itemField];
+				if ($this->isFreeInput()) {
+					$value[] = $one['name'];
+				} else {
+					$value[] = $one[$itemField];
+				}
 			}
 
 			$value = implode(',',$value);
 		}
-		
+
 		$this->value = $value;
 	}
 

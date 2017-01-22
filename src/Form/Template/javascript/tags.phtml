@@ -4,8 +4,14 @@
 			id: '<?=$this->getId()?>',
 			form: '#<?=$this->formIdentifier?>',
 			fieldName: '<?=$this->getName()?>',
-			items: [<? foreach ($this->getItems() as $key => $item): ?>{"id":"<?=$key?>","text":"<?=$item?>"},<? endforeach; ?>],
-			values: [<? foreach ($this->getValueArray() as $id => $text): ?>{"id":"<?=$id?>","text":"<?=$text?>"},<? endforeach; ?>],
+			freeInput: <?=$this->isFreeInput() ? 'true' : 'false'?>,
+			<? if ($this->isFreeInput()): ?>
+				items: [<? foreach ($this->getItems() as $key => $item): ?>"<?=$item?>",<? endforeach; ?>],
+				values: [<? foreach ($this->getValueArray() as $id => $text): ?>"<?=$text?>",<? endforeach; ?>],
+			<? else: ?>
+				items: [<? foreach ($this->getItems() as $key => $item): ?>{"id":"<?=$key?>","text":"<?=$item?>"},<? endforeach; ?>],
+				values: [<? foreach ($this->getValueArray() as $id => $text): ?>{"id":"<?=$id?>","text":"<?=$text?>"},<? endforeach; ?>],
+			<? endif; ?>
 		});
 	})
 <? $this->scriptCaptureEnd('PREPEND'); ?>

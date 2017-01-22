@@ -32,7 +32,7 @@ class Decorator {
 				break;
 			
 			default:
-				$class = new Decorator\Wordimit($options);
+				$class = new Decorator\Wordlimit($options);
 				break;
 		}
 

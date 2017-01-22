@@ -33,6 +33,10 @@ class Multiimage extends Element {
 			$this->thumbnail = $descriptor['thumbnail'];
 		}
 
+		if (isset($descriptor['preview'])) {
+			$this->preview = $descriptor['preview'];
+		}
+
 		if (isset($descriptor['buttonLabel'])) {
 			$this->buttonLabel = $descriptor['buttonLabel'];
 		}

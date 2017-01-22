@@ -572,7 +572,7 @@ class Form extends Ancestor {
 
 			$result = true;
 		} catch (\Exception $e) {
-			//DX($e->getMessage());
+			// DX($e->getMessage());
 			$result = false;
 		}
 

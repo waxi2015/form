@@ -23,6 +23,7 @@ $form-breakpoint: $screen-xs-max !default;
 @import '../libs/form-validation-io/css/formValidation';
 @import '../libs/fancybox/jquery.fancybox';
 @import '../libs/bootstrap-datepicker/css/datepicker';
+@import '../libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker';
 
 .hided {
 	visibility: none;
@@ -1071,6 +1072,70 @@ $form-breakpoint: $screen-xs-max !default;
 	.wax-section {
 		&.col-lg-2 {
 			@import 'components/_form-breakpoint';
+		}
+	}
+
+	.datepicker {
+		td.active {
+			background: $brand-primary;
+
+			&:hover,
+			&:hover:hover,
+			&:focus,
+			&:hover:focus,
+			&:active,
+			&:hover:active,
+			&.active,
+			&:hover.active,
+			&.disabled,
+			&:hover.disabled,
+			&[disabled],
+			&:hover[disabled] {
+			  color: #ffffff;
+			  background: $brand-primary;
+			  *background: $brand-primary;
+			}
+			&:active,
+			&:hover:active,
+			&.active,
+			&:hover.active {
+			  background: $brand-primary;
+			}
+			&:hover {
+			  background: darken($brand-primary,12.5%);
+			}
+		}
+
+		td {
+			span.active {
+				background: $brand-primary;
+
+				&:hover,
+				&:hover:hover,
+				&:focus,
+				&:hover:focus,
+				&:active,
+				&:hover:active,
+				&.active,
+				&:hover.active,
+				&.disabled,
+				&:hover.disabled,
+				&[disabled],
+				&:hover[disabled] {
+				  color: #ffffff;
+				  background: $brand-primary;
+				  *background: $brand-primary;
+				}
+				&:active,
+				&:hover:active,
+				&.active,
+				&:hover.active {
+				  background: $brand-primary;
+				}
+				&:hover {
+				  background: darken($brand-primary,12.5%);
+				}
+			}
 		}
 	}
 

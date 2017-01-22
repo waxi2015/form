@@ -111,6 +111,16 @@
 									form.formValidation('revalidateField', $(that).attr('name'));
 								});
 								break;
+
+							case 'datetimepicker':
+								var that = this;
+
+								$(this).datetimepicker({
+									format: 'YYYY-MM-DD HH:mm'
+								}).on('changeDate', function () {
+									form.formValidation('revalidateField', $(that).attr('name'));
+								});
+								break;
 						}
 					})
 				},
