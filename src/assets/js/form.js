@@ -999,7 +999,7 @@ var waxform = {
 						if (options.dynamicParams !== undefined) {
 							settings.data.test = $('#is-test').val();
 							$.each(options.dynamicParams, function(k,v){
-								settings.data[k] = $('[name="'+v+'"').val()
+								settings.data[k] = $('[name="'+v+'"]').val()
 							})
 						}
 						
