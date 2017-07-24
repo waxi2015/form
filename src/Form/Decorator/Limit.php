@@ -11,7 +11,9 @@ class Limit extends Ancestor {
 			throw new Exception('Decorator Limit cannot be called directly.', 1);
 		}
 
-		$options['message'] = $this->getConfigVar('decorators')[$this->type];
+		if (!isset($options['message'])) {
+			$options['message'] = $this->getConfigVar('decorators')[$this->type];
+		}
 
 		parent::__construct($options);
 	}

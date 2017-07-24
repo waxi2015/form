@@ -66,12 +66,12 @@ class Autocomplete extends Element {
 
 		if (isset($this->descriptor['allowNew'])) {
 			$this->allowNew = $this->descriptor['allowNew'];
+		}
 
-			if (!$this->allowNew) {
-				$this->validators['autocomplete'] = array(
-					'message' => $this->getConfig()->getMessage('autocompleteNew')
-				);
-			}
+		if (!$this->allowNew) {
+			$this->validators['autocomplete'] = array(
+				'message' => $this->getConfig()->getMessage('autocompleteNew')
+			);
 		}
 		
 		if (isset($this->descriptor['source'])) {
