@@ -6,11 +6,11 @@
 			fieldName: '<?=$this->getName()?>',
 			freeInput: <?=$this->isFreeInput() ? 'true' : 'false'?>,
 			<? if ($this->isFreeInput()): ?>
-				items: [<? foreach ($this->getItems() as $key => $item): ?>"<?=$item?>",<? endforeach; ?>],
-				values: [<? foreach ($this->getValueArray() as $id => $text): ?>"<?=$text?>",<? endforeach; ?>],
+				items: [<? foreach ($this->getItems() as $key => $item): ?>"<?=addslashes($item)?>",<? endforeach; ?>],
+				values: [<? foreach ($this->getValueArray() as $id => $text): ?>"<?=addslashes($text)?>",<? endforeach; ?>],
 			<? else: ?>
-				items: [<? foreach ($this->getItems() as $key => $item): ?>{"id":"<?=$key?>","text":"<?=$item?>"},<? endforeach; ?>],
-				values: [<? foreach ($this->getValueArray() as $id => $text): ?>{"id":"<?=$id?>","text":"<?=$text?>"},<? endforeach; ?>],
+				items: [<? foreach ($this->getItems() as $key => $item): ?>{"id":"<?=$key?>","text":"<?=addslashes($item)?>"},<? endforeach; ?>],
+				values: [<? foreach ($this->getValueArray() as $id => $text): ?>{"id":"<?=$id?>","text":"<?=addslashes($text)?>"},<? endforeach; ?>],
 			<? endif; ?>
 		});
 	})
