@@ -9,7 +9,7 @@
 	<?=($language?'<span class="language-indicator">'.$language.'</span>':'')?>
 
 	<?=$this->fetchTemplate('description')?>
-	<?=$this->fetchTemplate('error')?>
+	<?=$this->fetchTemplate('error', array('language' => $language))?>
 </div>
 
 <? endforeach; ?>
